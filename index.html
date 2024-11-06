@@ -600,7 +600,7 @@
 
 const createMercadoPagoPreference = async () => {
     try {
-        const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+        const response = await fetch('https://api.mercadopago.com/checkout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
