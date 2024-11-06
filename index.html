@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sistema de Reservas y Catálogo Profesional Optimizado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue3-star-ratings@1.1.0/dist/vue3-star-ratings.umd.js"></script>
+    <script src="https://unpkg.com/lucide-vue-next" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <style>
+        [v-cloak] { display: none; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .btn {
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .selected-service {
+            border-color: #000000;
+            background-color: #f0f0f0;
+        }
+        .selected-date, .selected-time {
+            background-color: #000000;
+            color: white;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #E5E7EB;
+            z-index: 1;
+        }
+        .step {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 2px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #6B7280;
+            position: relative;
+            z-index: 2;
+        }
+        .step.active {
+            border-color: #000000;
+            color: #000000;
+        }
+        .step.completed {
+            background-color: #000000;
+            border-color: #000000;
+            color: #fff;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .calendar-day:hover:not(.selected-date):not(.disabled):not(.unavailable):not(.fully-booked) {
+            background-color: #f0f0f0;
+        }
+        .calendar-day.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .time-slot {
+            transition: all 0.2s ease;
+        }
+        .time-slot:hover:not(.selected-time):not(.disabled):not(.unavailable) {
+            background-color: #f0f0f0;
+        }
+        .time-slot.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.5s ease;
+        }
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+        .slide-fade-enter-active {
+            transition: all 0.3s ease-out;
+        }
+        .slide-fade-leave-active {
+            transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+        }
+        .slide-fade-enter-from,
+        .slide-fade-leave-to {
+            transform: translateX(20px);
+            opacity: 0;
+        }
+        .shake {
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+            transform: translate3d(0, 0, 0);
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        .promo-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #000000;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .calendar-day.unavailable {
+            background-color: #F3F4F6;
+            color: #9CA3AF;
+            cursor: not-allowed;
+        }
+        .time-slot.unavailable {
+            background-color: #F3F4F6;
+            color: #9CA3AF;
+            cursor: not-allowed;
+        }
+        .calendar-day.fully-booked {
+            background-color: #FEE2E2;
+            cursor: not-allowed;
+        }
+        .calendar-day.limited-availability {
+            background-color: #FEF3C7;
+        }
+        .limited-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #000000;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calendar-container {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        .calendar-day {
+            min-height: 80px;
+        }
+        @media (max-width: 640px) {
+            .calendar-day {
+                min-height: 60px;
+            }
+        }
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+        @keyframes skeleton-loading {
+            0% {
+                background-color: hsl(200, 20%, 80%);
+            }
+            100% {
+                background-color: hsl(200, 20%, 95%);
+            }
+        }
+    .ff{
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    </style>
+</head>
+<body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 text-gray-900 ff">
+    <div id="app" v-cloak>
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">{{ appTitle }}</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ appSubtitle }}</p>
+        </header>
+        <div class="max-w-7xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+            <div class="bg-white bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-3xl shadow-xl p-8">
+                <div class="mb-8 flex justify-center bg-gray-100 p-4 rounded-xl">
+                    <div class="flex space-x-4">
+                        <button @click="setCurrentTab('booking')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'booking' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']">
+                            Reservar un turno
+                        </button>
+                        <button @click="setCurrentTab('shop')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'shop' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']">
+                            Comprar Productos
+                        </button>
+                    </div>
+                </div>
+
+                <Transition name="fade" mode="out-in">
+                    <div v-if="currentTab === 'booking'" key="booking">
+                        <div v-if="isLoading">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div v-for="i in 6" :key="i" class="card p-6 space-y-4">
+                                    <div class="skeleton h-6 w-3/4 rounded"></div>
+                                    <div class="skeleton h-4 w-full rounded"></div>
+                                    <div class="skeleton h-4 w-5/6 rounded"></div>
+                                    <div class="skeleton h-10 w-full rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else-if="filteredServices.length === 0">
+                            <p class="text-center text-xl font-semibold text-gray-700">No hay servicios disponibles en este momento.</p>
+                        </div>
+                        <div v-else>
+                            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Reserva Tu Servicio</h2>
+
+                            <div class="step-indicator mb-12 relative flex flex-col">
+                                <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-300 -translate-y-1/2"></div>
+                                <div class="relative flex justify-between">
+                                    <div v-for="step in 5" :key="step" :class="['step w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300', { 'bg-gray-900 text-white': currentStep === step, 'bg-white text-gray-900 border-2 border-gray-900': currentStep > step, 'bg-gray-200 text-gray-600': currentStep < step }]">
+                                        {{ step }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Transition name="slide-fade" mode="out-in">
+                                <div v-if="currentStep === 1" key="step1">
+                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Selecciona tus Servicios</h3>
+                                    <p class="text-gray-600 mb-6">Elige los servicios que deseas reservar.</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        <div v-for="service in filteredServices" :key="service.id"
+                                             @click="toggleService(service)"
+                                             class="card p-6 cursor-pointer border-2 transition-all duration-300 flex flex-col justify-between relative transform hover:scale-105 hover:shadow-lg bg-white rounded-xl overflow-hidden"
+                                             :class="{'border-gray-900 ring-2 ring-gray-300': isServiceSelected(service), 'border-transparent': !isServiceSelected(service)}">
+                                            <div v-if="service.promocion" class="promo-badge absolute top-0 right-0 bg-gray-900 text-white px-2 py-1 text-xs font-bold uppercase rounded-bl-lg">{{ service.nombre_promo || 'Promoción' }}</div>
+                                            <div>
+                                                <h4 class="font-semibold text-lg mb-2 text-gray-900">{{ service.name }}</h4>
+                                                <p class="text-sm text-gray-600 mb-4">{{ service.description }}</p>
+                                                <div class="mb-2">
+                                                    <vue3-star-ratings :rating="service.rating" :read-only="true" :star-size="20"></vue3-star-ratings>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between items-center mt-4">
+                                                <span class="text-gray-900 font-medium text-lg">${{ service.price }}</span>
+                                                <span class="text-sm text-gray-500">{{ service.duration }} min</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-if="selectedServices.length > 0" class="mt-6 p-4 bg-gray-100 rounded-lg">
+                                        <h4 class="font-semibold text-lg mb-2 text-gray-900">Servicios Seleccionados:</h4>
+                                        <ul class="list-disc list-inside">
+                                            <li v-for="service in selectedServices"
+                                                :key="service.id"
+                                                class="text-gray-900">
+                                                {{ service.name }} - ${{ service.price }}
+                                                <span v-if="service.promocion"
+                                                      class="text-gray-600 font-bold">
+                                                    ({{ service.nombre_promo || 'Promoción' }})
+                                                </span>
+                                            </li>
+                                        </ul>
+                                        <p class="mt-2 text-gray-900 font-semibold">Total: ${{ totalPrice }}</p>
+                                    </div>
+                                </div>
+
+                                <div v-if="currentStep === 2" key="step2">
+                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Selecciona una Fecha</h3>
+                                    <p class="text-gray-600 mb-6">Elige la fecha que prefieras para tu reserva. Las fechas disponibles se muestran a continuación.</p>
+                                    <div class="calendar-container p-6 bg-white rounded-lg shadow-md">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <button @click="previousMonth" class="btn bg-gray-900 text-white px-3 py-1 rounded-md hover:bg-gray-800 transition-colors transition-all duration-300 hover:shadow-md">
+                                                &lt; Anterior
+                                            </button>
+                                            <h2 class="text-xl font-semibold text-gray-900">{{ currentMonthName }} {{ currentYear }}</h2>
+                                            <button @click="nextMonth" class="btn bg-gray-900 text-white px-3 py-1 rounded-md hover:bg-gray-800 transition-colors transition-all duration-300 hover:shadow-md">
+                                                Siguiente &gt;
+                                            </button>
+                                        </div>
+                                        <div class="grid grid-cols-7 gap-2">
+                                            <div v-for="day in daysOfWeek" :key="day" class="text-center font-semibold text-gray-600 text-sm">
+                                                {{ day }}
+                                            </div>
+                                            <div v-for="(day, index) in calendarDays" :key="index"
+                                                 :class="['calendar-day p-2 text-center rounded-md transition-all duration-200 flex flex-col items-center justify-center',
+                                                          {'bg-gray-100': day.isCurrentMonth && isDateAvailable(day.date),
+                                                           'text-gray-400': !day.isCurrentMonth || !isDateAvailable(day.date),
+                                                           'cursor-pointer hover:bg-gray-200': isDateAvailable(day.date) && !isDateInPast(day.date),
+                                                           'bg-red-100': isFullyBooked(day.date),
+                                                           'bg-yellow-100': hasLimitedAvailability(day.date)}]"
+                                                 @click="selectDate(day.date)">
+                                                <span :class="{'font-bold': isToday(day.date)}">{{ day.date.getDate() }}</span>
+                                                <div v-if="hasLimitedAvailability(day.date)" class="text-xs mt-1 text-red-600">
+                                                    Limitado
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div v-if="currentStep === 3" key="step3">
+                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Selecciona una Hora</h3>
+                                    <p class="text-gray-600 mb-6">Elige la hora que mejor se adapte a tu agenda. Los horarios no disponibles aparecerán deshabilitados.</p>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                        <button v-for="time in availableTimes" :key="time"
+                                                @click="selectTime(time)"
+                                                :class="['time-slot py-3 px-4 rounded-lg text-center transition-all duration-300 transform hover:scale-105 transition-all duration-300 hover:shadow-md',
+                                                         {'bg-gray-900 text-white': selectedTime === time,
+                                                          'hover:bg-gray-200': isTimeAvailable(time),
+                                                          'opacity-50 cursor-not-allowed': !isTimeAvailable(time)}]"
+                                                :disabled="!isTimeAvailable(time)"
+                                                :aria-selected="selectedTime === time">
+                                            {{ formatDisplayTime(time) }}
+                                            <span v-if="!isTimeAvailable(time)" class="block text-xs text-gray-500">
+                                                Reservado
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div v-else-if="currentStep === 4" key="step4">
+                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Información de Contacto</h3>
+                                    <p class="text-gray-600 mb-6">Por favor, proporciona tu información de contacto para confirmar la reserva.</p>
+                                    <form @submit.prevent="nextStep" class="space-y-4">
+                                        <div>
+                                            <label for="name" class="block text-sm font-medium text-gray-900">Nombre Completo</label>
+                                            <input type="text" id="name" v-model="clientName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50 transition-all duration-300">
+                                        </div>
+                                        <div>
+                                            <label for="phone" class="block text-sm font-medium text-gray-900">Número de Teléfono</label>
+                                            <input type="tel" id="phone" v-model="clientPhone" required pattern="[0-9]{9}" title="Por favor, introduce un número de teléfono válido de 9 dígitos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
+                                        </div>
+                                        <!--div>
+                                            <label for="email" class="block text-sm font-medium text-gray-900">Correo Electrónico</label>
+                                            <input type="email" id="email" v-model="clientEmail" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
+                                        </div-->
+                                        <button type="submit" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md">
+                                            Continuar
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <div v-else-if="currentStep === 5" key="step5">
+                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Resumen y Pago de Seña</h3>
+                                    <p class="text-gray-600 mb-6">Revisa los detalles de tu reserva y procede con el pago de la seña del 10%.</p>
+                                    <div class="space-y-6 bg-gray-50 p-6 rounded-lg mb-6">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <span class="font-medium text-gray-900">Servicios:</span>
+                                                <ul class="list-disc list-inside mt-1">
+                                                    <li v-for="service in selectedServices" :key="service.id" class="text-gray-900">
+                                                        {{ service.name }}
+                                                        <span v-if="service.promocion" class="text-gray-600 font-bold">({{ service.nombre_promo || 'Promoción' }})</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-gray-900">Fecha:</span>
+                                                <p class="text-gray-900">{{ formatDate(selectedDate) }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-gray-900">Hora:</span>
+                                                <p class="text-gray-900">{{ selectedTime }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-gray-900">Precio Total:</span>
+                                                <p class="text-gray-900">${{ totalPrice }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-gray-900">Seña (10%):</span>
+                                                <p class="text-gray-900">${{ depositAmount }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-gray-900">Nombre:</span>
+                                                <p class="text-gray-900">{{ clientName }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-gray-900">Teléfono:</span>
+                                                <p class="text-gray-900">{{ clientPhone }}</p>
+                                            </div>
+                                            <!--div>
+                                                <span class="font-medium text-gray-900">Email:</span>
+                                                <p class="text-gray-900">{{ clientEmail }}</p>
+                                            </div-->
+                                        </div>
+                                    </div>
+                                    <div id="wallet_container"></div>
+                                    <button @click="initMercadoPago" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50 hover:shadow-md">
+                                        Pagar con MercadoPago
+                                    </button>
+                                    <!--form @submit.prevent="confirmBooking" class="space-y-4">
+                                        <div>
+                                            <label for="cardNumber" class="block text-sm font-medium text-gray-900">Número de Tarjeta</label>
+                                            <input type="text" id="cardNumber" v-model="paymentInfo.cardNumber" required pattern="[0-9]{16}" title="Por favor, introduce un número de tarjeta válido de 16 dígitos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label for="expiryDate" class="block text-sm font-medium text-gray-900">Fecha de Expiración</label>
+                                                <input type="text" id="expiryDate" v-model="paymentInfo.expiryDate" required pattern="(0[1-9]|1[0-2])\/[0-9]{2}" title="Por favor, introduce una fecha de expiración válida (MM/YY)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
+                                            </div>
+                                            <div>
+                                                <label for="cvv" class="block text-sm font-medium text-gray-900">CVV</label>
+                                                <input type="text" id="cvv" v-model="paymentInfo.cvv" required pattern="[0-9]{3,4}" title="Por favor, introduce un CVV válido" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="terms" v-model="termsAccepted" required class="h-4 w-4 text-gray-900 focus:ring-gray-900 border-gray-300 rounded">
+                                            <label for="terms" class="ml-2 block text-sm text-gray-900">
+                                                Acepto los <a href="#" @click.prevent="showTermsModal = true" class="text-gray-900 hover:text-gray-600">términos y condiciones</a>
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50 hover:shadow-md">
+                                            Confirmar Reserva y Pagar Seña
+                                        </button>
+                                    </form-->
+                                </div>
+                            </Transition>
+
+                            <div class="mt-8 flex justify-between">
+                                <button v-if="currentStep > 1" @click="previousStep" class="btn bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
+                                    Anterior
+                                </button>
+                                <button v-if="currentStep < 5" @click="nextStep" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
+                                    Siguiente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else-if="currentTab === 'shop'" key="shop">
+                        <div v-if="isLoading">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div v-for="i in 6" :key="i" class="card p-6 space-y-4">
+                                    <div class="skeleton h-6 w-3/4 rounded"></div>
+                                    <div class="skeleton h-4 w-full rounded"></div>
+                                    <div class="skeleton h-4 w-5/6 rounded"></div>
+                                    <div class="skeleton h-10 w-full rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else-if="filteredProducts.length === 0">
+                            <p class="text-center text-xl font-semibold text-gray-700">No hay productos disponibles en este momento.</p>
+                        </div>
+                        <div v-else>
+                            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Catálogo de Productos</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div v-for="product in filteredProducts" :key="product.id" class="card p-6 flex flex-col justify-between relative transform hover:scale-105 hover:shadow-lg transition-all duration-300">
+                                    <div>
+                                        <h3 class="font-semibold text-lg mb-2 text-gray-900">{{ product.name }}</h3>
+                                        <p class="text-sm text-gray-600 mb-4">{{ product.description }}</p>
+                                        <p class="text-gray-900 font-medium text-lg mb-4">${{ product.price }}</p>
+                                    </div>
+                                    <button @click="addToCart(product)" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
+                                        Agregar al Carrito
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="cart.length > 0" class="mt-12 bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4 text-gray-900">Carrito de Compras</h3>
+                            <ul class="space-y-4">
+                                <li v-for="item in cart" :key="item.id" class="flex justify-between items-center border-b pb-2">
+                                    <span class="text-gray-900">{{ item.name }} - ${{ item.price }}</span>
+                                    <button @click="removeFromCart(item)" class="text-red-600 hover:text-red-800">
+                                        Eliminar
+                                    </button>
+                                </li>
+                            </ul>
+                            <div class="mt-4 flex justify-between items-center">
+                                <span class="text-xl font-semibold text-gray-900">Total: ${{ cartTotal }}</span>
+                                <button @click="checkoutAndRedirect" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
+                                    Finalizar Compra
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Transition>
+            </div>
+        </div>
+
+        <Transition name="fade">
+            <div v-if="notification.show" :class="['fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white', {
+                'bg-green-500': notification.type === 'success',
+                'bg-red-500': notification.type === 'error',
+                'bg-blue-500': notification.type === 'info'
+            }]">
+                {{ notification.message }}
+            </div>
+        </Transition>
+
+        <Transition name="fade">
+            <div v-if="showTermsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div class="bg-white rounded-lg p-8 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900">Términos y Condiciones</h2>
+                    <div class="text-gray-700 space-y-4">
+                        <p>1. Al realizar una reserva, usted acepta pagar una seña del 10% del valor total del servicio.</p>
+                        <p>2. La seña no es reembolsable en caso de cancelación con menos de 24 horas de anticipación.</p>
+                        <p>3. Los servicios están sujetos a disponibilidad y pueden variar según la demanda.</p>
+                        <p>4. Nos reservamos el derecho de modificar o cancelar reservas en circunstancias excepcionales.</p>
+                        <p>5. La información personal proporcionada será tratada de acuerdo con nuestra política de privacidad.</p>
+                    </div>
+                    <button @click="showTermsModal = false" class="mt-6 bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors duration-300">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </Transition>
+
+        <Transition name="fade">
+            <div v-if="showConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div class="bg-white rounded-lg p-8 max-w-lg w-full">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900">¡Reserva Confirmada!</h2>
+                    <p class="text-gray-700 mb-4">Tu reserva ha sido confirmada con éxito. Hemos enviado un resumen a tu correo electrónico.</p>
+                    <p class="text-gray-900 font-semibold mb-2">Número de Reserva: {{ bookingNumber }}</p>
+                    <p class="text-gray-700 mb-4">Por favor, guarda este número para futuras referencias.</p>
+                    <button @click="closeConfirmationModal" class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors duration-300">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </Transition>
+
+        <div class="fixed bottom-4 left-4">
+            <button @click="showChat = !showChat" class="bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors duration-300">
+                <span v-if="!showChat">Chat</span>
+                <span v-else>Cerrar</span>
+            </button>
+        </div>
+
+        <Transition name="slide-fade">
+            <div v-if="showChat" class="fixed bottom-16 left-4 w-80 bg-white rounded-lg shadow-xl p-4 z-50">
+                <div class="h-64 overflow-y-auto mb-4 space-y-2">
+                    <div v-for="(message, index) in chatMessages" :key="index" :class="['p-2 rounded-lg', {
+                        'bg-gray-200 text-gray-900': message.sender === 'user',
+                        'bg-gray-900 text-white': message.sender === 'support'
+                    }]">
+                        {{ message.text }}
+                    </div>
+                </div>
+                <form @submit.prevent="sendMessage" class="flex">
+                    <input v-model="chatInput" type="text" placeholder="Escribe tu mensaje..." class="flex-grow border rounded-l-lg p-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-r-lg hover:bg-gray-800 transition-colors duration-300">Enviar</button>
+                </form>
+            </div>
+        </Transition>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted, watch } = Vue;
+        window.supabase = supabase.createClient(
+                'https://tbtzlqeoogcfviojfqzg.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidHpscWVvb2djZnZpb2pmcXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA0ODI0ODEsImV4cCI6MjA0NjA1ODQ4MX0.E4tlXIb8tTHySUkA-VMHpdrnep63prRi1PGsypCMjGQ'
+            );
+
+        createApp({
+            setup() {
+                // State variables
+                const appTitle = ref('Reservas y Catálogo');
+                const appSubtitle = ref('Reserva tus servicios y compra productos de calidad');
+                const currentTab = ref('booking');
+                const searchQuery = ref('');
+                const services = ref([]);
+                const products = ref([]);
+                const selectedServices = ref([]);
+                const currentStep = ref(1);
+                const selectedDate = ref(null);
+                const selectedTime = ref(null);
+                const clientName = ref('');
+                const clientPhone = ref('');
+                const clientEmail = ref('');
+                const paymentInfo = ref({ cardNumber: '', expiryDate: '', cvv: '' });
+                const termsAccepted = ref(false);
+                const cart = ref([]);
+                const notification = ref({ show: false, message: '', type: 'success' });
+                const showChat = ref(false);
+                const chatMessages = ref([]);
+                const chatInput = ref('');
+                const showTermsModal = ref(false);
+                const showConfirmationModal = ref(false);
+                const bookingNumber = ref('');
+                const loyaltyPoints = ref(0);
+                const adminCode = ref(null);
+                const businessHours = ref([]);
+                const bookings = ref([]);
+                const currentDate = ref(new Date());
+                const adminPhoneNumber = ref('');
+                const isProcessing = ref(false);
+                const isLoading = ref(true);
+
+                // Computed properties
+                const filteredServices = computed(() => {
+                    return services.value.filter(service =>
+                        service.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                        service.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+                    );
+                });
+
+                const filteredProducts = computed(() => {
+                    return products.value.filter(product =>
+                        product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                        product.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+                    );
+                });
+
+                const cartTotal = computed(() => {
+                    return cart.value.reduce((total, item) => total + item.price, 0).toFixed(2);
+                });
+
+                const totalPrice = computed(() => {
+                    return selectedServices.value.reduce((total, service) => total + service.price, 0).toFixed(2);
+                });
+
+                const depositAmount = computed(() => {
+                    return (parseFloat(totalPrice.value) * 0.1).toFixed(2);
+                });
+
+                const currentMonthName = computed(() => {
+                    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                    return months[currentDate.value.getMonth()];
+                });
+
+                const currentYear = computed(() => {
+                    return currentDate.value.getFullYear();
+                });
+
+                const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+                const calendarDays = computed(() => {
+                    const year = currentDate.value.getFullYear();
+                    const month = currentDate.value.getMonth();
+                    const firstDay = new Date(year, month, 1);
+                    const lastDay = new Date(year, month + 1, 0);
+                    const daysInMonth = lastDay.getDate();
+                    const startingDay = firstDay.getDay();
+
+                    const days = [];
+
+                    // Add days from previous month
+                    for (let i = startingDay - 1; i >= 0; i--) {
+                        const prevMonthLastDay = new Date(year, month, 0).getDate();
+                        days.push({
+                            date: new Date(year, month - 1, prevMonthLastDay - i),
+                            isCurrentMonth: false
+                        });
+                    }
+
+                    // Add days of current month
+                    for (let i = 1; i <= daysInMonth; i++) {
+                        days.push({
+                            date: new Date(year, month, i),
+                            isCurrentMonth: true
+                        });
+                    }
+
+                    // Add days from next month
+                    const remainingDays = 42 - days.length;
+                    for (let i = 1; i <= remainingDays; i++) {
+                        days.push({
+                            date: new Date(year, month + 1, i),
+                            isCurrentMonth: false
+                        });
+                    }
+
+                    return days;
+                });
+
+                // Methods
+                const setCurrentTab = (tab) => currentTab.value = tab;
+
+                const fetchServices = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('services')
+                            .select('*')
+                            .eq('admin_unique_code', adminCode.value);
+                        if (error) throw error;
+                        services.value = data.map(service => ({...service, rating: Math.random() * 5}));
+                    } catch (error) {
+                        console.error('Error fetching services:', error);
+                        showNotification('Error al cargar los servicios. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
+
+                const fetchProducts = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('products')
+                            .select('*')
+                            .eq('admin_unique_code', adminCode.value);
+                        if (error) throw error;
+                        products.value = data;
+                    } catch (error) {
+                        console.error('Error fetching products:', error);
+                        showNotification('Error al cargar los productos. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
+
+                const fetchBusinessName = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .select('business_name')
+                            .eq('admin_unique_code', adminCode.value)
+                            .single();
+                        if (error) throw error;
+                        appTitle.value = data.business_name;
+                    } catch (error) {
+                        console.error('Error fetching business name:', error);
+                        showNotification('Error al cargar el nombre del negocio. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
+
+                const fetchBusinessHours = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .select('working_hours')
+                            .eq('admin_unique_code', adminCode.value)
+                            .single();
+                        if (error) throw error;
+                        businessHours.value = JSON.parse(data.working_hours);
+                    } catch (error) {
+                        console.error('Error fetching business hours:', error);
+                        showNotification('Error al cargar los horarios de negocio. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
+
+                const fetchBookings = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('bookings')
+                            .select('*')
+                            .eq('admin_unique_code', adminCode.value);
+                        if (error) throw error;
+                        bookings.value = data;
+                    } catch (error) {
+                        console.error('Error fetching bookings:', error);
+                        showNotification('Error al cargar las reservas existentes. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
+
+                const generateUUID = () => {
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                        const r = Math.random() * 16 | 0,
+                              v = c === 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                };
+
+                //pagar con mercadopago
+
+                const initMercadoPago = async () => {
+                    const mp = new MercadoPago('TEST-1fe25574-1f25-478d-a7cd-45631bd592f7', {
+                        locale: 'es-AR'
+                    });
+
+                    const response = await fetch('/create_preference', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            description: 'Seña para reserva de servicios',
+                            price: depositAmount.value,
+                            quantity: 1
+                        }),
+                    });
+
+                    const preference = await response.json();
+
+                    mp.checkout({
+                        preference: {
+                            id: preference.id
+                        },
+                        render: {
+                            container: '#wallet_container',
+                            label: 'Pagar',
+                        }
+                    });
+                };
+
+                const confirmBooking = async () => {
+                    if (!termsAccepted.value) {
+                        showNotification('Por favor, acepta los términos y condiciones.', 'error');
+                        return;
+                    }
+
+                    isProcessing.value = true;
+                    showNotification('Procesando tu reserva...', 'info');
+
+                    try {
+                        // Simulate payment processing
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+
+                        const bookings = selectedServices.value.map(service => ({
+                            admin_unique_code: adminCode.value,
+                            client_id: generateUUID(),
+                            service_name: service.name,
+                            date: selectedDate.value.toISOString().split('T')[0],
+                            time: selectedTime.value,
+                            price: service.price,
+                            status: 'confirmed',
+                            payment_status: 'deposit_paid',
+                            deposit_amount: (service.price * 0.1).toFixed(2),
+                            client_name: clientName.value,
+                            client_phone: clientPhone.value,
+                            client_email: clientEmail.value
+                        }));
+
+                        const { data, error } = await supabase
+                            .from('bookings')
+                            .insert(bookings);
+
+                        if (error) throw error;
+
+                        // Add loyalty points based on the deposit amount
+                        loyaltyPoints.value += Math.floor(parseFloat(bookings[0].deposit_amount));
+
+                        showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
+                        resetBookingForm();
+                        currentStep.value = 1;
+
+                        // Generate a unique booking number
+                        bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                        showConfirmationModal.value = true;
+
+                        // Redirect to WhatsApp with booking summary
+                        const message = generateWhatsAppMessage(bookings[0]);
+                        const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${message}`;
+                        window.open(whatsappUrl, '_blank');
+
+                    } catch (error) {
+                        console.error('Error al procesar la reserva:', error);
+                        showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
+                    } finally {
+                        isProcessing.value = false;
+                    }
+                };
+
+                const generateWhatsAppMessage = (booking) => {
+    let message = 'Resumen de la reserva:\n\n';
+    message += `Número de Reserva: ${bookingNumber.value}\n`;
+    message += `Servicio: ${booking.service_name}\n`;
+    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
+    message += `Hora: ${booking.time}\n`;
+    message += `Precio Total: $${booking.price}\n`;
+    message += `Seña Pagada: $${booking.deposit_amount}\n`;
+    message += `Nombre: ${booking.client_name}\n`;
+    message += `Teléfono: ${booking.client_phone}\n`;
+    return encodeURIComponent(message);
+};
+
+                const toggleService = (service) => {
+                    const index = selectedServices.value.findIndex(s => s.id === service.id);
+                    if (index === -1) {
+                        selectedServices.value.push(service);
+                    } else {
+                        selectedServices.value.splice(index, 1);
+                    }
+                };
+
+                const isServiceSelected = (service) => {
+                    return selectedServices.value.some(s => s.id === service.id);
+                };
+
+                const selectDate = (date) => {
+                    if (isDateAvailable(date) && !isDateInPast(date)) {
+                        selectedDate.value = date;
+                        currentStep.value = 3;
+                        generateAvailableTimes();
+                    }
+                };
+
+                const selectTime = (time) => {
+                    if (isTimeAvailable(time)) {
+                        selectedTime.value = time;
+                        currentStep.value = 4;
+                    }
+                };
+
+                const nextStep = () => {
+                    if (currentStep.value < 5) {
+                        currentStep.value++;
+                    }
+                };
+
+                const previousStep = () => {
+                    if (currentStep.value > 1) {
+                        currentStep.value--;
+                    }
+                };
+
+                const fetchAdminPhoneNumber = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .select('phone')
+                            .eq('admin_unique_code', adminCode.value)
+                            .single();
+                        if (error) throw error;
+                        adminPhoneNumber.value = data.phone;
+                    } catch (error) {
+                        console.error('Error fetching admin phone number:', error);
+                        showNotification('Error al cargar el número de teléfono del administrador.', 'error');
+                    }
+                };
+
+                const addToCart = (product) => {
+                    cart.value.push(product);
+                    showNotification('Producto agregado al carrito.', 'success');
+                };
+
+                const removeFromCart = (item) => {
+                    const index = cart.value.findIndex(cartItem => cartItem.id === item.id);
+                    if (index !== -1) {
+                        cart.value.splice(index, 1);
+                        showNotification('Producto eliminado del carrito.', 'success');
+                    }
+                };
+
+                const saveOrderToDatabase = async () => {
+                    try {
+                        const orderItems = cart.value.map(item => ({
+                            admin_unique_code: adminCode.value,
+                            product_id: item.id,
+                            quantity: 1, // Assuming quantity is always 1, adjust if needed
+                            price: item.price,
+                            product_name: item.name
+                        }));
+
+                        const { data, error } = await supabase
+                            .from('order_items')
+                            .insert(orderItems);
+
+                        if (error) throw error;
+
+                        showNotification('Pedido guardado exitosamente', 'success');
+                    } catch (error) {
+                        console.error('Error saving order:', error);
+                        showNotification('Error al guardar el pedido. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
+
+                const generateWhatsAppMessageForCart = () => {
+                    let message = '🛒 *Resumen del Pedido*:\n\n';
+                    cart.value.forEach(item => {
+                        message += `🛍️ *${item.name}* - $${item.price}\n`;
+                    });
+                    message += `\n💰 *Total*: $${cartTotal.value}`;
+                    return encodeURIComponent(message);
+                };
+
+
+                const checkoutAndRedirect = async () => {
+                    isProcessing.value = true;
+                    showNotification('Procesando tu pedido...', 'info');
+
+                    try {
+                        await saveOrderToDatabase();
+                        const message = generateWhatsAppMessageForCart();
+                        const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${message}`;
+                        window.open(whatsappUrl, '_blank');
+                        cart.value = []; // Clear the cart after redirecting
+                        showNotification('Pedido enviado por WhatsApp. Gracias por su compra!', 'success');
+                    } catch (error) {
+                        console.error('Error processing order:', error);
+                        showNotification('Error al procesar el pedido. Por favor, intenta de nuevo.', 'error');
+                    } finally {
+                        isProcessing.value = false;
+                    }
+                };
+
+                const showNotification = (message, type = 'info') => {
+                    notification.value = { show: true, message, type };
+                    setTimeout(() => {
+                        notification.value.show = false;
+                    }, 3000);
+                };
+
+                const formatDate = (dateString) => {
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    return new Date(dateString).toLocaleDateString('es-ES', options);
+                };
+
+                const resetBookingForm = () => {
+                    selectedServices.value = [];
+                    currentStep.value = 1;
+                    selectedDate.value = null;
+                    selectedTime.value = null;
+                    clientName.value = '';
+                    clientPhone.value = '';
+                    clientEmail.value = '';
+                    paymentInfo.value = { cardNumber: '', expiryDate: '', cvv: '' };
+                    termsAccepted.value = false;
+                };
+
+                const sendMessage = () => {
+                    if (chatInput.value.trim()) {
+                        chatMessages.value.push({ sender: 'user', text: chatInput.value });
+                        chatInput.value = '';
+                        // Simulate a response from the support team
+                        setTimeout(() => {
+                            chatMessages.value.push({ sender: 'support', text: 'Gracias por tu mensaje. Un agente de soporte te responderá pronto.' });
+                        }, 1000);
+                    }
+                };
+
+                const closeConfirmationModal = () => {
+                    showConfirmationModal.value = false;
+                };
+
+                const isDateAvailable = (date) => {
+                    const dayOfWeek = date.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+                    return businessHoursForDay && businessHoursForDay.is_working_day;
+                };
+
+                const isDateInPast = (date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return date < today;
+                };
+
+                const isToday = (date) => {
+                    const today = new Date();
+                    return date.getDate() === today.getDate() &&
+                           date.getMonth() === today.getMonth() &&
+                           date.getFullYear() === today.getFullYear();
+                };
+
+                const previousMonth = () => {
+                    currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1);
+                };
+
+                const nextMonth = () => {
+                    currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1);
+                };
+
+                const generateAvailableTimes = () => {
+                    if (!selectedDate.value) return;
+
+                    const dayOfWeek = selectedDate.value.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+
+                    if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
+                        availableTimes.value = [];
+                        return;
+                    }
+
+                    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
+                    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
+                    const times = [];
+
+                    while (openTime < closeTime) {
+                        times.push(openTime.toTimeString().slice(0, 5));
+                        openTime.setMinutes(openTime.getMinutes() + 30);
+                    }
+
+                    availableTimes.value = times;
+                };
+
+                const isTimeAvailable = (time) => {
+                    if (!selectedDate.value) return false;
+
+                    const bookingDate = selectedDate.value.toISOString().split('T')[0];
+                    const existingBooking = bookings.value.find(booking =>
+                        booking.date === bookingDate && booking.time === time
+                    );
+
+                    return !existingBooking;
+                };
+
+                const getReservationName = (date, time) => {
+                    if (!date) return '';
+
+                    const dateString = date.toISOString().split('T')[0];
+                    const booking = bookings.value.find(booking =>
+                        booking.date === dateString &&
+                        booking.time === time &&
+                        booking.status !== 'cancelled'
+                    );
+                    return booking ? booking.client_name : '';
+                };
+
+                const formatDisplayTime = (time) => {
+                    // Convertir '09:00:00' a '09:00'
+                    return time.slice(0, 5);
+                };
+
+                const availableTimes = computed(() => {
+                    if (!selectedDate.value) return [];
+
+                    const dayOfWeek = selectedDate.value.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+                    if (!businessHoursForDay) return [];
+
+                    const openTime = new Date(`1970-01-01T${businessHoursForDay.open_time}`);
+                    const closeTime = new Date(`1970-01-01T${businessHoursForDay.close_time}`);
+                    const times = [];
+
+                    for (let time = openTime; time < closeTime; time.setMinutes(time.getMinutes() + 30)) {
+                        times.push(time.toTimeString().slice(0, 8)); // Formato '09:00:00'
+                    }
+
+                    return times;
+                });
+
+                const isFullyBooked = (date)  => {
+                    if (!date) return false;
+
+                    const bookingDate = date.toISOString().split('T')[0];
+                    const dayBookings = bookings.value.filter(b => b.date === bookingDate);
+
+                    const dayOfWeek = date.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+
+                    if (!businessHoursForDay || !businessHoursForDay.is_working_day) return true;
+
+                    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
+                    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
+                    let availableSlots = 0;
+
+                    while (openTime < closeTime) {
+                        const timeSlot = openTime.toTimeString().slice(0, 5);
+                        if (!dayBookings.some(b => b.time === timeSlot)) {
+                            availableSlots++;
+                        }
+                        openTime.setMinutes(openTime.getMinutes() + 30);
+                    }
+
+                    return availableSlots === 0;
+                };
+
+                const hasLimitedAvailability = (date) => {
+                    if (!date) return false;
+
+                    const bookingDate = date.toISOString().split('T')[0];
+                    const dayBookings = bookings.value.filter(b => b.date === bookingDate);
+
+                    const dayOfWeek = date.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+
+                    if (!businessHoursForDay || !businessHoursForDay.is_working_day) return false;
+
+                    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
+                    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
+                    let totalSlots = 0;
+                    let bookedSlots = 0;
+
+                    while (openTime < closeTime) {
+                        const timeSlot = openTime.toTimeString().slice(0, 5);
+                        totalSlots++;
+                        if (dayBookings.some(b => b.time === timeSlot)) {
+                            bookedSlots++;
+                        }
+                        openTime.setMinutes(openTime.getMinutes() + 30);
+                    }
+
+                    const availabilityPercentage = (totalSlots - bookedSlots) / totalSlots;
+                    return availabilityPercentage <= 0.3 && availabilityPercentage > 0;
+                };
+
+                // Watchers
+                watch(selectedServices, () => {
+                    if (currentStep.value === 1 && selectedServices.value.length > 0) {
+                        currentStep.value = 2;
+                    }
+                });
+
+                // Lifecycle hooks
+                onMounted(async () => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    adminCode.value = urlParams.get('code');
+                    if (adminCode.value) {
+                        await Promise.all([
+                            fetchServices(),
+                            fetchProducts(),
+                            fetchBusinessHours(),
+                            fetchBookings(),
+                            fetchAdminPhoneNumber(),
+                            fetchBusinessName()
+                        ]);
+                        isLoading.value = false;
+                    } else {
+                        showNotification('Código de administrador no proporcionado. Algunas funciones pueden no estar disponibles.', 'warning');
+                        isLoading.value = false;
+                    }
+                });
+
+                // Return the reactive state and methods
+                return {
+                    appTitle,
+                    appSubtitle,
+                    initMercadoPago,
+                    currentTab,
+                    searchQuery,
+                    filteredServices,
+                    filteredProducts,
+                    selectedServices,
+                    currentStep,
+                    selectedDate,
+                    selectedTime,
+                    clientName,
+                    clientPhone,
+                    clientEmail,
+                    paymentInfo,
+                    termsAccepted,
+                    cart,
+                    notification,
+                    showChat,
+                    chatMessages,
+                    chatInput,
+                    showTermsModal,
+                    showConfirmationModal,
+                    bookingNumber,
+                    loyaltyPoints,
+                    currentDate,
+                    currentMonthName,
+                    currentYear,
+                    daysOfWeek,
+                    calendarDays,
+                    availableTimes,
+                    totalPrice,
+                    depositAmount,
+                    cartTotal,
+                    isProcessing,
+                    isLoading,
+                    setCurrentTab,
+                    toggleService,
+                    isServiceSelected,
+                    selectDate,
+                    selectTime,
+                    nextStep,
+                    previousStep,
+                    confirmBooking,
+                    addToCart,
+                    removeFromCart,
+                    sendMessage,
+                    closeConfirmationModal,
+                    formatDate,
+                    isDateAvailable,
+                    isDateInPast,
+                    isToday,
+                    previousMonth,
+                    nextMonth,
+                    isTimeAvailable,
+                    formatDisplayTime,
+                    getReservationName,
+                    isFullyBooked,
+                    hasLimitedAvailability,
+                    checkoutAndRedirect
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
