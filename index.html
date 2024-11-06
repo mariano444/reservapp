@@ -785,57 +785,56 @@
 
                 //pagar con mercadopago
 
-                const initMercadoPago = async () => {
-                    // Initialize MercadoPago object
-                    const mp = new MercadoPago('TEST-5a1c7c1e-1c9e-4c4e-8c2d-7f8e8b8e8c8c', {
-                        locale: 'es-AR'
-                    });
+  const initMercadoPago = async () => {
+            // Inicializar el objeto de MercadoPago
+            const mp = new MercadoPago('TEST-5a1c7c1e-1c9e-4c4e-8c2d-7f8e8b8e8c8c', {
+                locale: 'es-AR'
+            });
 
-                    try {
-                        // Simulate preference creation (this should be done server-side in production)
-                        const preference = {
-                            items: [
-                                {
-                                    title: 'Seña para reserva de servicios',
-                                    unit_price: parseFloat(depositAmount.value),
-                                    quantity: 1,
-                                }
-                            ],
-                            payer: {
-                                name: clientName.value,
-                                email: clientEmail.value,
-                                phone: {
-                                    number: clientPhone.value
-                                }
-                            }
-                        };
-
-                        // Create button
-                        const bricksBuilder = mp.bricks();
-
-                        await bricksBuilder.create("wallet", "wallet_container", {
-                            initialization: {
-                                preferenceId: 'TEST-f6a3d2c7-c2a9-4f42-8e00-6d5d3a230d8d',
-                                redirectMode: 'modal'
-                            },
-                            callbacks: {
-                                onReady: () => {
-                                    console.log('Brick ready');
-                                },
-                                onSubmit: () => {
-                                    console.log('Callback on submit');
-                                },
-                                onError: (error) => {
-                                    console.error('Callback on error: ', error);
-                                }
-                            }
-                        });
-
-                    } catch (error) {
-                        console.error('Error initializing MercadoPago:', error);
-                        showNotification('Error al inicializar MercadoPago. Por favor, intenta de nuevo.', 'error');
+            try {
+                // Simular la creación de preferencia (esto debería hacerse en el servidor en producción)
+                const preference = {
+                    items: [
+                        {
+                            title: 'Seña para reserva de servicios',
+                            unit_price: parseFloat(depositAmount.value),
+                            quantity: 1,
+                        }
+                    ],
+                    payer: {
+                        name: clientName.value,
+                        phone: {
+                            number: clientPhone.value
+                        }
                     }
                 };
+
+                // Crear el botón
+                const bricksBuilder = mp.bricks();
+
+                await bricksBuilder.create("wallet", "wallet_container", {
+                    initialization: {
+                        preferenceId: 'TEST-f6a3d2c7-c2a9-4f42-8e00-6d5d3a230d8d',
+                        redirectMode: 'modal'
+                    },
+                    callbacks: {
+                        onReady: () => {
+                            console.log('Brick ready');
+                        },
+                        onSubmit: () => {
+                            console.log('Callback on submit');
+                        },
+                        onError: (error) => {
+                            console.error('Callback on error: ', error);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error al inicializar MercadoPago:', error);
+            }
+        };
+    </script>
+
 
                 const confirmBooking = async () => {
                     if (!termsAccepted.value) {
