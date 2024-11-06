@@ -786,33 +786,41 @@
                 //pagar con mercadopago
 
                 const initMercadoPago = async () => {
-                    const mp = new MercadoPago('TEST-1fe25574-1f25-478d-a7cd-45631bd592f7', {
+                    const mp = new MercadoPago('TEST-5a1c7c1e-1c9e-4c4e-8c2d-7f8e8b8e8c8c', {
                         locale: 'es-AR'
                     });
 
-                    const response = await fetch('/create_preference', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
+                    // Simulate the /create_preference endpoint
+                    const simulateCreatePreference = async (data) => {
+                        // In a real scenario, this would be a server-side operation
+                        return {
+                            id: 'simulated-preference-id-' + Date.now(),
+                            init_point: 'https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=simulated-preference-id'
+                        };
+                    };
+
+                    try {
+                        const preferenceData = {
                             description: 'Seña para reserva de servicios',
                             price: depositAmount.value,
                             quantity: 1
-                        }),
-                    });
+                        };
 
-                    const preference = await response.json();
+                        const preference = await simulateCreatePreference(preferenceData);
 
-                    mp.checkout({
-                        preference: {
-                            id: preference.id
-                        },
-                        render: {
-                            container: '#wallet_container',
-                            label: 'Pagar',
-                        }
-                    });
+                        mp.checkout({
+                            preference: {
+                                id: preference.id
+                            },
+                            render: {
+                                container: '#wallet_container',
+                                label: 'Pagar',
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Error initializing MercadoPago:', error);
+                        showNotification('Error al inicializar MercadoPago. Por favor, intenta de nuevo.', 'error');
+                    }
                 };
 
                 const confirmBooking = async () => {
