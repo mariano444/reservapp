@@ -762,8 +762,63 @@
                 const preferenceId = ref(null);
                 const isProcessingPayment = ref(false);
 
+
+                const initMercadoPago = async () => {
+                    await createMercadoPagoPreference();
+                    if (preferenceId.value) {
+                        const mp = new MercadoPago('APP_USR-7e074160-3840-4194-bf27-7beee9489c9d', {
+                            locale: 'es-AR'
+                        });
+
+                        const checkout = mp.checkout({
+                            preference: {
+                                id: preferenceId.value
+                            },
+                            render: {
+                                container: '#mercadopago-button-container',
+                                label: 'Pagar con MercadoPago',
+                            }
+                        });
+
+                        checkout.on('payment_received', (data) => {
+                            confirmBooking(data.status);
+                        });
+                    } else {
+                        showNotification('Error al inicializar el pago. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
+
+                const retrieveBookingDetails = () => {
+                    const storedDetails = localStorage.getItem('bookingDetails');
+                    if (storedDetails) {
+                        const details = JSON.parse(storedDetails);
+                        selectedServices.value = details.selectedServices;
+                        selectedDate.value = new Date(details.selectedDate);
+                        selectedTime.value = details.selectedTime;
+                        clientName.value = details.clientName;
+                        clientPhone.value = details.clientPhone;
+                        clientEmail.value = details.clientEmail;
+                        // No need to set totalPrice and depositAmount as they are computed properties
+                    }
+                };
+
+                const storeBookingDetails = () => {
+                    const bookingDetails = {
+                        selectedServices: selectedServices.value,
+                        selectedDate: selectedDate.value,
+                        selectedTime: selectedTime.value,
+                        clientName: clientName.value,
+                        clientPhone: clientPhone.value,
+                        clientEmail: clientEmail.value,
+                        totalPrice: totalPrice.value,
+                        depositAmount: depositAmount.value
+                    };
+                    localStorage.setItem('bookingDetails', JSON.stringify(bookingDetails));
+                };
+
                 const createMercadoPagoPreference = async () => {
                     try {
+                        storeBookingDetails(); // Store details before creating preference
                         const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
                             method: 'POST',
                             headers: {
@@ -806,31 +861,6 @@
                     }
                 };
 
-                const initMercadoPago = async () => {
-                    await createMercadoPagoPreference();
-                    if (preferenceId.value) {
-                        const mp = new MercadoPago('APP_USR-7e074160-3840-4194-bf27-7beee9489c9d', {
-                            locale: 'es-AR'
-                        });
-
-                        const checkout = mp.checkout({
-                            preference: {
-                                id: preferenceId.value
-                            },
-                            render: {
-                                container: '#mercadopago-button-container',
-                                label: 'Pagar con MercadoPago',
-                            }
-                        });
-
-                        checkout.on('payment_received', (data) => {
-                            confirmBooking(data.status);
-                        });
-                    } else {
-                        showNotification('Error al inicializar el pago. Por favor, intenta de nuevo.', 'error');
-                    }
-                };
-
                 const confirmBooking = async (paymentStatus) => {
                     if (paymentStatus !== 'approved') {
                         showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
@@ -841,6 +871,12 @@
                     showNotification('Procesando tu reserva...', 'info');
 
                     try {
+                        retrieveBookingDetails(); // Retrieve stored details
+
+                        if (!selectedDate.value) {
+                            throw new Error('No se encontraron detalles de la reserva');
+                        }
+
                         const booking = {
                             admin_unique_code: adminCode.value,
                             client_id: generateUUID(),
@@ -873,6 +909,7 @@
 
                         resetBookingForm();
                         currentStep.value = 1;
+                        localStorage.removeItem('bookingDetails'); // Clear stored details
                     } catch (error) {
                         console.error('Error al procesar la reserva:', error);
                         showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
@@ -880,6 +917,7 @@
                         isProcessingPayment.value = false;
                     }
                 };
+
 
     const simulatePaymentProcess = () => {
         return new Promise((resolve) => {
