@@ -922,6 +922,8 @@
 
                         const message = generateWhatsAppMessage(booking);
                         const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+                        
+                        // Open WhatsApp in a new tab
                         window.open(whatsappUrl, '_blank');
 
                         resetBookingForm();
