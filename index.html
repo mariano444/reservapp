@@ -604,7 +604,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer APP_USR-6199985570439520-110611-70095fd0d24eeb13bddeef48edb16cfc-1670125470'  // Reemplaza 'YOUR_ACCESS_TOKEN' con tu token de acceso real
+                        'Authorization': 'Bearer APP_USR-3549263053798148-110618-852bdcdbea13c4a27d5d95d8e7f98f5b-2079511789'  // Reemplaza 'YOUR_ACCESS_TOKEN' con tu token de acceso real
                     },
                     body: JSON.stringify({
                         items: [
@@ -639,7 +639,7 @@
         const initMercadoPago = async () => {
             await createMercadoPagoPreference();
             if (preferenceId.value) {
-                const mp = new MercadoPago('APP_USR-786e5b42-76e4-43c8-85d7-e9d9330f0403', {  // Reemplaza 'YOUR_PUBLIC_KEY' con tu clave pública real
+                const mp = new MercadoPago('APP_USR-7e074160-3840-4194-bf27-7beee9489c9d', {  // Reemplaza 'YOUR_PUBLIC_KEY' con tu clave pública real
                     locale: 'es-AR'
                 });
 
@@ -823,63 +823,81 @@
                     });
                 };
 
-                const confirmBooking = async () => {
-                    if (!termsAccepted.value) {
-                        showNotification('Por favor, acepta los términos y condiciones.', 'error');
-                        return;
-                    }
 
-                    isProcessing.value = true;
-                    showNotification('Procesando tu reserva...', 'info');
 
-                    try {
-                        // Simulate payment processing
-                        await new Promise(resolve => setTimeout(resolve, 2000));
+    const confirmBooking = async () => {
+        if (!termsAccepted.value) {
+            showNotification('Por favor, acepta los términos y condiciones.', 'error');
+            return;
+        }
 
-                        const bookings = selectedServices.value.map(service => ({
-                            admin_unique_code: adminCode.value,
-                            client_id: generateUUID(),
-                            service_name: service.name,
-                            date: selectedDate.value.toISOString().split('T')[0],
-                            time: selectedTime.value,
-                            price: service.price,
-                            status: 'confirmed',
-                            payment_status: 'deposit_paid',
-                            deposit_amount: (service.price * 0.1).toFixed(2),
-                            client_name: clientName.value,
-                            client_phone: clientPhone.value,
-                            client_email: clientEmail.value
-                        }));
+        isProcessing.value = true;
+        showNotification('Procesando tu reserva...', 'info');
 
-                        const { data, error } = await supabase
-                            .from('bookings')
-                            .insert(bookings);
+        try {
+            // Simplified payment check (replace with actual MercadoPago integration)
+            const paymentResult = await simulatePaymentProcess();
 
-                        if (error) throw error;
-
-                        // Add loyalty points based on the deposit amount
-                        loyaltyPoints.value += Math.floor(parseFloat(bookings[0].deposit_amount));
-
-                        showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
-                        resetBookingForm();
-                        currentStep.value = 1;
-
-                        // Generate a unique booking number
-                        bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-                        showConfirmationModal.value = true;
-
-                        // Redirect to WhatsApp with booking summary
-                        const message = generateWhatsAppMessage(bookings[0]);
-                        const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${message}`;
-                        window.open(whatsappUrl, '_blank');
-
-                    } catch (error) {
-                        console.error('Error al procesar la reserva:', error);
-                        showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
-                    } finally {
-                        isProcessing.value = false;
-                    }
+            if (paymentResult.status === 'approved') {
+                const booking = {
+                    admin_unique_code: adminCode.value,
+                    client_id: generateUUID(),
+                    service_name: selectedServices.value.map(s => s.name).join(', '),
+                    date: selectedDate.value.toISOString().split('T')[0],
+                    time: selectedTime.value,
+                    price: totalPrice.value,
+                    status: 'confirmed',
+                    payment_status: 'deposit_paid',
+                    deposit_amount: depositAmount.value,
+                    client_name: clientName.value,
+                    client_phone: clientPhone.value,
+                    client_email: clientEmail.value
                 };
+
+                // Save booking to local storage as a fallback
+                localStorage.setItem('lastBooking', JSON.stringify(booking));
+
+                try {
+                    const { data, error } = await supabase
+                        .from('bookings')
+                        .insert([booking]);
+
+                    if (error) throw error;
+
+                    showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
+                } catch (dbError) {
+                    console.error('Error saving to database:', dbError);
+                    showNotification('Reserva guardada localmente. Por favor, contacta al soporte.', 'warning');
+                }
+
+                resetBookingForm();
+                currentStep.value = 1;
+
+                bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                showConfirmationModal.value = true;
+
+                const message = generateWhatsAppMessage(booking);
+                const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            } else {
+                throw new Error('Pago no aprobado');
+            }
+        } catch (error) {
+            console.error('Error al procesar la reserva:', error);
+            showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
+        } finally {
+            isProcessing.value = false;
+        }
+    };
+
+    const simulatePaymentProcess = () => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({ status: 'approved' });
+            }, 2000);
+        });
+    };
+
 
                 const generateWhatsAppMessage = (booking) => {
     let message = 'Resumen de la reserva:\n\n';
