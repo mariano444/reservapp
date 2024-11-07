@@ -878,6 +878,12 @@
                     return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
                 };
 
+                const redirectToWhatsApp = (booking) => {
+                    const message = generateWhatsAppMessage(booking);
+                    const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappUrl, '_blank');
+                };
+
                 const confirmBooking = async (paymentStatus) => {
                     if (paymentStatus !== 'approved') {
                         showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
@@ -920,9 +926,8 @@
                         bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
                         showConfirmationModal.value = true;
 
-                        const message = generateWhatsAppMessage(booking);
-                        const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
-                        window.open(whatsappUrl, '_blank');
+                        // Redirect to WhatsApp immediately after successful booking
+                        redirectToWhatsApp(booking);
 
                         resetBookingForm();
                         currentStep.value = 1;
@@ -932,6 +937,21 @@
                         showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
                     } finally {
                         isProcessingPayment.value = false;
+                    }
+                };
+
+                const fetchAdminPhoneNumber = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .select('phone')
+                            .eq('admin_unique_code', adminCode.value)
+                            .single();
+                        if (error) throw error;
+                        adminPhoneNumber.value = data.phone;
+                    } catch (error) {
+                        console.error('Error fetching admin phone number:', error);
+                        showNotification('Error al cargar el número de teléfono del administrador.', 'error');
                     }
                 };
 
@@ -983,21 +1003,6 @@
                 const previousStep = () => {
                     if (currentStep.value > 1) {
                         currentStep.value--;
-                    }
-                };
-
-                const fetchAdminPhoneNumber = async () => {
-                    try {
-                        const { data, error } = await supabase
-                            .from('admin_configurations')
-                            .select('phone')
-                            .eq('admin_unique_code', adminCode.value)
-                            .single();
-                        if (error) throw error;
-                        adminPhoneNumber.value = data.phone;
-                    } catch (error) {
-                        console.error('Error fetching admin phone number:', error);
-                        showNotification('Error al cargar el número de teléfono del administrador.', 'error');
                     }
                 };
 
