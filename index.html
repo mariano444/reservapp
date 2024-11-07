@@ -861,6 +861,23 @@
                     }
                 };
 
+                const generateWhatsAppMessage = (booking) => {
+                    let message = 'Resumen de la reserva:\n\n';
+                    message += `Número de Reserva: ${bookingNumber.value}\n`;
+                    message += `Servicio: ${booking.service_name}\n`;
+                    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
+                    message += `Hora: ${booking.time}\n`;
+                    message += `Precio Total: $${booking.price}\n`;
+                    message += `Seña Pagada: $${booking.deposit_amount}\n`;
+                    message += `Nombre: ${booking.client_name}\n`;
+                    message += `Teléfono: ${booking.client_phone}\n`;
+                    return message;
+                };
+
+                const formatDate = (date) => {
+                    return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+                };
+
                 const confirmBooking = async (paymentStatus) => {
                     if (paymentStatus !== 'approved') {
                         showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
@@ -1054,11 +1071,6 @@
                     setTimeout(() => {
                         notification.value.show = false;
                     }, 3000);
-                };
-
-                const formatDate = (dateString) => {
-                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                    return new Date(dateString).toLocaleDateString('es-ES', options);
                 };
 
                 const resetBookingForm = () => {
