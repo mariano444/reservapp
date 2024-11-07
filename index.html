@@ -861,19 +861,6 @@
                     }
                 };
 
-                const generateWhatsAppMessage = (booking) => {
-                    let message = 'Resumen de la reserva:\n\n';
-                    message += `Número de Reserva: ${bookingNumber.value}\n`;
-                    message += `Servicio: ${booking.service_name}\n`;
-                    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
-                    message += `Hora: ${booking.time}\n`;
-                    message += `Precio Total: $${booking.price}\n`;
-                    message += `Seña Pagada: $${booking.deposit_amount}\n`;
-                    message += `Nombre: ${booking.client_name}\n`;
-                    message += `Teléfono: ${booking.client_phone}\n`;
-                    return message;
-                };
-
                 const formatDate = (date) => {
                     return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
                 };
@@ -884,62 +871,75 @@
                     window.open(whatsappUrl, '_blank');
                 };
 
-                const confirmBooking = async (paymentStatus) => {
-                    if (paymentStatus !== 'approved') {
-                        showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
-                        return;
-                    }
+                   const generateWhatsAppMessage = (booking) => {
+        let message = 'Resumen de la reserva:\n\n';
+        message += `Número de Reserva: ${bookingNumber.value}\n`;
+        message += `Servicio: ${booking.service_name}\n`;
+        message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
+        message += `Hora: ${booking.time}\n`;
+        message += `Precio Total: $${booking.price}\n`;
+        message += `Seña Pagada: $${booking.deposit_amount}\n`;
+        message += `Nombre: ${booking.client_name}\n`;
+        message += `Teléfono: ${booking.client_phone}\n`;
+        return message;
+    };
 
-                    isProcessingPayment.value = true;
-                    showNotification('Procesando tu reserva...', 'info');
+    const confirmBooking = async (paymentStatus) => {
+        if (paymentStatus !== 'approved') {
+            showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
+            return;
+        }
 
-                    try {
-                        retrieveBookingDetails(); // Retrieve stored details
+        isProcessingPayment.value = true;
+        showNotification('Procesando tu reserva...', 'info');
 
-                        if (!selectedDate.value) {
-                            throw new Error('No se encontraron detalles de la reserva');
-                        }
+        try {
+            retrieveBookingDetails(); // Retrieve stored details
 
-                        const booking = {
-                            admin_unique_code: adminCode.value,
-                            client_id: generateUUID(),
-                            service_name: selectedServices.value.map(s => s.name).join(', '),
-                            date: selectedDate.value.toISOString().split('T')[0],
-                            time: selectedTime.value,
-                            price: totalPrice.value,
-                            status: 'confirmed',
-                            payment_status: 'deposit_paid',
-                            deposit_amount: depositAmount.value,
-                            client_name: clientName.value,
-                            client_phone: clientPhone.value,
-                            client_email: clientEmail.value
-                        };
+            if (!selectedDate.value) {
+                throw new Error('No se encontraron detalles de la reserva');
+            }
 
-                        const { data, error } = await supabase
-                            .from('bookings')
-                            .insert([booking]);
+            const booking = {
+                admin_unique_code: adminCode.value,
+                client_id: generateUUID(),
+                service_name: selectedServices.value.map(s => s.name).join(', '),
+                date: selectedDate.value.toISOString().split('T')[0],
+                time: selectedTime.value,
+                price: totalPrice.value,
+                status: 'confirmed',
+                payment_status: 'deposit_paid',
+                deposit_amount: depositAmount.value,
+                client_name: clientName.value,
+                client_phone: clientPhone.value,
+                client_email: clientEmail.value
+            };
 
-                        if (error) throw error;
+            const { data, error } = await supabase
+                .from('bookings')
+                .insert([booking]);
 
-                        showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
-                        
-                        bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-                        showConfirmationModal.value = true;
+            if (error) throw error;
 
-                        // Redirect to WhatsApp immediately after successful booking
-                        redirectToWhatsApp(booking);
+            showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
+            
+            bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            showConfirmationModal.value = true;
 
-                        resetBookingForm();
-                        currentStep.value = 1;
-                        localStorage.removeItem('bookingDetails'); // Clear stored details
-                    } catch (error) {
-                        console.error('Error al procesar la reserva:', error);
-                        showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
-                    } finally {
-                        isProcessingPayment.value = false;
-                    }
-                };
+            const message = generateWhatsAppMessage(booking);
+            const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
 
+            resetBookingForm();
+            currentStep.value = 1;
+            localStorage.removeItem('bookingDetails'); // Clear stored details
+        } catch (error) {
+            console.error('Error al procesar la reserva:', error);
+            showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
+        } finally {
+            isProcessingPayment.value = false;
+        }
+    };
                 const fetchAdminPhoneNumber = async () => {
                     try {
                         const { data, error } = await supabase
