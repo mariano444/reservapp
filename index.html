@@ -861,19 +861,6 @@
                     }
                 };
 
-                const generateWhatsAppMessage = (booking) => {
-                    let message = 'Resumen de la reserva:\n\n';
-                    message += `Número de Reserva: ${bookingNumber.value}\n`;
-                    message += `Servicio: ${booking.service_name}\n`;
-                    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
-                    message += `Hora: ${booking.time}\n`;
-                    message += `Precio Total: $${booking.price}\n`;
-                    message += `Seña Pagada: $${booking.deposit_amount}\n`;
-                    message += `Nombre: ${booking.client_name}\n`;
-                    message += `Teléfono: ${booking.client_phone}\n`;
-                    return message;
-                };
-
                 const formatDate = (date) => {
                     return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
                 };
@@ -926,6 +913,11 @@
                         // Open WhatsApp in a new tab
                         window.open(whatsappUrl, '_blank');
 
+                        // Redirect to WhatsApp in the current tab after a short delay
+                        setTimeout(() => {
+                            window.location.href = whatsappUrl;
+                        }, 2000);
+
                         resetBookingForm();
                         currentStep.value = 1;
                         localStorage.removeItem('bookingDetails'); // Clear stored details
@@ -935,6 +927,19 @@
                     } finally {
                         isProcessingPayment.value = false;
                     }
+                };
+
+                const generateWhatsAppMessage = (booking) => {
+                    let message = 'Resumen de la reserva:\n\n';
+                    message += `Número de Reserva: ${bookingNumber.value}\n`;
+                    message += `Servicio: ${booking.service_name}\n`;
+                    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
+                    message += `Hora: ${booking.time}\n`;
+                    message += `Precio Total: $${booking.price}\n`;
+                    message += `Seña Pagada: $${booking.deposit_amount}\n`;
+                    message += `Nombre: ${booking.client_name}\n`;
+                    message += `Teléfono: ${booking.client_phone}\n`;
+                    return message;
                 };
 
 
