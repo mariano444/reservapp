@@ -600,6 +600,8 @@
                 const adminPhoneNumber = ref('');
                 const isProcessing = ref(false);
                 const isLoading = ref(true);
+                const availableTimes = ref([]);
+
 
                 // Computed properties
                 const filteredServices = computed(() => {
@@ -739,19 +741,7 @@
                     }
                 };
 
-                const fetchBookings = async () => {
-                    try {
-                        const { data, error } = await supabase
-                            .from('bookings')
-                            .select('*')
-                            .eq('admin_unique_code', adminCode.value);
-                        if (error) throw error;
-                        bookings.value = data;
-                    } catch (error) {
-                        console.error('Error fetching bookings:', error);
-                        showNotification('Error al cargar las reservas existentes. Por favor, intenta de nuevo.', 'error');
-                    }
-                };
+
 
                 const generateUUID = () => {
                     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -895,6 +885,120 @@
                     // Add more validations as needed
                 }
 
+                const formatDisplayTime = (time) => {
+                    if (!time) return '';
+                    return time.slice(0, 5); // Devuelve 'HH:MM'
+                };
+
+                const addMinutesToTime = (time, minutes) => {
+                    const [hours, mins] = time.split(':').map(Number);
+                    const date = new Date(2000, 0, 1, hours, mins);
+                    date.setMinutes(date.getMinutes() + minutes);
+                    return date.toTimeString().slice(0, 5);
+                };
+
+                const isTimeSlotAvailable = (timeSlot) => {
+                    if (!selectedDate.value || selectedServices.value.length === 0) return true;
+
+                    const bookingDate = selectedDate.value.toISOString().split('T')[0];
+                    const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
+                    const endTime = addMinutesToTime(timeSlot, totalDuration);
+
+                    return !bookings.value.some(booking => {
+                        if (booking.date !== bookingDate) return false;
+                        const bookingEndTime = addMinutesToTime(booking.time, booking.duration);
+                        return (timeSlot < bookingEndTime && endTime > booking.time);
+                    });
+                };
+
+                const generateAvailableTimes = () => {
+                    if (!selectedDate.value) {
+                        availableTimes.value = [];
+                        return;
+                    }
+
+                    const dayOfWeek = selectedDate.value.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+
+                    if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
+                        availableTimes.value = [];
+                        return;
+                    }
+
+                    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
+                    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
+                    const times = [];
+
+                    while (openTime < closeTime) {
+                        const timeSlot = openTime.toTimeString().slice(0, 5);
+                        times.push({
+                            time: timeSlot,
+                            available: isTimeSlotAvailable(timeSlot)
+                        });
+                        openTime.setMinutes(openTime.getMinutes() + 30);
+                    }
+
+                    availableTimes.value = times;
+                };
+
+                const selectTime = (time) => {
+                    const timeSlot = availableTimes.value.find(t => t.time === time);
+                    if (timeSlot && timeSlot.available) {
+                        selectedTime.value = time;
+                        currentStep.value = 4;
+                    }
+                };
+
+
+                const fetchBookings = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('bookings')
+                            .select('*')
+                            .eq('admin_unique_code', adminCode.value);
+                        if (error) throw error;
+                        bookings.value = data;
+                    } catch (error) {
+                        console.error('Error fetching bookings:', error);
+                        showNotification('Error al cargar las reservas existentes. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
+
+                onMounted(() => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    adminCode.value = urlParams.get('code');
+                    const paymentStatus = urlParams.get('status');
+                    
+                    if (paymentStatus === 'approved') {
+                        confirmBooking('approved');
+                    }
+                    
+                    if (adminCode.value) {
+                        Promise.all([
+                            fetchServices(),
+                            fetchProducts(),
+                            fetchBusinessHours(),
+                            fetchBookings(),
+                            fetchAdminPhoneNumber(),
+                            fetchBusinessName()
+                        ]).then(() => {
+                            isLoading.value = false;
+                        }).catch(error => {
+                            console.error('Error initializing app:', error);
+                            showNotification('Error al cargar los datos. Por favor, recarga la página.', 'error');
+                            isLoading.value = false;
+                        });
+                    } else {
+                        showNotification('Código de administrador no proporcionado. Algunas funciones pueden no estar disponibles.', 'warning');
+                        isLoading.value = false;
+                    }
+                });
+
+                // Observa los cambios en selectedDate y selectedServices
+                watch([selectedDate, selectedServices], () => {
+                    generateAvailableTimes();
+                });
+
                 const confirmBooking = async (paymentStatus) => {
                     if (paymentStatus !== 'approved') {
                         showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
@@ -968,74 +1072,6 @@
             }, 2000);
         });
     };
-
-
-    const formatDisplayTime = (time) => {
-                    if (!time) return ''; // Handle undefined or null values
-                    // Assuming time is in the format 'HH:MM:SS'
-                    return time.slice(0, 5); // Return 'HH:MM'
-                };
-
-                const generateAvailableTimes = () => {
-                    if (!selectedDate.value) {
-                        availableTimes.value = [];
-                        return;
-                    }
-
-                    const dayOfWeek = selectedDate.value.getDay();
-                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
-
-                    if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
-                        availableTimes.value = [];
-                        return;
-                    }
-
-                    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
-                    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
-                    const times = [];
-
-                    while (openTime < closeTime) {
-                        const timeSlot = openTime.toTimeString().slice(0, 5);
-                        times.push({
-                            time: timeSlot,
-                            available: isTimeSlotAvailable(timeSlot)
-                        });
-                        openTime.setMinutes(openTime.getMinutes() + 30);
-                    }
-
-                    availableTimes.value = times;
-                };
-
-                const isTimeSlotAvailable = (timeSlot) => {
-                    if (!selectedDate.value || selectedServices.value.length === 0) return true;
-
-                    const bookingDate = selectedDate.value.toISOString().split('T')[0];
-                    const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
-                    const endTime = addMinutesToTime(timeSlot, totalDuration);
-
-                    // Check if the time slot overlaps with any existing booking
-                    return !bookings.value.some(booking => {
-                        if (booking.date !== bookingDate) return false;
-                        const bookingEndTime = addMinutesToTime(booking.time, booking.duration);
-                        return (timeSlot < bookingEndTime && endTime > booking.time);
-                    });
-                };
-
-                const addMinutesToTime = (time, minutes) => {
-                    const [hours, mins] = time.split(':').map(Number);
-                    const date = new Date(2000, 0, 1, hours, mins);
-                    date.setMinutes(date.getMinutes() + minutes);
-                    return date.toTimeString().slice(0, 5);
-                };
-
-                const selectTime = (time) => {
-                    if (isTimeSlotAvailable(time)) {
-                        selectedTime.value = time;
-                        currentStep.value = 4;
-                    }
-                };
-
-
 
                 const toggleService = (service) => {
                     const index = selectedServices.value.findIndex(s => s.id === service.id);
@@ -1230,23 +1266,6 @@
                     return booking ? booking.client_name : '';
                 };
 
-                const availableTimes = computed(() => {
-                    if (!selectedDate.value) return [];
-
-                    const dayOfWeek = selectedDate.value.getDay();
-                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
-                    if (!businessHoursForDay) return [];
-
-                    const openTime = new Date(`1970-01-01T${businessHoursForDay.open_time}`);
-                    const closeTime = new Date(`1970-01-01T${businessHoursForDay.close_time}`);
-                    const times = [];
-
-                    for (let time = openTime; time < closeTime; time.setMinutes(time.getMinutes() + 30)) {
-                        times.push(time.toTimeString().slice(0, 8)); // Formato '09:00:00'
-                    }
-
-                    return times;
-                });
 
                 const isFullyBooked = (date)  => {
                     if (!date) return false;
@@ -1310,35 +1329,6 @@
                     }
                 });
 
-                onMounted(() => {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    adminCode.value = urlParams.get('code');
-                    const paymentStatus = urlParams.get('status');
-                    
-                    if (paymentStatus === 'approved') {
-                        confirmBooking('approved');
-                    }
-                    
-                    if (adminCode.value) {
-                        Promise.all([
-                            fetchServices(),
-                            fetchProducts(),
-                            fetchBusinessHours(),
-                            fetchBookings(),
-                            fetchAdminPhoneNumber(),
-                            fetchBusinessName()
-                        ]).then(() => {
-                            isLoading.value = false;
-                        }).catch(error => {
-                            console.error('Error initializing app:', error);
-                            showNotification('Error al cargar los datos. Por favor, recarga la página.', 'error');
-                            isLoading.value = false;
-                        });
-                    } else {
-                        showNotification('Código de administrador no proporcionado. Algunas funciones pueden no estar disponibles.', 'warning');
-                        isLoading.value = false;
-                    }
-                });
 
                 watch(() => currentStep.value, (newStep) => {
                     if (newStep === 5) {
@@ -1353,6 +1343,9 @@
                     appSubtitle,
                     isProcessingPayment,
                     currentTab,
+                    availableTimes,
+                    selectedTime,
+                    currentStep,
                     searchQuery,
                     filteredServices,
                     filteredProducts,
@@ -1367,9 +1360,6 @@
                     generateAvailableTimes,
                     isTimeSlotAvailable,
                     selectTime,
-                    availableTimes: ref([]),
-                    selectedTime: ref(null),
-                    currentStep: ref(1),
                     paymentInfo,
                     termsAccepted,
                     cart,
