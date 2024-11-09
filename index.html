@@ -882,8 +882,11 @@
                     return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
                 };
 
-                                // Modified methods to handle service duration
-                                const generateAvailableTimes = () => {
+
+                // Existing methods remain unchanged
+
+                // Modified methods to handle service duration
+                const generateAvailableTimes = () => {
                     if (!selectedDate.value) return;
 
                     const dayOfWeek = selectedDate.value.getDay();
@@ -940,7 +943,16 @@
 
                 // Existing methods remain unchanged
 
-                // Modified confirmBooking method to include service duration
+                function validateBookingData(booking) {
+                    if (!booking.admin_unique_code) throw new Error('Código de administrador no válido');
+                    if (!booking.service_name) throw new Error('No se ha seleccionado ningún servicio');
+                    if (!booking.date) throw new Error('No se ha seleccionado una fecha');
+                    if (!booking.time) throw new Error('No se ha seleccionado una hora');
+                    if (!booking.client_name) throw new Error('Nombre del cliente no proporcionado');
+                    if (!booking.client_phone) throw new Error('Teléfono del cliente no proporcionado');
+                    // Add more validations as needed
+                }
+
                 const confirmBooking = async (paymentStatus) => {
                     if (paymentStatus !== 'approved') {
                         showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
@@ -975,11 +987,16 @@
                             client_email: clientEmail.value
                         };
 
+                        validateBookingData(booking);
+
                         const { data, error } = await supabase
                             .from('bookings')
                             .insert([booking]);
 
-                        if (error) throw error;
+                        if (error) {
+                            console.error('Supabase error:', error);
+                            throw new Error(`Error al insertar la reserva: ${error.message}`);
+                        }
 
                         showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
                         
@@ -994,8 +1011,8 @@
                         currentStep.value = 1;
                         localStorage.removeItem('bookingDetails');
                     } catch (error) {
-                        console.error('Error al procesar la reserva:', error);
-                        showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
+                        console.error('Error detallado al procesar la reserva:', error);
+                        showNotification(`Hubo un error al procesar tu reserva: ${error.message}. Por favor, intenta de nuevo.`, 'error');
                     } finally {
                         isProcessingPayment.value = false;
                     }
