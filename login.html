@@ -84,6 +84,10 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300" for="businessName">{{ currentLanguage.businessName }}</label>
                             <input class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors duration-300" id="businessName" type="text" v-model="businessName" :placeholder="currentLanguage.businessNamePlaceholder" required>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300" for="phone">{{ currentLanguage.phoneNumber }}</label>
+                            <input class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors duration-300" id="phone" type="tel" v-model="phone" :placeholder="currentLanguage.phoneNumberPlaceholder" required>
+                        </div>
                     </template>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300" for="email">{{ currentLanguage.email }}</label>
@@ -136,11 +140,6 @@
                         {{ currentLanguage.forgotPassword }}
                     </a>
                 </div>
-                <!--div class="mt-6 flex justify-center">
-                    <button @click="toggleLanguage" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
-                        {{ currentLanguage === spanish ? 'English' : 'Español' }}
-                    </button>
-                </div-->
             </div>
         </div>
         <Transition name="fade">
@@ -171,7 +170,7 @@
     </div>
 
     <script>
-        const { createApp, ref, computed, watch } = Vue
+        const { createApp, ref, computed, watch, onMounted } = Vue
         // Initialize Supabase client globally
         window.supabase = supabase.createClient(
             'https://tbtzlqeoogcfviojfqzg.supabase.co',
@@ -202,7 +201,9 @@
             weak: 'Débil',
             medium: 'Media',
             strong: 'Fuerte',
-            veryStrong: 'Muy fuerte'
+            veryStrong: 'Muy fuerte',
+            phoneNumber: 'Número de Teléfono',
+            phoneNumberPlaceholder: 'Tu número de teléfono'
         };
 
         const english = {
@@ -229,7 +230,9 @@
             weak: 'Weak',
             medium: 'Medium',
             strong: 'Strong',
-            veryStrong: 'Very strong'
+            veryStrong: 'Very strong',
+            phoneNumber: 'Phone Number',
+            phoneNumberPlaceholder: 'Your phone number'
         };
 
         createApp({
@@ -249,6 +252,7 @@
                 const isDarkMode = ref(false)
                 const currentLanguage = ref(spanish)
                 const emailError = ref('')
+                const phone = ref('')
 
                 const passwordStrength = computed(() => {
                     const pwd = password.value
@@ -339,17 +343,9 @@
                                 window.location.href = 'https://reservaonline.netlify.app/adm'
                             }, 2000)
                         } else {
-                            // Remove bcrypt hashing and send the password directly to Supabase
                             const { data, error: signUpError } = await supabase.auth.signUp({
                                 email: email.value,
                                 password: password.value,
-                                options: {
-                                    data: {
-                                        first_name: firstName.value,
-                                        last_name: lastName.value,
-                                        business_name: businessName.value,
-                                    }
-                                }
                             })
 
                             if (signUpError) throw signUpError
@@ -363,6 +359,7 @@
                                     last_name: lastName.value,
                                     business_name: businessName.value,
                                     email: email.value,
+                                    phone: phone.value,
                                     working_hours: JSON.stringify([
                                         { day_of_week: 0, is_working_day: false, open_time: '09:00', close_time: '17:00' },
                                         { day_of_week: 1, is_working_day: true, open_time: '09:00', close_time: '17:00' },
@@ -422,6 +419,19 @@
                     lastLoginAttempt.value = now
                 }
 
+                // Add function to check if user is already logged in
+                const checkLoggedInUser = async () => {
+                    const { data: { user } } = await supabase.auth.getUser()
+                    if (user) {
+                        window.location.href = 'https://reservaonline.netlify.app/adm'
+                    }
+                }
+
+                // Call checkLoggedInUser on component mount
+                onMounted(() => {
+                    checkLoggedInUser()
+                })
+
                 return {
                     isLogin,
                     firstName,
@@ -442,6 +452,7 @@
                     isDarkMode,
                     currentLanguage,
                     emailError,
+                    phone,
                     toggleMode,
                     togglePasswordVisibility,
                     toggleDarkMode,
