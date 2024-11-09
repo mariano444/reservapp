@@ -282,13 +282,7 @@
                                             </div>
                                             <div class="flex justify-between items-center mt-4">
                                                 <span class="text-gray-900 font-medium text-lg">${{ service.price }}</span>
-                                                <span class="text-sm text-gray-500">
-                                                    {{ 
-                                                        service.duration >= 60 
-                                                        ? Math.floor(service.duration / 60) + ' h ' + (service.duration % 60) + ' min' 
-                                                        : service.duration + ' min'
-                                                    }}
-                                                </span>
+                                                <span class="text-sm text-gray-500">{{ service.duration }} min</span>
                                             </div>
                                         </div>
                                     </div>
@@ -888,93 +882,62 @@
                     return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
                 };
 
-                const generateAvailableTimes = () => {
-    if (!selectedDate.value || selectedServices.value.length === 0) return;
+                const confirmBooking = async (paymentStatus) => {
+                    if (paymentStatus !== 'approved') {
+                        showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
+                        return;
+                    }
 
-    const dayOfWeek = selectedDate.value.getDay();
-    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+                    isProcessingPayment.value = true;
+                    showNotification('Procesando tu reserva...', 'info');
 
-    if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
-        availableTimes.value = [];
-        return;
-    }
+                    try {
+                        retrieveBookingDetails(); // Retrieve stored details
 
-    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
-    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
-    const times = [];
-    const totalServiceDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
+                        if (!selectedDate.value) {
+                            throw new Error('No se encontraron detalles de la reserva');
+                        }
 
-    while (openTime < closeTime) {
-        const endTime = new Date(openTime.getTime() + totalServiceDuration * 60000);
-        if (endTime <= closeTime) {
-            times.push(openTime.toTimeString().slice(0, 5));
-        }
-        openTime.setMinutes(openTime.getMinutes() + 30);
-    }
+                        const booking = {
+                            admin_unique_code: adminCode.value,
+                            client_id: generateUUID(),
+                            service_name: selectedServices.value.map(s => s.name).join(', '),
+                            date: selectedDate.value.toISOString().split('T')[0],
+                            time: selectedTime.value,
+                            price: totalPrice.value,
+                            status: 'confirmed',
+                            payment_status: 'deposit_paid',
+                            deposit_amount: depositAmount.value,
+                            client_name: clientName.value,
+                            client_phone: clientPhone.value,
+                            client_email: clientEmail.value
+                        };
 
-    availableTimes.value = times;
-};
+                        const { data, error } = await supabase
+                            .from('bookings')
+                            .insert([booking]);
 
+                        if (error) throw error;
 
-const confirmBooking = async (paymentStatus) => {
-    if (paymentStatus !== 'approved') {
-        showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
-        return;
-    }
+                        showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
+                        
+                        bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                        showConfirmationModal.value = true;
 
-    isProcessingPayment.value = true;
-    showNotification('Procesando tu reserva...', 'info');
+                        const message = generateWhatsAppMessage(booking);
+                        const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+                        window.open(whatsappUrl, '_blank');
 
-    try {
-        retrieveBookingDetails();
-
-        if (!selectedDate.value) {
-            throw new Error('No se encontraron detalles de la reserva');
-        }
-
-        const totalServiceDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
-
-        const booking = {
-            admin_unique_code: adminCode.value,
-            client_id: generateUUID(),
-            service_name: selectedServices.value.map(s => s.name).join(', '),
-            date: selectedDate.value.toISOString().split('T')[0],
-            time: selectedTime.value,
-            duration: totalServiceDuration, // Añadimos la duración total
-            price: totalPrice.value,
-            status: 'confirmed',
-            payment_status: 'deposit_paid',
-            deposit_amount: depositAmount.value,
-            client_name: clientName.value,
-            client_phone: clientPhone.value,
-            client_email: clientEmail.value
-        };
-
-        const { data, error } = await supabase
-            .from('bookings')
-            .insert([booking]);
-
-        if (error) throw error;
-
-        showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
-        
-        bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-        showConfirmationModal.value = true;
-
-        const message = generateWhatsAppMessage(booking);
-        const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-
-        resetBookingForm();
-        currentStep.value = 1;
-        localStorage.removeItem('bookingDetails');
-    } catch (error) {
-        console.error('Error al procesar la reserva:', error);
-        showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
-    } finally {
-        isProcessingPayment.value = false;
-    }
-};
+                        resetBookingForm();
+                        currentStep.value = 1;
+                        localStorage.removeItem('bookingDetails'); // Clear stored details
+                    } catch (error) {
+                        console.error('Error al procesar la reserva:', error);
+                        showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
+                    } finally {
+                        isProcessingPayment.value = false;
+                    }
+                };
 
 
     const simulatePaymentProcess = () => {
@@ -1168,6 +1131,40 @@ const confirmBooking = async (paymentStatus) => {
                     currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1);
                 };
 
+                const generateAvailableTimes = () => {
+                    if (!selectedDate.value) return;
+
+                    const dayOfWeek = selectedDate.value.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+
+                    if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
+                        availableTimes.value = [];
+                        return;
+                    }
+
+                    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
+                    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
+                    const times = [];
+
+                    while (openTime < closeTime) {
+                        times.push(openTime.toTimeString().slice(0, 5));
+                        openTime.setMinutes(openTime.getMinutes() + 30);
+                    }
+
+                    availableTimes.value = times;
+                };
+
+                const isTimeAvailable = (time) => {
+                    if (!selectedDate.value) return false;
+
+                    const bookingDate = selectedDate.value.toISOString().split('T')[0];
+                    const existingBooking = bookings.value.find(booking =>
+                        booking.date === bookingDate && booking.time === time
+                    );
+
+                    return !existingBooking;
+                };
+
                 const getReservationName = (date, time) => {
                     if (!date) return '';
 
@@ -1202,58 +1199,6 @@ const confirmBooking = async (paymentStatus) => {
 
                     return times;
                 });
-
-                const generateAvailableTimeSlots = () => {
-  if (!selectedDate.value || selectedServices.value.length === 0) return [];
-
-  const dayOfWeek = selectedDate.value.getDay();
-  const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
-
-  if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
-    return [];
-  }
-
-  const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
-  const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
-  const timeSlots = [];
-  const totalServiceDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
-
-  while (openTime < closeTime) {
-    const currentTime = openTime.toTimeString().slice(0, 5);
-    const isAvailable = isTimeAvailable(currentTime);
-    timeSlots.push({
-      time: currentTime,
-      available: isAvailable
-    });
-    openTime.setMinutes(openTime.getMinutes() + 30);
-  }
-
-  return timeSlots;
-};
-
-const isTimeAvailable = (time) => {
-  if (!selectedDate.value || selectedServices.value.length === 0) return false;
-
-  const bookingDate = selectedDate.value.toISOString().split('T')[0];
-  const totalServiceDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
-  const startTime = new Date(`2000-01-01T${time}`);
-  const endTime = new Date(startTime.getTime() + totalServiceDuration * 60000);
-
-  // Verificar si hay alguna reserva que se superponga con el tiempo del servicio
-  const conflictingBooking = bookings.value.find(booking => {
-    if (booking.date !== bookingDate) return false;
-    const bookingStart = new Date(`2000-01-01T${booking.time}`);
-    const bookingEnd = new Date(bookingStart.getTime() + booking.duration * 60000);
-    return (startTime < bookingEnd && endTime > bookingStart);
-  });
-
-  return !conflictingBooking;
-};
-
-const availableTimeSlots = computed(() => {
-  return generateAvailableTimeSlots();
-});
-
 
                 const isFullyBooked = (date)  => {
                     if (!date) return false;
@@ -1357,9 +1302,6 @@ const availableTimeSlots = computed(() => {
                 // Return the reactive state and methods
                 return {
                     appTitle,
-                    availableTimeSlots,
-                    isTimeAvailable,
-                    formatDisplayTime,
                     appSubtitle,
                     isProcessingPayment,
                     currentTab,
