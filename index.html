@@ -211,6 +211,10 @@
     .ff{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
+    .bg-gray-900{
+        --tw-bg-opacity: 1!important;
+        background-color: rgba(79, 70, 229, var(--tw-bg-opacity))!important;
+    }
     </style>
 </head>
 <body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 text-gray-900 ff">
@@ -223,10 +227,10 @@
             <div class="bg-white bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-3xl shadow-xl p-8">
                 <div class="mb-8 flex justify-center bg-gray-100 p-4 rounded-xl">
                     <div class="flex space-x-4">
-                        <button @click="setCurrentTab('booking')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'booking' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']">
+                        <button @click="setCurrentTab('booking')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'booking' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']" style="border-radius: 10px; --tw-bg-opacity: 1; background-color: rgba(79, 70, 229, var(--tw-bg-opacity));">
                             Reservar un turno
                         </button>
-                        <button @click="setCurrentTab('shop')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'shop' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']">
+                        <button @click="setCurrentTab('shop')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'shop' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']" style="border-radius: 10px;">
                             Comprar Productos
                         </button>
                     </div>
@@ -365,10 +369,10 @@
                                             <label for="phone" class="block text-sm font-medium text-gray-900">Número de Teléfono</label>
                                             <input type="tel" id="phone" v-model="clientPhone" required pattern="[0-9]{9}" title="Por favor, introduce un número de teléfono válido de 9 dígitos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
                                         </div>
-                                        <div>
+                                        <!--div>
                                             <label for="email" class="block text-sm font-medium text-gray-900">Correo Electrónico</label>
                                             <input type="email" id="email" v-model="clientEmail" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
-                                        </div>
+                                        </div-->
                                         <button type="submit" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md">
                                             Continuar
                                         </button>
@@ -409,19 +413,19 @@
                                         </div>
                                     </div>
                                 
-                                    <!-- Aquí es donde se renderizará el botón de MercadoPago -->
-                                    <div id="mercadopago-button-container" class="mb-6"></div>
-                                
-                                    <div class="flex items-center mb-6">
+                                    <!--div class="flex items-center mb-6">
                                         <input type="checkbox" id="terms" v-model="termsAccepted" required class="h-4 w-4 text-gray-900 focus:ring-gray-900 border-gray-300 rounded">
                                         <label for="terms" class="ml-2 block text-sm text-gray-900">
                                             Acepto los <a href="#" @click.prevent="showTermsModal = true" class="text-gray-900 hover:text-gray-600">términos y condiciones</a>
                                         </label>
-                                    </div>
+                                    </div-->
+
+                                    <!-- Aquí es donde se renderizará el botón de MercadoPago -->
+                                    <div id="mercadopago-button-container" class="mb-6"></div>
                                 
-                                    <button @click="confirmBooking" :disabled="!termsAccepted || isProcessing" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <!--button @click="confirmBooking" :disabled="!termsAccepted || isProcessing" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
                                         {{ isProcessing ? 'Procesando...' : 'Confirmar Reserva' }}
-                                    </button>
+                                    </button-->
                                 </div>
                             </Transition>
 
@@ -429,7 +433,7 @@
                                 <button v-if="currentStep > 1" @click="previousStep" class="btn bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
                                     Anterior
                                 </button>
-                                <button v-if="currentStep < 5" @click="nextStep" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
+                                <button v-if="currentStep < 5" @click="nextStep" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md" style="--tw-bg-opacity: 1; background-color: rgba(79, 70, 229, var(--tw-bg-opacity));">
                                     Siguiente
                                 </button>
                             </div>
@@ -530,7 +534,7 @@
             </div>
         </Transition>
 
-        <div class="fixed bottom-4 left-4">
+        <!--div class="fixed bottom-4 left-4">
             <button @click="showChat = !showChat" class="bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors duration-300">
                 <span v-if="!showChat">Chat</span>
                 <span v-else>Cerrar</span>
@@ -552,7 +556,7 @@
                     <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-r-lg hover:bg-gray-800 transition-colors duration-300">Enviar</button>
                 </form>
             </div>
-        </Transition>
+        </Transition-->
     </div>
 
     <script>
@@ -861,6 +865,19 @@
                     }
                 };
 
+                const generateWhatsAppMessage = (booking) => {
+                    let message = 'Resumen de la reserva:\n\n';
+                    message += `Número de Reserva: ${bookingNumber.value}\n`;
+                    message += `Servicio: ${booking.service_name}\n`;
+                    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
+                    message += `Hora: ${booking.time}\n`;
+                    message += `Precio Total: $${booking.price}\n`;
+                    message += `Seña Pagada: $${booking.deposit_amount}\n`;
+                    message += `Nombre: ${booking.client_name}\n`;
+                    message += `Teléfono: ${booking.client_phone}\n`;
+                    return message;
+                };
+
                 const formatDate = (date) => {
                     return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
                 };
@@ -909,14 +926,7 @@
 
                         const message = generateWhatsAppMessage(booking);
                         const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
-                        
-                        // Open WhatsApp in a new tab
                         window.open(whatsappUrl, '_blank');
-
-                        // Redirect to WhatsApp in the current tab after a short delay
-                        setTimeout(() => {
-                            window.location.href = whatsappUrl;
-                        }, 2000);
 
                         resetBookingForm();
                         currentStep.value = 1;
@@ -927,19 +937,6 @@
                     } finally {
                         isProcessingPayment.value = false;
                     }
-                };
-
-                const generateWhatsAppMessage = (booking) => {
-                    let message = 'Resumen de la reserva:\n\n';
-                    message += `Número de Reserva: ${bookingNumber.value}\n`;
-                    message += `Servicio: ${booking.service_name}\n`;
-                    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
-                    message += `Hora: ${booking.time}\n`;
-                    message += `Precio Total: $${booking.price}\n`;
-                    message += `Seña Pagada: $${booking.deposit_amount}\n`;
-                    message += `Nombre: ${booking.client_name}\n`;
-                    message += `Teléfono: ${booking.client_phone}\n`;
-                    return message;
                 };
 
 
