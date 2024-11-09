@@ -890,56 +890,6 @@
                     return time.slice(0, 5); // Devuelve 'HH:MM'
                 };
 
-                const addMinutesToTime = (time, minutes) => {
-                    const [hours, mins] = time.split(':').map(Number);
-                    const date = new Date(2000, 0, 1, hours, mins);
-                    date.setMinutes(date.getMinutes() + minutes);
-                    return date.toTimeString().slice(0, 5);
-                };
-
-                const isTimeSlotAvailable = (timeSlot) => {
-                    if (!selectedDate.value || selectedServices.value.length === 0) return true;
-
-                    const bookingDate = selectedDate.value.toISOString().split('T')[0];
-                    const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
-                    const endTime = addMinutesToTime(timeSlot, totalDuration);
-
-                    return !bookings.value.some(booking => {
-                        if (booking.date !== bookingDate) return false;
-                        const bookingEndTime = addMinutesToTime(booking.time, booking.duration);
-                        return (timeSlot < bookingEndTime && endTime > booking.time);
-                    });
-                };
-
-                const generateAvailableTimes = () => {
-                    if (!selectedDate.value) {
-                        availableTimes.value = [];
-                        return;
-                    }
-
-                    const dayOfWeek = selectedDate.value.getDay();
-                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
-
-                    if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
-                        availableTimes.value = [];
-                        return;
-                    }
-
-                    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
-                    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
-                    const times = [];
-
-                    while (openTime < closeTime) {
-                        const timeSlot = openTime.toTimeString().slice(0, 5);
-                        times.push({
-                            time: timeSlot,
-                            available: isTimeSlotAvailable(timeSlot)
-                        });
-                        openTime.setMinutes(openTime.getMinutes() + 30);
-                    }
-
-                    availableTimes.value = times;
-                };
 
                 const selectTime = (time) => {
                     const timeSlot = availableTimes.value.find(t => t.time === time);
@@ -998,71 +948,6 @@
                 watch([selectedDate, selectedServices], () => {
                     generateAvailableTimes();
                 });
-
-                const confirmBooking = async (paymentStatus) => {
-                    if (paymentStatus !== 'approved') {
-                        showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
-                        return;
-                    }
-
-                    isProcessingPayment.value = true;
-                    showNotification('Procesando tu reserva...', 'info');
-
-                    try {
-                        retrieveBookingDetails();
-
-                        if (!selectedDate.value) {
-                            throw new Error('No se encontraron detalles de la reserva');
-                        }
-
-                        const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
-
-                        const booking = {
-                            admin_unique_code: adminCode.value,
-                            client_id: generateUUID(),
-                            service_name: selectedServices.value.map(s => s.name).join(', '),
-                            date: selectedDate.value.toISOString().split('T')[0],
-                            time: selectedTime.value,
-                            duration: totalDuration, // Add duration to the booking
-                            price: totalPrice.value,
-                            status: 'confirmed',
-                            payment_status: 'deposit_paid',
-                            deposit_amount: depositAmount.value,
-                            client_name: clientName.value,
-                            client_phone: clientPhone.value,
-                            client_email: clientEmail.value
-                        };
-
-                        validateBookingData(booking);
-
-                        const { data, error } = await supabase
-                            .from('bookings')
-                            .insert([booking]);
-
-                        if (error) {
-                            console.error('Supabase error:', error);
-                            throw new Error(`Error al insertar la reserva: ${error.message}`);
-                        }
-
-                        showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
-                        
-                        bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-                        showConfirmationModal.value = true;
-
-                        const message = generateWhatsAppMessage(booking);
-                        const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
-                        window.open(whatsappUrl, '_blank');
-
-                        resetBookingForm();
-                        currentStep.value = 1;
-                        localStorage.removeItem('bookingDetails');
-                    } catch (error) {
-                        console.error('Error detallado al procesar la reserva:', error);
-                        showNotification(`Hubo un error al procesar tu reserva: ${error.message}. Por favor, intenta de nuevo.`, 'error');
-                    } finally {
-                        isProcessingPayment.value = false;
-                    }
-                };
 
 
     const simulatePaymentProcess = () => {
@@ -1337,6 +1222,125 @@
                         });
                     }
                 });
+
+
+                const addMinutesToTime = (time, minutes) => {
+                        const [hours, mins] = time.split(':').map(Number);
+                        const date = new Date(2000, 0, 1, hours, mins);
+                        date.setMinutes(date.getMinutes() + minutes);
+                        return date.toTimeString().slice(0, 5);
+                    };
+
+                    const isTimeSlotAvailable = (timeSlot) => {
+                        if (!selectedDate.value || selectedServices.value.length === 0) return true;
+
+                        const bookingDate = selectedDate.value.toISOString().split('T')[0];
+                        const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
+                        const endTime = addMinutesToTime(timeSlot, totalDuration + 20); // Add 20 minutes break
+
+                        return !bookings.value.some(booking => {
+                            if (booking.date !== bookingDate) return false;
+                            const bookingEndTime = addMinutesToTime(booking.time, booking.duration + 20); // Add 20 minutes break
+                            return (timeSlot < bookingEndTime && endTime > booking.time);
+                        });
+                    };
+
+                    const generateAvailableTimes = () => {
+                        if (!selectedDate.value) {
+                            availableTimes.value = [];
+                            return;
+                        }
+
+                        const dayOfWeek = selectedDate.value.getDay();
+                        const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+
+                        if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
+                            availableTimes.value = [];
+                            return;
+                        }
+
+                        const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
+                        const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
+                        const times = [];
+
+                        while (openTime < closeTime) {
+                            const timeSlot = openTime.toTimeString().slice(0, 5);
+                            times.push({
+                                time: timeSlot,
+                                available: isTimeSlotAvailable(timeSlot)
+                            });
+                            openTime.setMinutes(openTime.getMinutes() + 30);
+                        }
+
+                        availableTimes.value = times;
+                    };
+
+                    const confirmBooking = async (paymentStatus) => {
+                        if (paymentStatus !== 'approved') {
+                            showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
+                            return;
+                        }
+
+                        isProcessingPayment.value = true;
+                        showNotification('Procesando tu reserva...', 'info');
+
+                        try {
+                            retrieveBookingDetails();
+
+                            if (!selectedDate.value) {
+                                throw new Error('No se encontraron detalles de la reserva');
+                            }
+
+                            const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
+
+                            const booking = {
+                                admin_unique_code: adminCode.value,
+                                client_id: generateUUID(),
+                                service_name: selectedServices.value.map(s => s.name).join(', '),
+                                date: selectedDate.value.toISOString().split('T')[0],
+                                time: selectedTime.value,
+                                duration: totalDuration + 20, // Add 20 minutes break
+                                price: totalPrice.value,
+                                status: 'confirmed',
+                                payment_status: 'deposit_paid',
+                                deposit_amount: depositAmount.value,
+                                client_name: clientName.value,
+                                client_phone: clientPhone.value,
+                                client_email: clientEmail.value
+                            };
+
+                            validateBookingData(booking);
+
+                            const { data, error } = await supabase
+                                .from('bookings')
+                                .insert([booking]);
+
+                            if (error) {
+                                console.error('Supabase error:', error);
+                                throw new Error(`Error al insertar la reserva: ${error.message}`);
+                            }
+
+                            showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
+                            
+                            bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                            showConfirmationModal.value = true;
+
+                            const message = generateWhatsAppMessage(booking);
+                            const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+                            window.open(whatsappUrl, '_blank');
+
+                            resetBookingForm();
+                            currentStep.value = 1;
+                            localStorage.removeItem('bookingDetails');
+                        } catch (error) {
+                            console.error('Error detallado al procesar la reserva:', error);
+                            showNotification(`Hubo un error al procesar tu reserva: ${error.message}. Por favor, intenta de nuevo.`, 'error');
+                        } finally {
+                            isProcessingPayment.value = false;
+                        }
+                    };
+
+
                 // Return the reactive state and methods
                 return {
                     appTitle,
