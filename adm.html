@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://ui-avatars.com https://tailwindui.com data:; connect-src 'self' https://tbtzlqeoogcfviojfqzg.supabase.co https://tbtzlqeoogcfviojfqzg.supabase.co;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://kit.fontawesome.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://ui-avatars.com https://tailwindui.com data:; connect-src 'self' https://tbtzlqeoogcfviojfqzg.supabase.co https://tbtzlqeoogcfviojfqzg.supabase.co;">
     <title>Panel de Administración Profesional</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -46,6 +46,7 @@
             background-color: white;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
             display: none;
+            z-index: 1000;
         }
         @media (max-width: 640px) {
             .mobile-nav {
@@ -54,12 +55,33 @@
             .desktop-nav {
                 display: none;
             }
+            .content-area {
+                padding-bottom: 70px;
+            }
         }
         @media (max-width: 640px) {
             .touch-target {
                 min-height: 44px;
                 min-width: 44px;
             }
+        }
+        .mobile-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            color: #6B7280;
+            text-decoration: none;
+            font-size: 0.75rem;
+        }
+        .mobile-nav-item.active {
+            color: #4F46E5;
+        }
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
         }
     </style>
 </head>
@@ -114,7 +136,25 @@
                 </div>
             </nav>
 
-            <div class="py-10 responsive-padding">
+            <!-- Updated Mobile Navigation -->
+            <nav class="mobile-nav">
+                <a v-for="tab in tabs" :key="tab" 
+                   @click="changeTab(tab.toLowerCase())"
+                   :class="['mobile-nav-item', currentTab === tab.toLowerCase() ? 'active' : '']">
+                    <span class="mobile-nav-icon">
+                        <i v-if="tab === 'Dashboard'" class="fas fa-home"></i>
+                        <i v-else-if="tab === 'Servicios'" class="fas fa-concierge-bell"></i>
+                        <i v-else-if="tab === 'Productos'" class="fas fa-box"></i>
+                        <i v-else-if="tab === 'Reservas'" class="fas fa-calendar-alt"></i>
+                        <i v-else-if="tab === 'Productos Pedidos'" class="fas fa-shopping-cart"></i>
+                        <i v-else-if="tab === 'Compartir'" class="fas fa-share-alt"></i>
+                        <i v-else-if="tab === 'Configuraciones'" class="fas fa-cog"></i>
+                    </span>
+                    <span>{{ tab }}</span>
+                </a>
+            </nav>
+
+            <div class="py-10 responsive-padding content-area">
                 <header>
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <h1 class="text-3xl font-bold leading-tight text-gray-900 dark:text-white">Panel de Administración</h1>
@@ -189,7 +229,7 @@
                                                 Editar
                                             </button>
                                             <button @click="deleteService(service.id)" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-150 touch-target">
-                                                Eliminar
+                                Eliminar
                                             </button>
                                         </div>
                                     </li>
@@ -324,6 +364,10 @@
                                             <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
                                             <input type="email" id="email" v-model="configurations.email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                                         </div>
+                                        <div>
+                                            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono</label>
+                                            <input type="tel" id="phone" v-model="configurations.phone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        </div>
                                     </div>
                                     <div class="mt-6">
                                         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Horario de Trabajo</h3>
@@ -364,18 +408,6 @@
                     </div>
                 </main>
             </div>
-
-            <!-- Mobile Navigation -->
-            <nav class="mobile-nav">
-                <div class="flex justify-around items-center h-16">
-                    <a v-for="tab in tabs" :key="tab" 
-                       @click="changeTab(tab.toLowerCase())"
-                       :class="['text-gray-500 hover:text-indigo-500 transition-colors duration-200 touch-target flex flex-col items-center justify-center', 
-                                currentTab === tab.toLowerCase() ? 'text-indigo-500' : '']">
-                        <span class="text-xs mt-1">{{ tab }}</span>
-                    </a>
-                </div>
-            </nav>
 
             <!-- Service Modal -->
             <div v-if="showServiceModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -454,6 +486,7 @@
         </div>
     </div>
 
+
     <script>
         const { createApp, ref, onMounted, watch, computed } = Vue
 
@@ -503,7 +536,7 @@
                     firstName: '',
                     lastName: '',
                     businessName: '',
-                    email: '',
+                    phone: '',
                     workingHours: [
                         { day_of_week: 0, is_working_day: false, open_time: '09:00', close_time: '17:00' },
                         { day_of_week: 1, is_working_day: true, open_time: '09:00', close_time: '17:00' },
@@ -706,6 +739,63 @@
                     })
                 }
 
+                const fetchConfigurations = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .select('*')
+                            .eq('admin_unique_code', userUniqueCode.value)
+                            .single()
+
+                        if (error) {
+                            if (error.code === 'PGRST116') {
+                                console.warn('No configuration found for the current user.')
+                                return
+                            }
+                            throw error
+                        }
+
+                        if (data) {
+                            configurations.value = {
+                                ...configurations.value,
+                                firstName: data.first_name,
+                                lastName: data.last_name,
+                                businessName: data.business_name,
+                                phone: data.phone,
+                                email: data.email,
+                                workingHours: JSON.parse(data.working_hours)
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error fetching configurations:', error)
+                    }
+                }
+
+                const saveConfigurations = async () => {
+                    try {
+                        const configData = {
+                            admin_unique_code: userUniqueCode.value,
+                            first_name: configurations.value.firstName,
+                            last_name: configurations.value.lastName,
+                            business_name: configurations.value.businessName,
+                            email: configurations.value.email,
+                            working_hours: JSON.stringify(configurations.value.workingHours),
+                            phone: configurations.value.phone
+                        }
+
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .upsert(configData, { onConflict: 'admin_unique_code' })
+
+                        if (error) throw error
+
+                        alert('Configuraciones guardadas exitosamente')
+                    } catch (error) {
+                        console.error('Error saving configurations:', error)
+                        alert('Error al guardar las configuraciones: ' + error.message)
+                    }
+                }
+
                 const fetchServices = async () => {
                     try {
                         const { data, error } = await supabase
@@ -766,38 +856,6 @@
                     }
                 }
 
-                const fetchConfigurations = async () => {
-                        try {
-                            const { data, error } = await supabase
-                                .from('admin_configurations')
-                                .select('*')
-                                .eq('admin_unique_code', userUniqueCode.value)
-                                .single()
-
-                            if (error) {
-                                if (error.code === 'PGRST116') {
-                                    console.warn('No configuration found for the current user.')
-                                    return
-                                }
-                                throw error
-                            }
-
-                            if (data) {
-                                configurations.value = {
-                                    ...configurations.value,
-                                    firstName: data.first_name,
-                                    lastName: data.last_name,
-                                    businessName: data.business_name,
-                                    email: data.email,
-                                    workingHours: JSON.parse(data.working_hours)
-                                }
-                            }
-                        } catch (error) {
-                            console.error('Error fetching configurations:', error)
-                        }
-                    }
-
-
                 const openServiceModal = () => {
                     editingService.value = null
                     serviceForm.value = {
@@ -814,7 +872,7 @@
                 const closeServiceModal = () => {
                     showServiceModal.value = false
                 }
-
+                
                 const saveService = async () => {
                     try {
                         const serviceData = {
@@ -960,30 +1018,6 @@
                     navigator.clipboard.writeText(shareLink.value)
                         .then(() => alert('Enlace copiado al portapapeles'))
                         .catch(err => console.error('Error al copiar el enlace: ', err))
-                }
-
-                const saveConfigurations = async () => {
-                    try {
-                        const configData = {
-                            admin_unique_code: userUniqueCode.value,
-                            first_name: configurations.value.firstName,
-                            last_name: configurations.value.lastName,
-                            business_name: configurations.value.businessName,
-                            email: configurations.value.email,
-                            working_hours: JSON.stringify(configurations.value.workingHours)
-                        }
-
-                        const { data, error } = await supabase
-                            .from('admin_configurations')
-                            .upsert(configData, { onConflict: 'admin_unique_code' })
-
-                        if (error) throw error
-
-                        alert('Configuraciones guardadas exitosamente')
-                    } catch (error) {
-                        console.error('Error saving configurations:', error)
-                        alert('Error al guardar las configuraciones: ' + error.message)
-                    }
                 }
 
                 const getDayName = (dayNumber) => {
