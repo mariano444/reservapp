@@ -1235,13 +1235,15 @@
                         if (!selectedDate.value || selectedServices.value.length === 0) return true;
 
                         const bookingDate = selectedDate.value.toISOString().split('T')[0];
-                        const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
-                        const endTime = addMinutesToTime(timeSlot, totalDuration + 20); // Add 20 minutes break
+                        const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0) + 20; // Add 20 minutes break
+                        const endTime = addMinutesToTime(timeSlot, totalDuration);
 
                         return !bookings.value.some(booking => {
                             if (booking.date !== bookingDate) return false;
-                            const bookingEndTime = addMinutesToTime(booking.time, booking.duration + 20); // Add 20 minutes break
-                            return (timeSlot < bookingEndTime && endTime > booking.time);
+                            const bookingEndTime = addMinutesToTime(booking.time, booking.duration);
+                            return (timeSlot >= booking.time && timeSlot < bookingEndTime) || 
+                                   (endTime > booking.time && endTime <= bookingEndTime) ||
+                                   (timeSlot <= booking.time && endTime >= bookingEndTime);
                         });
                     };
 
@@ -1291,7 +1293,7 @@
                                 throw new Error('No se encontraron detalles de la reserva');
                             }
 
-                            const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0);
+                            const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0) + 20; // Add 20 minutes break
 
                             const booking = {
                                 admin_unique_code: adminCode.value,
@@ -1299,7 +1301,7 @@
                                 service_name: selectedServices.value.map(s => s.name).join(', '),
                                 date: selectedDate.value.toISOString().split('T')[0],
                                 time: selectedTime.value,
-                                duration: totalDuration + 20, // Add 20 minutes break
+                                duration: totalDuration,
                                 price: totalPrice.value,
                                 status: 'confirmed',
                                 payment_status: 'deposit_paid',
