@@ -21,6 +21,16 @@
             font-family: 'Poppins', sans-serif;
             transition: background-color 0.3s, color 0.3s;
         }
+        .reserved-slot {
+            background-color: #FEE2E2;
+            color: #9CA3AF;
+            cursor: not-allowed;
+        }
+        .break-slot {
+            background-color: #E5E7EB;
+            color: #6B7280;
+            cursor: not-allowed;
+        }
         .card {
             background-color: white;
             border-radius: 1rem;
@@ -211,10 +221,6 @@
     .ff{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
-    .bg-gray-900{
-        --tw-bg-opacity: 1!important;
-        background-color: rgba(79, 70, 229, var(--tw-bg-opacity))!important;
-    }
     </style>
 </head>
 <body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 text-gray-900 ff">
@@ -227,10 +233,10 @@
             <div class="bg-white bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-3xl shadow-xl p-8">
                 <div class="mb-8 flex justify-center bg-gray-100 p-4 rounded-xl">
                     <div class="flex space-x-4">
-                        <button @click="setCurrentTab('booking')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'booking' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']" style="border-radius: 10px; --tw-bg-opacity: 1; background-color: rgba(79, 70, 229, var(--tw-bg-opacity));">
+                        <button @click="setCurrentTab('booking')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'booking' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']">
                             Reservar un turno
                         </button>
-                        <button @click="setCurrentTab('shop')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'shop' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']" style="border-radius: 10px;">
+                        <button @click="setCurrentTab('shop')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'shop' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']">
                             Comprar Productos
                         </button>
                     </div>
@@ -341,17 +347,21 @@
                                     <h3 class="text-xl font-semibold mb-4 text-gray-900">Selecciona una Hora</h3>
                                     <p class="text-gray-600 mb-6">Elige la hora que mejor se adapte a tu agenda. Los horarios no disponibles aparecerán deshabilitados.</p>
                                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                        <button v-for="timeSlot in availableTimes" :key="timeSlot.time"
-                                                @click="selectTime(timeSlot.time)"
+                                        <button v-for="(time, index) in availableTimes" :key="time"
+                                                @click="selectTime(time)"
                                                 :class="['time-slot py-3 px-4 rounded-lg text-center transition-all duration-300 transform hover:scale-105 transition-all duration-300 hover:shadow-md',
-                                                         {'bg-gray-900 text-white': selectedTime === timeSlot.time,
-                                                          'hover:bg-gray-200': timeSlot.available,
-                                                          'opacity-50 cursor-not-allowed': !timeSlot.available}]"
-                                                :disabled="!timeSlot.available"
-                                                :aria-selected="selectedTime === timeSlot.time">
-                                            {{ formatDisplayTime(timeSlot.time) }}
-                                            <span v-if="!timeSlot.available" class="block text-xs text-gray-500">
-                                                Reservado
+                                                         {'bg-gray-900 text-white': selectedTime === time,
+                                                          'hover:bg-gray-200': isTimeAvailable(time),
+                                                          'reserved-slot': !isTimeAvailable(time) && !isBreakTime(time),
+                                                          'break-slot': isBreakTime(time)}]"
+                                                :disabled="!isTimeAvailable(time) || isBreakTime(time)"
+                                                :aria-selected="selectedTime === time">
+                                            {{ formatDisplayTime(time) }}
+                                            <span v-if="!isTimeAvailable(time) && !isBreakTime(time)" class="block text-xs">
+                                                {{ getReservationInfo(time) }}
+                                            </span>
+                                            <span v-if="isBreakTime(time)" class="block text-xs">
+                                                Descanso
                                             </span>
                                         </button>
                                     </div>
@@ -369,10 +379,10 @@
                                             <label for="phone" class="block text-sm font-medium text-gray-900">Número de Teléfono</label>
                                             <input type="tel" id="phone" v-model="clientPhone" required pattern="[0-9]{9}" title="Por favor, introduce un número de teléfono válido de 9 dígitos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
                                         </div>
-                                        <!--div>
+                                        <div>
                                             <label for="email" class="block text-sm font-medium text-gray-900">Correo Electrónico</label>
                                             <input type="email" id="email" v-model="clientEmail" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
-                                        </div-->
+                                        </div>
                                         <button type="submit" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md">
                                             Continuar
                                         </button>
@@ -413,19 +423,19 @@
                                         </div>
                                     </div>
                                 
-                                    <!--div class="flex items-center mb-6">
+                                    <!-- Aquí es donde se renderizará el botón de MercadoPago -->
+                                    <div id="mercadopago-button-container" class="mb-6"></div>
+                                
+                                    <div class="flex items-center mb-6">
                                         <input type="checkbox" id="terms" v-model="termsAccepted" required class="h-4 w-4 text-gray-900 focus:ring-gray-900 border-gray-300 rounded">
                                         <label for="terms" class="ml-2 block text-sm text-gray-900">
                                             Acepto los <a href="#" @click.prevent="showTermsModal = true" class="text-gray-900 hover:text-gray-600">términos y condiciones</a>
                                         </label>
-                                    </div-->
-
-                                    <!-- Aquí es donde se renderizará el botón de MercadoPago -->
-                                    <div id="mercadopago-button-container" class="mb-6"></div>
+                                    </div>
                                 
-                                    <!--button @click="confirmBooking" :disabled="!termsAccepted || isProcessing" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <button @click="confirmBooking" :disabled="!termsAccepted || isProcessing" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
                                         {{ isProcessing ? 'Procesando...' : 'Confirmar Reserva' }}
-                                    </button-->
+                                    </button>
                                 </div>
                             </Transition>
 
@@ -433,7 +443,7 @@
                                 <button v-if="currentStep > 1" @click="previousStep" class="btn bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
                                     Anterior
                                 </button>
-                                <button v-if="currentStep < 5" @click="nextStep" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md" style="--tw-bg-opacity: 1; background-color: rgba(79, 70, 229, var(--tw-bg-opacity));">
+                                <button v-if="currentStep < 5" @click="nextStep" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
                                     Siguiente
                                 </button>
                             </div>
@@ -534,7 +544,7 @@
             </div>
         </Transition>
 
-        <!--div class="fixed bottom-4 left-4">
+        <div class="fixed bottom-4 left-4">
             <button @click="showChat = !showChat" class="bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors duration-300">
                 <span v-if="!showChat">Chat</span>
                 <span v-else>Cerrar</span>
@@ -556,7 +566,7 @@
                     <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-r-lg hover:bg-gray-800 transition-colors duration-300">Enviar</button>
                 </form>
             </div>
-        </Transition-->
+        </Transition>
     </div>
 
     <script>
@@ -600,8 +610,87 @@
                 const adminPhoneNumber = ref('');
                 const isProcessing = ref(false);
                 const isLoading = ref(true);
-                const availableTimes = ref([]);
 
+
+                const isTimeAvailable = (time) => {
+    if (!selectedDate.value) return false;
+
+    const bookingDate = selectedDate.value.toISOString().split('T')[0];
+    const existingBookings = bookings.value.filter(booking =>
+        booking.date === bookingDate
+    );
+
+    for (const booking of existingBookings) {
+        const serviceDuration = getServiceDuration(booking.service_name);
+        const bookingStartTime = new Date(`2000-01-01T${booking.time}`);
+        const bookingEndTime = new Date(`2000-01-01T${addMinutesToTime(booking.time, serviceDuration + 30)}`);
+        const currentTime = new Date(`2000-01-01T${time}`);
+
+        if (currentTime >= bookingStartTime && currentTime < bookingEndTime) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+const getReservationInfo = (time) => {
+    if (!selectedDate.value) return '';
+
+    const bookingDate = selectedDate.value.toISOString().split('T')[0];
+    const dayBookings = bookings.value.filter(booking => booking.date === bookingDate);
+    
+    // Ordenar las reservas por hora
+    dayBookings.sort((a, b) => a.time.localeCompare(b.time));
+
+    let currentSlot = 0;
+    for (const booking of dayBookings) {
+        const serviceDuration = getServiceDuration(booking.service_name);
+        const slots = Math.ceil(serviceDuration / 30);
+        const totalSlots = slots + 1; // Añadir un slot extra
+        const bookingStartTime = new Date(`2000-01-01T${booking.time}`);
+        const bookingEndTime = new Date(`2000-01-01T${addMinutesToTime(booking.time, serviceDuration + 30)}`);
+        const currentTime = new Date(`2000-01-01T${time}`);
+
+        if (currentTime >= bookingStartTime && currentTime < bookingEndTime) {
+            return `Reservado (Slots ${currentSlot + 1}-${currentSlot + totalSlots})`;
+        }
+
+        if (currentTime < bookingStartTime) {
+            break;
+        }
+
+        currentSlot += totalSlots;
+    }
+
+    return '';
+};
+
+const getServiceDuration = (serviceName) => {
+    const service = services.value.find(s => s.name === serviceName);
+    return service ? service.duration : 0;
+};
+
+const addMinutesToTime = (time, minutes) => {
+    const [hours, mins] = time.split(':').map(Number);
+    const date = new Date(2000, 0, 1, hours, mins + minutes);
+    return date.toTimeString().slice(0, 5);
+};
+
+                const getReservedSlotNumber = (time) => {
+    if (!selectedDate.value) return '';
+
+    const bookingDate = selectedDate.value.toISOString().split('T')[0];
+    const dayBookings = bookings.value.filter(booking => booking.date === bookingDate);
+    
+    // Sort bookings by time
+    dayBookings.sort((a, b) => a.time.localeCompare(b.time));
+
+    // Find the index of the current booking
+    const bookingIndex = dayBookings.findIndex(booking => booking.time === time);
+
+    return bookingIndex !== -1 ? bookingIndex : '';
+};
 
                 // Computed properties
                 const filteredServices = computed(() => {
@@ -741,7 +830,19 @@
                     }
                 };
 
-
+                const fetchBookings = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('bookings')
+                            .select('*')
+                            .eq('admin_unique_code', adminCode.value);
+                        if (error) throw error;
+                        bookings.value = data;
+                    } catch (error) {
+                        console.error('Error fetching bookings:', error);
+                        showNotification('Error al cargar las reservas existentes. Por favor, intenta de nuevo.', 'error');
+                    }
+                };
 
                 const generateUUID = () => {
                     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -855,99 +956,9 @@
                     }
                 };
 
-                const generateWhatsAppMessage = (booking) => {
-                    let message = 'Resumen de la reserva:\n\n';
-                    message += `Número de Reserva: ${bookingNumber.value}\n`;
-                    message += `Servicio: ${booking.service_name}\n`;
-                    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
-                    message += `Hora: ${booking.time}\n`;
-                    message += `Precio Total: $${booking.price}\n`;
-                    message += `Seña Pagada: $${booking.deposit_amount}\n`;
-                    message += `Nombre: ${booking.client_name}\n`;
-                    message += `Teléfono: ${booking.client_phone}\n`;
-                    return message;
-                };
-
                 const formatDate = (date) => {
                     return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
                 };
-
-
-                // Existing methods remain unchanged
-
-                function validateBookingData(booking) {
-                    if (!booking.admin_unique_code) throw new Error('Código de administrador no válido');
-                    if (!booking.service_name) throw new Error('No se ha seleccionado ningún servicio');
-                    if (!booking.date) throw new Error('No se ha seleccionado una fecha');
-                    if (!booking.time) throw new Error('No se ha seleccionado una hora');
-                    if (!booking.client_name) throw new Error('Nombre del cliente no proporcionado');
-                    if (!booking.client_phone) throw new Error('Teléfono del cliente no proporcionado');
-                    // Add more validations as needed
-                }
-
-                const formatDisplayTime = (time) => {
-                    if (!time) return '';
-                    return time.slice(0, 5); // Devuelve 'HH:MM'
-                };
-
-
-                const selectTime = (time) => {
-                    const timeSlot = availableTimes.value.find(t => t.time === time);
-                    if (timeSlot && timeSlot.available) {
-                        selectedTime.value = time;
-                        currentStep.value = 4;
-                    }
-                };
-
-
-                const fetchBookings = async () => {
-                    try {
-                        const { data, error } = await supabase
-                            .from('bookings')
-                            .select('*')
-                            .eq('admin_unique_code', adminCode.value);
-                        if (error) throw error;
-                        bookings.value = data;
-                    } catch (error) {
-                        console.error('Error fetching bookings:', error);
-                        showNotification('Error al cargar las reservas existentes. Por favor, intenta de nuevo.', 'error');
-                    }
-                };
-
-                onMounted(() => {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    adminCode.value = urlParams.get('code');
-                    const paymentStatus = urlParams.get('status');
-                    
-                    if (paymentStatus === 'approved') {
-                        confirmBooking('approved');
-                    }
-                    
-                    if (adminCode.value) {
-                        Promise.all([
-                            fetchServices(),
-                            fetchProducts(),
-                            fetchBusinessHours(),
-                            fetchBookings(),
-                            fetchAdminPhoneNumber(),
-                            fetchBusinessName()
-                        ]).then(() => {
-                            isLoading.value = false;
-                        }).catch(error => {
-                            console.error('Error initializing app:', error);
-                            showNotification('Error al cargar los datos. Por favor, recarga la página.', 'error');
-                            isLoading.value = false;
-                        });
-                    } else {
-                        showNotification('Código de administrador no proporcionado. Algunas funciones pueden no estar disponibles.', 'warning');
-                        isLoading.value = false;
-                    }
-                });
-
-                // Observa los cambios en selectedDate y selectedServices
-                watch([selectedDate, selectedServices], () => {
-                    generateAvailableTimes();
-                });
 
 
     const simulatePaymentProcess = () => {
@@ -976,6 +987,13 @@
                         selectedDate.value = date;
                         currentStep.value = 3;
                         generateAvailableTimes();
+                    }
+                };
+
+                const selectTime = (time) => {
+                    if (isTimeAvailable(time)) {
+                        selectedTime.value = time;
+                        currentStep.value = 4;
                     }
                 };
 
@@ -1132,12 +1150,28 @@
                     currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1);
                 };
 
+                const generateAvailableTimes = () => {
+                    if (!selectedDate.value) return;
 
-                const isTimeAvailable = (time) => {
-                    const timeSlot = availableTimes.value.find(t => t.time === time);
-                    return timeSlot ? timeSlot.available : false;
+                    const dayOfWeek = selectedDate.value.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+
+                    if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
+                        availableTimes.value = [];
+                        return;
+                    }
+
+                    const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
+                    const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
+                    const times = [];
+
+                    while (openTime < closeTime) {
+                        times.push(openTime.toTimeString().slice(0, 5));
+                        openTime.setMinutes(openTime.getMinutes() + 30);
+                    }
+
+                    availableTimes.value = times;
                 };
-
 
                 const getReservationName = (date, time) => {
                     if (!date) return '';
@@ -1151,6 +1185,28 @@
                     return booking ? booking.client_name : '';
                 };
 
+                const formatDisplayTime = (time) => {
+                    // Convertir '09:00:00' a '09:00'
+                    return time.slice(0, 5);
+                };
+
+                const availableTimes = computed(() => {
+                    if (!selectedDate.value) return [];
+
+                    const dayOfWeek = selectedDate.value.getDay();
+                    const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+                    if (!businessHoursForDay) return [];
+
+                    const openTime = new Date(`1970-01-01T${businessHoursForDay.open_time}`);
+                    const closeTime = new Date(`1970-01-01T${businessHoursForDay.close_time}`);
+                    const times = [];
+
+                    for (let time = openTime; time < closeTime; time.setMinutes(time.getMinutes() + 30)) {
+                        times.push(time.toTimeString().slice(0, 8)); // Formato '09:00:00'
+                    }
+
+                    return times;
+                });
 
                 const isFullyBooked = (date)  => {
                     if (!date) return false;
@@ -1214,6 +1270,35 @@
                     }
                 });
 
+                onMounted(() => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    adminCode.value = urlParams.get('code');
+                    const paymentStatus = urlParams.get('status');
+                    
+                    if (paymentStatus === 'approved') {
+                        confirmBooking('approved');
+                    }
+                    
+                    if (adminCode.value) {
+                        Promise.all([
+                            fetchServices(),
+                            fetchProducts(),
+                            fetchBusinessHours(),
+                            fetchBookings(),
+                            fetchAdminPhoneNumber(),
+                            fetchBusinessName()
+                        ]).then(() => {
+                            isLoading.value = false;
+                        }).catch(error => {
+                            console.error('Error initializing app:', error);
+                            showNotification('Error al cargar los datos. Por favor, recarga la página.', 'error');
+                            isLoading.value = false;
+                        });
+                    } else {
+                        showNotification('Código de administrador no proporcionado. Algunas funciones pueden no estar disponibles.', 'warning');
+                        isLoading.value = false;
+                    }
+                });
 
                 watch(() => currentStep.value, (newStep) => {
                     if (newStep === 5) {
@@ -1223,125 +1308,131 @@
                     }
                 });
 
+                const isBreakTime = (time) => {
+                    if (!selectedDate.value) return false;
 
-                const addMinutesToTime = (time, minutes) => {
-                        const [hours, mins] = time.split(':').map(Number);
-                        const date = new Date(2000, 0, 1, hours, mins);
-                        date.setMinutes(date.getMinutes() + minutes);
-                        return date.toTimeString().slice(0, 5);
-                    };
+                    const bookingDate = selectedDate.value.toISOString().split('T')[0];
+                    const existingBookings = bookings.value.filter(booking =>
+                        booking.date === bookingDate
+                    );
 
-                    const isTimeSlotAvailable = (timeSlot) => {
-                        if (!selectedDate.value || selectedServices.value.length === 0) return true;
+                    for (const booking of existingBookings) {
+                        const serviceDuration = getServiceDuration(booking.service_name);
+                        const breakStartTime = new Date(`2000-01-01T${addMinutesToTime(booking.time, serviceDuration)}`);
+                        const breakEndTime = new Date(`2000-01-01T${addMinutesToTime(booking.time, serviceDuration + 30)}`);
+                        const currentTime = new Date(`2000-01-01T${time}`);
 
-                        const bookingDate = selectedDate.value.toISOString().split('T')[0];
-                        const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0) + 20; // Add 20 minutes break
-                        const endTime = addMinutesToTime(timeSlot, totalDuration);
-
-                        return !bookings.value.some(booking => {
-                            if (booking.date !== bookingDate) return false;
-                            const bookingEndTime = addMinutesToTime(booking.time, booking.duration);
-                            return (timeSlot >= booking.time && timeSlot < bookingEndTime) || 
-                                   (endTime > booking.time && endTime <= bookingEndTime) ||
-                                   (timeSlot <= booking.time && endTime >= bookingEndTime);
-                        });
-                    };
-
-                    const generateAvailableTimes = () => {
-                        if (!selectedDate.value) {
-                            availableTimes.value = [];
-                            return;
+                        if (currentTime >= breakStartTime && currentTime < breakEndTime) {
+                            return true;
                         }
+                    }
 
-                        const dayOfWeek = selectedDate.value.getDay();
-                        const businessHoursForDay = businessHours.value.find(bh => bh.day_of_week === dayOfWeek);
+                    return false;
+                };
 
-                        if (!businessHoursForDay || !businessHoursForDay.is_working_day) {
-                            availableTimes.value = [];
-                            return;
-                        }
+                const getReservationDuration = (time) => {
+                    if (!selectedDate.value) return '';
 
-                        const openTime = new Date(`2000-01-01T${businessHoursForDay.open_time}`);
-                        const closeTime = new Date(`2000-01-01T${businessHoursForDay.close_time}`);
-                        const times = [];
+                    const bookingDate = selectedDate.value.toISOString().split('T')[0];
+                    const existingBooking = bookings.value.find(booking =>
+                        booking.date === bookingDate && booking.time === time
+                    );
 
-                        while (openTime < closeTime) {
-                            const timeSlot = openTime.toTimeString().slice(0, 5);
-                            times.push({
-                                time: timeSlot,
-                                available: isTimeSlotAvailable(timeSlot)
-                            });
-                            openTime.setMinutes(openTime.getMinutes() + 30);
-                        }
+                    if (existingBooking) {
+                        return getServiceDuration(existingBooking.service_name);
+                    }
 
-                        availableTimes.value = times;
-                    };
+                    return '';
+                };
 
-                    const confirmBooking = async (paymentStatus) => {
-                        if (paymentStatus !== 'approved') {
-                            showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
-                            return;
-                        }
+                const calculateEndTime = (startTime, duration) => {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  let endDate = new Date(2000, 0, 1, hours, minutes + duration);
+  return endDate.toTimeString().slice(0, 5);
+};
 
-                        isProcessingPayment.value = true;
-                        showNotification('Procesando tu reserva...', 'info');
+<!-- Modify the confirmBooking function to include the end_time -->
 
-                        try {
-                            retrieveBookingDetails();
+const confirmBooking = async (paymentStatus) => {
+  if (paymentStatus !== 'approved') {
+    showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
+    return;
+  }
 
-                            if (!selectedDate.value) {
-                                throw new Error('No se encontraron detalles de la reserva');
-                            }
+  isProcessingPayment.value = true;
+  showNotification('Procesando tu reserva...', 'info');
 
-                            const totalDuration = selectedServices.value.reduce((total, service) => total + service.duration, 0) + 20; // Add 20 minutes break
+  try {
+    retrieveBookingDetails();
 
-                            const booking = {
-                                admin_unique_code: adminCode.value,
-                                client_id: generateUUID(),
-                                service_name: selectedServices.value.map(s => s.name).join(', '),
-                                date: selectedDate.value.toISOString().split('T')[0],
-                                time: selectedTime.value,
-                                duration: totalDuration,
-                                price: totalPrice.value,
-                                status: 'confirmed',
-                                payment_status: 'deposit_paid',
-                                deposit_amount: depositAmount.value,
-                                client_name: clientName.value,
-                                client_phone: clientPhone.value,
-                                client_email: clientEmail.value
-                            };
+    if (!selectedDate.value) {
+      throw new Error('No se encontraron detalles de la reserva');
+    }
 
-                            validateBookingData(booking);
+    const selectedService = selectedServices.value[0]; // Assuming single service selection
+    const endTime = calculateEndTime(selectedTime.value, selectedService.duration);
 
-                            const { data, error } = await supabase
-                                .from('bookings')
-                                .insert([booking]);
+    const booking = {
+      admin_unique_code: adminCode.value,
+      client_id: generateUUID(),
+      service_name: selectedServices.value.map(s => s.name).join(', '),
+      date: selectedDate.value.toISOString().split('T')[0],
+      time: selectedTime.value,
+      end_time: endTime, // Add this line
+      price: totalPrice.value,
+      status: 'confirmed',
+      payment_status: 'deposit_paid',
+      deposit_amount: depositAmount.value,
+      client_name: clientName.value,
+      client_phone: clientPhone.value,
+      client_email: clientEmail.value
+    };
 
-                            if (error) {
-                                console.error('Supabase error:', error);
-                                throw new Error(`Error al insertar la reserva: ${error.message}`);
-                            }
+    const { data, error } = await supabase
+      .from('bookings')
+      .insert([booking]);
 
-                            showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
-                            
-                            bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-                            showConfirmationModal.value = true;
+    if (error) throw error;
 
-                            const message = generateWhatsAppMessage(booking);
-                            const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
-                            window.open(whatsappUrl, '_blank');
+    showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
+    
+    bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    showConfirmationModal.value = true;
 
-                            resetBookingForm();
-                            currentStep.value = 1;
-                            localStorage.removeItem('bookingDetails');
-                        } catch (error) {
-                            console.error('Error detallado al procesar la reserva:', error);
-                            showNotification(`Hubo un error al procesar tu reserva: ${error.message}. Por favor, intenta de nuevo.`, 'error');
-                        } finally {
-                            isProcessingPayment.value = false;
-                        }
-                    };
+    const message = generateWhatsAppMessage(booking);
+    const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+    
+    window.open(whatsappUrl, '_blank');
 
+    setTimeout(() => {
+      window.location.href = whatsappUrl;
+    }, 2000);
+
+    resetBookingForm();
+    currentStep.value = 1;
+    localStorage.removeItem('bookingDetails');
+  } catch (error) {
+    console.error('Error al procesar la reserva:', error);
+    showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
+  } finally {
+    isProcessingPayment.value = false;
+  }
+};
+
+
+const generateWhatsAppMessage = (booking) => {
+  let message = 'Resumen de la reserva:\n\n';
+  message += `Número de Reserva: ${bookingNumber.value}\n`;
+  message += `Servicio: ${booking.service_name}\n`;
+  message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
+  message += `Hora de inicio: ${booking.time}\n`;
+  message += `Hora de finalización: ${booking.end_time}\n`; // Add this line
+  message += `Precio Total: $${booking.price}\n`;
+  message += `Seña Pagada: $${booking.deposit_amount}\n`;
+  message += `Nombre: ${booking.client_name}\n`;
+  message += `Teléfono: ${booking.client_phone}\n`;
+  return message;
+};
 
                 // Return the reactive state and methods
                 return {
@@ -1349,23 +1440,25 @@
                     appSubtitle,
                     isProcessingPayment,
                     currentTab,
-                    availableTimes,
-                    selectedTime,
-                    currentStep,
                     searchQuery,
                     filteredServices,
                     filteredProducts,
                     selectedServices,
+                    getReservationInfo,
+                    getServiceDuration,
+                    addMinutesToTime,
                     currentStep,
                     selectedDate,
+                    getReservedSlotNumber,
                     selectedTime,
+                    isTimeAvailable,
+                    getReservationDuration,
+                    isTimeAvailable,
+                    isBreakTime,
+                    getReservationDuration,
                     clientName,
                     clientPhone,
                     clientEmail,
-                    formatDisplayTime,
-                    generateAvailableTimes,
-                    isTimeSlotAvailable,
-                    selectTime,
                     paymentInfo,
                     termsAccepted,
                     cart,
