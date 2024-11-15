@@ -1,288 +1,311 @@
 <!DOCTYPE html>
 <html lang="es" class="h-full bg-gray-100">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sistema de Reservas y Catálogo Profesional Optimizado</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/vue3-star-ratings@1.1.0/dist/vue3-star-ratings.umd.js"></script>
-    <script src="https://unpkg.com/lucide-vue-next" type="text/javascript"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        [v-cloak] { display: none; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .reserved-slot {
-            background-color: #FEE2E2;
-            color: #9CA3AF;
-            cursor: not-allowed;
-        }
-        .break-slot {
-            background-color: #E5E7EB;
-            color: #6B7280;
-            cursor: not-allowed;
-        }
-        .card {
-            background-color: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .btn {
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        .selected-service {
-            border-color: #4F46E5;
-            background-color: #EEF2FF;
-        }
-        .selected-date, .selected-time {
-            background-color: #4F46E5;
-            color: white;
-        }
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-        .step-indicator::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #E5E7EB;
-            z-index: 1;
-        }
-        .step {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            background-color: #fff;
-            border: 2px solid #E5E7EB;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #6B7280;
-            position: relative;
-            z-index: 2;
-        }
-        .step.active {
-            border-color: #4F46E5;
-            color: #4F46E5;
-        }
-        .step.completed {
-            background-color: #4F46E5;
-            border-color: #4F46E5;
-            color: #fff;
-        }
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
-        }
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            font-size: 0.875rem;
-        }
-        .calendar-day:hover:not(.selected-date):not(.disabled):not(.unavailable):not(.fully-booked) {
-            background-color: #EEF2FF;
-        }
-        .calendar-day.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .time-slot {
-            transition: all 0.2s ease;
-        }
-        .time-slot:hover:not(.selected-time):not(.disabled):not(.unavailable) {
-            background-color: #EEF2FF;
-        }
-        .time-slot.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .fade-enter-active, .fade-leave-active {
-            transition: opacity 0.5s ease;
-        }
-        .fade-enter-from, .fade-leave-to {
-            opacity: 0;
-        }
-        .slide-fade-enter-active {
-            transition: all 0.3s ease-out;
-        }
-        .slide-fade-leave-active {
-            transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-        }
-        .slide-fade-enter-from,
-        .slide-fade-leave-to {
-            transform: translateX(20px);
-            opacity: 0;
-        }
-        .shake {
-            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
-            transform: translate3d(0, 0, 0);
-        }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-        .promo-badge {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background-color: #10B981;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .calendar-day.unavailable {
-            background-color: #F3F4F6;
-            color: #9CA3AF;
-            cursor: not-allowed;
-        }
-        .time-slot.unavailable {
-            background-color: #F3F4F6;
-            color: #9CA3AF;
-            cursor: not-allowed;
-        }
-        .calendar-day.fully-booked {
-            background-color: #FEE2E2;
-            cursor: not-allowed;
-        }
-        .calendar-day.limited-availability {
-            background-color: #FEF3C7;
-        }
-        .limited-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: #F59E0B;
-            color: white;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .calendar-container {
-            max-width: 100%;
-            overflow-x: auto;
-        }
-        .calendar-day {
-            min-height: 60px;
-        }
-        @media (min-width: 640px) {
-            .calendar-day {
-                min-height: 80px;
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Sistema de Reservas y Catálogo Profesional Optimizado</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="https://unpkg.com/vue3-star-ratings@1.1.0/dist/vue3-star-ratings.umd.js"></script>
+        <script src="https://unpkg.com/lucide-vue-next" type="text/javascript"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <script src="https://sdk.mercadopago.com/js/v2"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            [v-cloak] { display: none; }
+            body {
+                font-family: 'Poppins', sans-serif;
+                transition: background-color 0.3s, color 0.3s;
             }
-        }
-        .skeleton {
-            animation: skeleton-loading 1s linear infinite alternate;
-        }
-        @keyframes skeleton-loading {
-            0% {
-                background-color: hsl(200, 20%, 80%);
+            .reserved-slot {
+                background-color: #FEE2E2;
+                color: #9CA3AF;
+                cursor: not-allowed;
             }
-            100% {
-                background-color: hsl(200, 20%, 95%);
+            .break-slot {
+                background-color: #E5E7EB;
+                color: #6B7280;
+                cursor: not-allowed;
             }
-        }
-        .ff {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-                /* Add these new styles for improved responsiveness */
-                @media (max-width: 640px) {
+            .card {
+                background-color: white;
+                border-radius: 1rem;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+            }
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            .btn {
+                transition: all 0.3s ease;
+            }
+            .btn:hover {
+                transform: translateY(-2px);
+            }
+            .selected-service {
+                border-color: #4F46E5;
+                background-color: #EEF2FF;
+            }
+            .selected-date, .selected-time {
+                background-color: #4F46E5;
+                color: white;
+            }
             .step-indicator {
-                flex-direction: column;
-                align-items: flex-start;
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 2rem;
+                position: relative;
             }
             .step-indicator::before {
-                display: none;
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background-color: #E5E7EB;
+                z-index: 1;
             }
             .step {
-                margin-bottom: 1rem;
+                width: 2.5rem;
+                height: 2.5rem;
+                border-radius: 50%;
+                background-color: #fff;
+                border: 2px solid #E5E7EB;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                color: #6B7280;
+                position: relative;
+                z-index: 2;
+                transition: all 0.3s ease;
+            }
+            .step.active {
+                border-color: #4F46E5;
+                color: #4F46E5;
+                transform: scale(1.1);
+            }
+            .step.completed {
+                background-color: #4F46E5;
+                border-color: #4F46E5;
+                color: #fff;
             }
             .calendar {
-                grid-template-columns: repeat(4, 1fr);
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 0.5rem;
             }
             .calendar-day {
-                aspect-ratio: auto;
-                height: 60px;
+                aspect-ratio: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0.5rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+                font-size: 0.875rem;
             }
-        }
-        
-        @media (min-width: 641px) and (max-width: 1024px) {
-            .calendar {
-                grid-template-columns: repeat(5, 1fr);
+            .calendar-day:hover:not(.selected-date):not(.disabled):not(.unavailable):not(.fully-booked) {
+                background-color: #EEF2FF;
+                transform: scale(1.05);
             }
-        }
-        
-        .booking-steps {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-        
-        .booking-step {
-            flex: 1 1 300px;
-            max-width: 100%;
-        }
-        
-        .time-slots {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 0.5rem;
-        }
-    </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#4F46E5',
-                        secondary: '#10B981',
-                        accent: '#F59E0B',
+            .calendar-day.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            .time-slot {
+                transition: all 0.2s ease;
+            }
+            .time-slot:hover:not(.selected-time):not(.disabled):not(.unavailable) {
+                background-color: #EEF2FF;
+                transform: scale(1.05);
+            }
+            .time-slot.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            .fade-enter-active, .fade-leave-active {
+                transition: opacity 0.5s ease;
+            }
+            .fade-enter-from, .fade-leave-to {
+                opacity: 0;
+            }
+            .slide-fade-enter-active {
+                transition: all 0.3s ease-out;
+            }
+            .slide-fade-leave-active {
+                transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+            }
+            .slide-fade-enter-from,
+            .slide-fade-leave-to {
+                transform: translateX(20px);
+                opacity: 0;
+            }
+            .shake {
+                animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+                transform: translate3d(0, 0, 0);
+            }
+            @keyframes shake {
+                10%, 90% { transform: translate3d(-1px, 0, 0); }
+                20%, 80% { transform: translate3d(2px, 0, 0); }
+                30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+                40%, 60% { transform: translate3d(4px, 0, 0); }
+            }
+            .promo-badge {
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                background-color: #10B981;
+                color: white;
+                padding: 0.25rem 0.5rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: bold;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .calendar-day.unavailable {
+                background-color: #F3F4F6;
+                color: #9CA3AF;
+                cursor: not-allowed;
+            }
+            .time-slot.unavailable {
+                background-color: #F3F4F6;
+                color: #9CA3AF;
+                cursor: not-allowed;
+            }
+            .calendar-day.fully-booked {
+                background-color: #FEE2E2;
+                cursor: not-allowed;
+            }
+            .calendar-day.limited-availability {
+                background-color: #FEF3C7;
+            }
+            .limited-badge {
+                position: absolute;
+                top: 0;
+                right: 0;
+                background-color: #F59E0B;
+                color: white;
+                border-radius: 50%;
+                width: 16px;
+                height: 16px;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .calendar-container {
+                max-width: 100%;
+                overflow-x: auto;
+            }
+            .calendar-day {
+                min-height: 60px;
+            }
+            @media (min-width: 640px) {
+                .calendar-day {
+                    min-height: 80px;
+                }
+            }
+            .skeleton {
+                animation: skeleton-loading 1s linear infinite alternate;
+            }
+            @keyframes skeleton-loading {
+                0% {
+                    background-color: hsl(200, 20%, 80%);
+                }
+                100% {
+                    background-color: hsl(200, 20%, 95%);
+                }
+            }
+            .ff {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            }
+            /* Add these new styles for improved responsiveness */
+            @media (max-width: 640px) {
+                .step-indicator {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .step-indicator::before {
+                    display: none;
+                }
+                .step {
+                    margin-bottom: 1rem;
+                }
+                .calendar {
+                    grid-template-columns: repeat(4, 1fr);
+                }
+                .calendar-day {
+                    aspect-ratio: auto;
+                    height: 60px;
+                }
+            }
+            
+            @media (min-width: 641px) and (max-width: 1024px) {
+                .calendar {
+                    grid-template-columns: repeat(5, 1fr);
+                }
+            }
+            
+            .booking-steps {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+            }
+            
+            .booking-step {
+                flex: 1 1 300px;
+                max-width: 100%;
+            }
+            
+            .time-slots {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 0.5rem;
+            }
+            /* New styles for enhanced design */
+            .gradient-bg {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+            .shadow-soft {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+        </style>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#4F46E5',
+                            secondary: '#10B981',
+                            accent: '#F59E0B',
+                        }
                     }
                 }
             }
-        }
-    </script>
-</head>
+        </script>
+    </head>
 <body class="h-full">
     <div id="app" v-cloak class="min-h-screen flex flex-col bg-gray-50">
         <header class="bg-white shadow-sm">
@@ -325,15 +348,14 @@
                                         <p class="mt-1 text-sm text-gray-500">Parece que no hay servicios disponibles en este momento.</p>
                                     </div>
                                     <div v-else>
-                                        <!-- Booking steps -->
                                         <div class="mb-8">
                                             <nav aria-label="Progress">
-                                                <ol role="list" class="flex items-center">
-                                                    <li v-for="step in 5" :key="step" :class="[step > 1 ? 'ml-8 sm:ml-20' : '', 'relative']">
+                                                <ol role="list" class="flex items-center justify-between sm:justify-start">
+                                                    <li v-for="step in 5" :key="step" :class="[step > 1 ? 'sm:ml-10' : '', 'relative']">
                                                         <div v-if="step > 1" class="absolute inset-0 flex items-center" aria-hidden="true">
                                                             <div class="h-0.5 w-full bg-gray-200"></div>
                                                         </div>
-                                                        <a href="#" :class="['relative w-8 h-8 flex items-center justify-center rounded-full', { 'bg-primary text-white': currentStep >= step, 'bg-white border-2 border-gray-300': currentStep < step }]">
+                                                        <a href="#" :class="['relative flex items-center justify-center w-8 h-8 rounded-full', { 'bg-primary text-white': currentStep >= step, 'bg-white border-2 border-gray-300': currentStep < step }]">
                                                             <span v-if="currentStep > step" class="text-white">
                                                                 <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                                                     <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
@@ -341,6 +363,9 @@
                                                             </span>
                                                             <span v-else>{{ step }}</span>
                                                         </a>
+                                                        <div class="hidden sm:block mt-2 text-xs text-center">
+                                                            {{ ['Servicios', 'Fecha', 'Hora', 'Datos', 'Pago'][step - 1] }}
+                                                        </div>
                                                     </li>
                                                 </ol>
                                             </nav>
@@ -1069,10 +1094,6 @@ const getServiceDuration = (serviceName) => {
                     }
                 };
 
-                const formatDate = (date) => {
-                    return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-                };
-
 
     const simulatePaymentProcess = () => {
         return new Promise((resolve) => {
@@ -1534,18 +1555,26 @@ const confirmBooking = async (paymentStatus) => {
 
 
 const generateWhatsAppMessage = (booking) => {
-  let message = 'Resumen de la reserva:\n\n';
-  message += `Número de Reserva: ${bookingNumber.value}\n`;
-  message += `Servicio: ${booking.service_name}\n`;
-  message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
-  message += `Hora de inicio: ${booking.time}\n`;
-  message += `Hora de finalización: ${booking.end_time}\n`; // Add this line
-  message += `Precio Total: $${booking.price}\n`;
-  message += `Seña Pagada: $${booking.deposit_amount}\n`;
-  message += `Nombre: ${booking.client_name}\n`;
-  message += `Teléfono: ${booking.client_phone}\n`;
-  return message;
+    let message = 'Resumen de la reserva:\n\n';
+    message += `Número de Reserva: ${bookingNumber.value}\n`;
+    message += `Servicio: ${booking.service_name}\n`;
+    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
+    message += `Hora de inicio: ${booking.time}\n`;
+    message += `Hora de finalización: ${booking.end_time}\n`; // Asegúrate de que `end_time` esté calculado y almacenado correctamente
+    message += `Precio Total: $${booking.price}\n`;
+    message += `Seña Pagada: $${booking.deposit_amount}\n`;
+    message += `Nombre: ${booking.client_name}\n`;
+    message += `Teléfono: ${booking.client_phone}\n`;
+    return message;
 };
+
+const formatDate = (date) => {
+    // Asegúrate de que la fecha se formatee correctamente
+    const timeZoneOffset = date.getTimezoneOffset() * 60000; // Offset en milisegundos
+    const localDate = new Date(date.getTime() - timeZoneOffset);
+    return localDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+};
+
 
                 // Return the reactive state and methods
                 return {
