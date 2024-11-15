@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full bg-gray-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue3-star-ratings@1.1.0/dist/vue3-star-ratings.umd.js"></script>
     <script src="https://unpkg.com/lucide-vue-next" type="text/javascript"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         [v-cloak] { display: none; }
         body {
@@ -48,11 +48,11 @@
             transform: translateY(-2px);
         }
         .selected-service {
-            border-color: #000000;
-            background-color: #f0f0f0;
+            border-color: #4F46E5;
+            background-color: #EEF2FF;
         }
         .selected-date, .selected-time {
-            background-color: #000000;
+            background-color: #4F46E5;
             color: white;
         }
         .step-indicator {
@@ -86,12 +86,12 @@
             z-index: 2;
         }
         .step.active {
-            border-color: #000000;
-            color: #000000;
+            border-color: #4F46E5;
+            color: #4F46E5;
         }
         .step.completed {
-            background-color: #000000;
-            border-color: #000000;
+            background-color: #4F46E5;
+            border-color: #4F46E5;
             color: #fff;
         }
         .calendar {
@@ -102,15 +102,17 @@
         .calendar-day {
             aspect-ratio: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
+            border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
+            font-size: 0.875rem;
         }
         .calendar-day:hover:not(.selected-date):not(.disabled):not(.unavailable):not(.fully-booked) {
-            background-color: #f0f0f0;
+            background-color: #EEF2FF;
         }
         .calendar-day.disabled {
             opacity: 0.5;
@@ -120,7 +122,7 @@
             transition: all 0.2s ease;
         }
         .time-slot:hover:not(.selected-time):not(.disabled):not(.unavailable) {
-            background-color: #f0f0f0;
+            background-color: #EEF2FF;
         }
         .time-slot.disabled {
             opacity: 0.5;
@@ -157,12 +159,13 @@
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
-            background-color: #000000;
+            background-color: #10B981;
             color: white;
             padding: 0.25rem 0.5rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .calendar-day.unavailable {
             background-color: #F3F4F6;
@@ -185,7 +188,7 @@
             position: absolute;
             top: 0;
             right: 0;
-            background-color: #000000;
+            background-color: #F59E0B;
             color: white;
             border-radius: 50%;
             width: 16px;
@@ -200,11 +203,11 @@
             overflow-x: auto;
         }
         .calendar-day {
-            min-height: 80px;
+            min-height: 60px;
         }
-        @media (max-width: 640px) {
+        @media (min-width: 640px) {
             .calendar-day {
-                min-height: 60px;
+                min-height: 80px;
             }
         }
         .skeleton {
@@ -218,292 +221,413 @@
                 background-color: hsl(200, 20%, 95%);
             }
         }
-    .ff{
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    }
+        .ff {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+                /* Add these new styles for improved responsiveness */
+                @media (max-width: 640px) {
+            .step-indicator {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .step-indicator::before {
+                display: none;
+            }
+            .step {
+                margin-bottom: 1rem;
+            }
+            .calendar {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .calendar-day {
+                aspect-ratio: auto;
+                height: 60px;
+            }
+        }
+        
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .calendar {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        
+        .booking-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .booking-step {
+            flex: 1 1 300px;
+            max-width: 100%;
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+        }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 text-gray-900 ff">
-    <div id="app" v-cloak>
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">{{ appTitle }}</h1>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ appSubtitle }}</p>
+<body class="h-full">
+    <div id="app" v-cloak class="min-h-screen flex flex-col bg-gray-50">
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold text-gray-900">{{ appTitle }}</h1>
+                <p class="mt-1 text-sm text-gray-600">{{ appSubtitle }}</p>
+            </div>
         </header>
-        <div class="max-w-7xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
-            <div class="bg-white bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-3xl shadow-xl p-8">
-                <div class="mb-8 flex justify-center bg-gray-100 p-4 rounded-xl">
-                    <div class="flex space-x-4">
-                        <button @click="setCurrentTab('booking')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'booking' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']">
-                            Reservar un turno
-                        </button>
-                        <button @click="setCurrentTab('shop')" :class="['btn px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:scale-105', currentTab === 'shop' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 hover:bg-gray-200']">
-                            Comprar Productos
-                        </button>
-                    </div>
-                </div>
 
-                <Transition name="fade" mode="out-in">
-                    <div v-if="currentTab === 'booking'" key="booking">
-                        <div v-if="isLoading">
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div v-for="i in 6" :key="i" class="card p-6 space-y-4">
-                                    <div class="skeleton h-6 w-3/4 rounded"></div>
-                                    <div class="skeleton h-4 w-full rounded"></div>
-                                    <div class="skeleton h-4 w-5/6 rounded"></div>
-                                    <div class="skeleton h-10 w-full rounded"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else-if="filteredServices.length === 0">
-                            <p class="text-center text-xl font-semibold text-gray-700">No hay servicios disponibles en este momento.</p>
-                        </div>
-                        <div v-else>
-                            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Reserva Tu Servicio</h2>
-
-                            <div class="step-indicator mb-12 relative flex flex-col">
-                                <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-300 -translate-y-1/2"></div>
-                                <div class="relative flex justify-between">
-                                    <div v-for="step in 5" :key="step" :class="['step w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300', { 'bg-gray-900 text-white': currentStep === step, 'bg-white text-gray-900 border-2 border-gray-900': currentStep > step, 'bg-gray-200 text-gray-600': currentStep < step }]">
-                                        {{ step }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Transition name="slide-fade" mode="out-in">
-                                <div v-if="currentStep === 1" key="step1">
-                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Selecciona tus Servicios</h3>
-                                    <p class="text-gray-600 mb-6">Elige los servicios que deseas reservar.</p>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        <div v-for="service in filteredServices" :key="service.id"
-                                             @click="toggleService(service)"
-                                             class="card p-6 cursor-pointer border-2 transition-all duration-300 flex flex-col justify-between relative transform hover:scale-105 hover:shadow-lg bg-white rounded-xl overflow-hidden"
-                                             :class="{'border-gray-900 ring-2 ring-gray-300': isServiceSelected(service), 'border-transparent': !isServiceSelected(service)}">
-                                            <div v-if="service.promocion" class="promo-badge absolute top-0 right-0 bg-gray-900 text-white px-2 py-1 text-xs font-bold uppercase rounded-bl-lg">{{ service.nombre_promo || 'Promoción' }}</div>
-                                            <div>
-                                                <h4 class="font-semibold text-lg mb-2 text-gray-900">{{ service.name }}</h4>
-                                                <p class="text-sm text-gray-600 mb-4">{{ service.description }}</p>
-                                                <div class="mb-2">
-                                                    <vue3-star-ratings :rating="service.rating" :read-only="true" :star-size="20"></vue3-star-ratings>
-                                                </div>
-                                            </div>
-                                            <div class="flex justify-between items-center mt-4">
-                                                <span class="text-gray-900 font-medium text-lg">${{ service.price }}</span>
-                                                <span class="text-sm text-gray-500">{{ service.duration }} min</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div v-if="selectedServices.length > 0" class="mt-6 p-4 bg-gray-100 rounded-lg">
-                                        <h4 class="font-semibold text-lg mb-2 text-gray-900">Servicios Seleccionados:</h4>
-                                        <ul class="list-disc list-inside">
-                                            <li v-for="service in selectedServices"
-                                                :key="service.id"
-                                                class="text-gray-900">
-                                                {{ service.name }} - ${{ service.price }}
-                                                <span v-if="service.promocion"
-                                                      class="text-gray-600 font-bold">
-                                                    ({{ service.nombre_promo || 'Promoción' }})
-                                                </span>
-                                            </li>
-                                        </ul>
-                                        <p class="mt-2 text-gray-900 font-semibold">Total: ${{ totalPrice }}</p>
-                                    </div>
-                                </div>
-
-                                <div v-if="currentStep === 2" key="step2">
-                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Selecciona una Fecha</h3>
-                                    <p class="text-gray-600 mb-6">Elige la fecha que prefieras para tu reserva. Las fechas disponibles se muestran a continuación.</p>
-                                    <div class="calendar-container p-6 bg-white rounded-lg shadow-md">
-                                        <div class="flex justify-between items-center mb-4">
-                                            <button @click="previousMonth" class="btn bg-gray-900 text-white px-3 py-1 rounded-md hover:bg-gray-800 transition-colors transition-all duration-300 hover:shadow-md">
-                                                &lt; Anterior
-                                            </button>
-                                            <h2 class="text-xl font-semibold text-gray-900">{{ currentMonthName }} {{ currentYear }}</h2>
-                                            <button @click="nextMonth" class="btn bg-gray-900 text-white px-3 py-1 rounded-md hover:bg-gray-800 transition-colors transition-all duration-300 hover:shadow-md">
-                                                Siguiente &gt;
-                                            </button>
-                                        </div>
-                                        <div class="grid grid-cols-7 gap-2">
-                                            <div v-for="day in daysOfWeek" :key="day" class="text-center font-semibold text-gray-600 text-sm">
-                                                {{ day }}
-                                            </div>
-                                            <div v-for="(day, index) in calendarDays" :key="index"
-                                                 :class="['calendar-day p-2 text-center rounded-md transition-all duration-200 flex flex-col items-center justify-center',
-                                                          {'bg-gray-100': day.isCurrentMonth && isDateAvailable(day.date),
-                                                           'text-gray-400': !day.isCurrentMonth || !isDateAvailable(day.date),
-                                                           'cursor-pointer hover:bg-gray-200': isDateAvailable(day.date) && !isDateInPast(day.date),
-                                                           'bg-red-100': isFullyBooked(day.date),
-                                                           'bg-yellow-100': hasLimitedAvailability(day.date)}]"
-                                                 @click="selectDate(day.date)">
-                                                <span :class="{'font-bold': isToday(day.date)}">{{ day.date.getDate() }}</span>
-                                                <div v-if="hasLimitedAvailability(day.date)" class="text-xs mt-1 text-red-600">
-                                                    Limitado
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div v-if="currentStep === 3" key="step3">
-                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Selecciona una Hora</h3>
-                                    <p class="text-gray-600 mb-6">Elige la hora que mejor se adapte a tu agenda. Los horarios no disponibles aparecerán deshabilitados.</p>
-                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                        <button v-for="(time, index) in availableTimes" :key="time"
-                                                @click="selectTime(time)"
-                                                :class="['time-slot py-3 px-4 rounded-lg text-center transition-all duration-300 transform hover:scale-105 transition-all duration-300 hover:shadow-md',
-                                                         {'bg-gray-900 text-white': selectedTime === time,
-                                                          'hover:bg-gray-200': isTimeAvailable(time),
-                                                          'reserved-slot': !isTimeAvailable(time) && !isBreakTime(time),
-                                                          'break-slot': isBreakTime(time)}]"
-                                                :disabled="!isTimeAvailable(time) || isBreakTime(time)"
-                                                :aria-selected="selectedTime === time">
-                                            {{ formatDisplayTime(time) }}
-                                            <span v-if="!isTimeAvailable(time) && !isBreakTime(time)" class="block text-xs">
-                                                {{ getReservationInfo(time) }}
-                                            </span>
-                                            <span v-if="isBreakTime(time)" class="block text-xs">
-                                                Descanso
-                                            </span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div v-else-if="currentStep === 4" key="step4">
-                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Información de Contacto</h3>
-                                    <p class="text-gray-600 mb-6">Por favor, proporciona tu información de contacto para confirmar la reserva.</p>
-                                    <form @submit.prevent="nextStep" class="space-y-4">
-                                        <div>
-                                            <label for="name" class="block text-sm font-medium text-gray-900">Nombre Completo</label>
-                                            <input type="text" id="name" v-model="clientName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50 transition-all duration-300">
-                                        </div>
-                                        <div>
-                                            <label for="phone" class="block text-sm font-medium text-gray-900">Número de Teléfono</label>
-                                            <input type="tel" id="phone" v-model="clientPhone" required pattern="[0-9]{9}" title="Por favor, introduce un número de teléfono válido de 9 dígitos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
-                                        </div>
-                                        <div>
-                                            <label for="email" class="block text-sm font-medium text-gray-900">Correo Electrónico</label>
-                                            <input type="email" id="email" v-model="clientEmail" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
-                                        </div>
-                                        <button type="submit" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md">
-                                            Continuar
-                                        </button>
-                                    </form>
-                                </div>
-
-                                <div v-if="currentStep === 5" key="step5">
-                                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Resumen y Pago de Seña</h3>
-                                    <p class="text-gray-600 mb-6">Revisa los detalles de tu reserva y procede con el pago de la seña del 10%.</p>
-                                    
-                                    <div class="space-y-6 bg-gray-50 p-6 rounded-lg mb-6">
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <span class="font-medium text-gray-900">Servicios:</span>
-                                                <ul class="list-disc list-inside mt-1">
-                                                    <li v-for="service in selectedServices" :key="service.id" class="text-gray-900">
-                                                        {{ service.name }}
-                                                        <span v-if="service.promocion" class="text-gray-600 font-bold">({{ service.nombre_promo || 'Promoción' }})</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div>
-                                                <span class="font-medium text-gray-900">Fecha:</span>
-                                                <p class="text-gray-900">{{ formatDate(selectedDate) }}</p>
-                                            </div>
-                                            <div>
-                                                <span class="font-medium text-gray-900">Hora:</span>
-                                                <p class="text-gray-900">{{ selectedTime }}</p>
-                                            </div>
-                                            <div>
-                                                <span class="font-medium text-gray-900">Precio Total:</span>
-                                                <p class="text-gray-900">${{ totalPrice }}</p>
-                                            </div>
-                                            <div>
-                                                <span class="font-medium text-gray-900">Seña (10%):</span>
-                                                <p class="text-gray-900">${{ depositAmount }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                
-                                    <!-- Aquí es donde se renderizará el botón de MercadoPago -->
-                                    <div id="mercadopago-button-container" class="mb-6"></div>
-                                
-                                    <div class="flex items-center mb-6">
-                                        <input type="checkbox" id="terms" v-model="termsAccepted" required class="h-4 w-4 text-gray-900 focus:ring-gray-900 border-gray-300 rounded">
-                                        <label for="terms" class="ml-2 block text-sm text-gray-900">
-                                            Acepto los <a href="#" @click.prevent="showTermsModal = true" class="text-gray-900 hover:text-gray-600">términos y condiciones</a>
-                                        </label>
-                                    </div>
-                                
-                                    <button @click="confirmBooking" :disabled="!termsAccepted || isProcessing" class="w-full btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-                                        {{ isProcessing ? 'Procesando...' : 'Confirmar Reserva' }}
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <!-- Main content -->
+                <div class="px-4 py-6 sm:px-0">
+                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                        <div class="p-6 bg-white border-b border-gray-200">
+                            <div class="mb-8 flex justify-center">
+                                <div class="inline-flex rounded-md shadow-sm" role="group">
+                                    <button @click="setCurrentTab('booking')" :class="['px-4 py-2 text-sm font-medium rounded-l-lg focus:z-10 focus:ring-2 focus:ring-primary focus:text-white', currentTab === 'booking' ? 'bg-primary text-white' : 'bg-white text-gray-900 hover:bg-gray-50']">
+                                        Reservar un turno
                                     </button>
+                                    <button @click="setCurrentTab('shop')" :class="['px-4 py-2 text-sm font-medium rounded-r-lg focus:z-10 focus:ring-2 focus:ring-primary focus:text-white', currentTab === 'shop' ? 'bg-primary text-white' : 'bg-white text-gray-900 hover:bg-gray-50']">
+                                        Comprar Productos
+                                    </button>
+                                </div>
+                            </div>
+
+                            <Transition name="fade" mode="out-in">
+                                <div v-if="currentTab === 'booking'" key="booking">
+                                    <!-- Booking content -->
+                                    <div v-if="isLoading" class="animate-pulse">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            <div v-for="i in 6" :key="i" class="bg-gray-200 p-6 rounded-lg h-48"></div>
+                                        </div>
+                                    </div>
+                                    <div v-else-if="filteredServices.length === 0" class="text-center py-12">
+                                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                                        </svg>
+                                        <h3 class="mt-2 text-sm font-medium text-gray-900">No hay servicios disponibles</h3>
+                                        <p class="mt-1 text-sm text-gray-500">Parece que no hay servicios disponibles en este momento.</p>
+                                    </div>
+                                    <div v-else>
+                                        <!-- Booking steps -->
+                                        <div class="mb-8">
+                                            <nav aria-label="Progress">
+                                                <ol role="list" class="flex items-center">
+                                                    <li v-for="step in 5" :key="step" :class="[step > 1 ? 'ml-8 sm:ml-20' : '', 'relative']">
+                                                        <div v-if="step > 1" class="absolute inset-0 flex items-center" aria-hidden="true">
+                                                            <div class="h-0.5 w-full bg-gray-200"></div>
+                                                        </div>
+                                                        <a href="#" :class="['relative w-8 h-8 flex items-center justify-center rounded-full', { 'bg-primary text-white': currentStep >= step, 'bg-white border-2 border-gray-300': currentStep < step }]">
+                                                            <span v-if="currentStep > step" class="text-white">
+                                                                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                                                                </svg>
+                                                            </span>
+                                                            <span v-else>{{ step }}</span>
+                                                        </a>
+                                                    </li>
+                                                </ol>
+                                            </nav>
+                                        </div>
+
+                                        <Transition name="slide-fade" mode="out-in">
+                                            <!-- Step 1: Select Services -->
+                                            <div v-if="currentStep === 1" key="step1" class="space-y-6">
+                                                <h2 class="text-2xl font-semibold text-gray-900">Selecciona tus Servicios</h2>
+                                                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                                    <div v-for="service in filteredServices" :key="service.id"
+                                                         @click="toggleService(service)"
+                                                         class="relative bg-white border rounded-lg shadow-sm p-6 cursor-pointer hover:border-primary focus:outline-none transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md"
+                                                         :class="{'border-primary ring-2 ring-primary': isServiceSelected(service), 'border-gray-200': !isServiceSelected(service)}">
+                                                        <div class="flex items-center justify-between">
+                                                            <div class="flex-1 truncate">
+                                                                <h3 class="text-sm font-medium text-gray-900">{{ service.name }}</h3>
+                                                                <p class="mt-1 text-xs text-gray-500">{{ service.description }}</p>
+                                                            </div>
+                                                            <svg v-if="isServiceSelected(service)" class="h-5 w-5 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                                                            </svg>
+                                                        </div>
+                                                        <div class="mt-4 flex items-center justify-between">
+                                                            <p class="text-sm font-medium text-gray-900">${{ service.price }}</p>
+                                                            <div class="flex items-center">
+                                                                <svg class="text-yellow-400 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                                    <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
+                                                                </svg>
+                                                                <p class="ml-1 text-sm text-gray-500">{{ service.rating.toFixed(1) }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div v-if="service.promocion" class="promo-badge animate__animated animate__fadeIn">
+                                                            {{ service.nombre_promo || 'Promoción' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 2: Select Date -->
+                                            <div v-else-if="currentStep === 2" key="step2" class="space-y-6">
+                                                <h2 class="text-2xl font-semibold text-gray-900">Selecciona una Fecha</h2>
+                                                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                                                    <div class="px-4 py-5 sm:p-6">
+                                                        <div class="flex items-center justify-between mb-4">
+                                                            <button @click="previousMonth" class="p-1 rounded-full hover:bg-gray-200 transition-colors duration-200">
+                                                                <svg class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                                                </svg>
+                                                            </button>
+                                                            <h3 class="text-lg font-medium text-gray-900">{{ currentMonthName }} {{ currentYear }}</h3>
+                                                            <button @click="nextMonth" class="p-1 rounded-full hover:bg-gray-200 transition-colors duration-200">
+                                                                <svg class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                        <div class="grid grid-cols-7 gap-2 mb-2">
+                                                            <div v-for="day in daysOfWeek" :key="day" class="text-center text-sm font-medium text-gray-700">
+                                                                {{ day }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="grid grid-cols-7 gap-2">
+                                                            <button v-for="(day, index) in calendarDays" :key="index"
+                                                                    @click="selectDate(day.date)"
+                                                                    :disabled="!isDateAvailable(day.date) || isDateInPast(day.date)"
+                                                                    :class="[
+                                                                        'p-2 text-center text-sm leading-none rounded-lg hover:bg-gray-100 focus:z-10 transition-colors duration-200',
+                                                                        isToday(day.date) ? 'font-bold border border-primary' : 'font-normal',
+                                                                        day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400',
+                                                                        isDateAvailable(day.date) && !isDateInPast(day.date) ? 'cursor-pointer' : 'cursor-not-allowed opacity-50',
+                                                                        selectedDate && day.date.toDateString() === selectedDate.toDateString() ? 'bg-primary text-white' : ''
+                                                                    ]"
+                                                            >
+                                                                <span class="block mb-1">{{ day.date.getDate() }}</span>
+                                                                <span v-if="hasLimitedAvailability(day.date)" class="block text-xs mt-1 text-accent">Limitado</span>
+                                                                <span v-if="isFullyBooked(day.date)" class="block text-xs mt-1 text-red-500">Completo</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 3: Select Time -->
+                                            <div v-else-if="currentStep === 3" key="step3" class="space-y-6">
+                                                <h2 class="text-2xl font-semibold text-gray-900">Selecciona una Hora</h2>
+                                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                                    <button v-for="time in availableTimes" :key="time"
+                                                            @click="selectTime(time)"
+                                                            :disabled="!isTimeAvailable(time)"
+                                                            :class="[
+                                                                'px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200',
+                                                                selectedTime === time ? 'bg-primary text-white' : 'bg-white text-gray-900 border border-gray-300',
+                                                                isTimeAvailable(time) ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'
+                                                            ]"
+                                                    >
+                                                        {{ formatDisplayTime(time) }}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 4: Contact Information -->
+                                            <div v-else-if="currentStep === 4" key="step4" class="space-y-6">
+                                                <form @submit.prevent="nextStep" class="space-y-6">
+                                                    <div>
+                                                        <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                                                        <input type="text" id="name" v-model="clientName" required
+                                                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors duration-200">
+                                                    </div>
+                                                    <div>
+                                                        <label for="phone" class="block text-sm font-medium text-gray-700">Número de Teléfono</label>
+                                                        <input type="tel" id="phone" v-model="clientPhone" required pattern="[0-9]{9}"
+                                                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors duration-200">
+                                                    </div>
+                                                    <div>
+                                                        <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                                                        <input type="email" id="email" v-model="clientEmail" required
+                                                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors duration-200">
+                                                    </div>
+                                                    <button type="submit"
+                                                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+                                                        Continuar
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            <!-- Step 5: Summary and Payment -->
+                                            <div v-else-if="currentStep === 5" key="step5" class="space-y-6">
+                                                <h2 class="text-2xl font-semibold text-gray-900">Resumen y Pago de Seña</h2>
+                                                <div class="bg-gray-50 p-6 rounded-lg shadow">
+                                                    <dl class="space-y-6">
+                                                        <div>
+                                                            <dt class="text-sm font-medium text-gray-500">Servicios</dt>
+                                                            <dd class="mt-1 text-sm text-gray-900">
+                                                                <ul class="list-disc pl-5 space-y-1">
+                                                                    <li v-for="service in selectedServices" :key="service.id">
+                                                                        {{ service.name }}
+                                                                        <span v-if="service.promocion" class="text-secondary font-bold">({{ service.nombre_promo || 'Promoción' }})</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </dd>
+                                                        </div>
+                                                        <div>
+                                                            <dt class="text-sm font-medium text-gray-500">Fecha</dt>
+                                                            <dd class="mt-1 text-sm text-gray-900">{{ formatDate(selectedDate) }}</dd>
+                                                        </div>
+                                                        <div>
+                                                            <dt class="text-sm font-medium text-gray-500">Hora</dt>
+                                                            <dd class="mt-1 text-sm text-gray-900">{{ selectedTime }}</dd>
+                                                        </div>
+                                                        <div>
+                                                            <dt class="text-sm font-medium text-gray-500">Precio Total</dt>
+                                                            <dd class="mt-1 text-sm text-gray-900">${{ totalPrice }}</dd>
+                                                        </div>
+                                                        <div>
+                                                            <dt class="text-sm font-medium text-gray-500">Seña (10%)</dt>
+                                                            <dd class="mt-1 text-sm text-gray-900">${{ depositAmount }}</dd>
+                                                        </div>
+                                                    </dl>
+                                                </div>
+
+                                                <div id="mercadopago-button-container"></div>
+
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" id="terms" v-model="termsAccepted" required
+                                                           class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded transition-colors duration-200">
+                                                    <label for="terms" class="ml-2 block text-sm text-gray-900">
+                                                        Acepto los <a href="#" @click.prevent="showTermsModal = true" class="text-primary hover:text-primary-dark underline">términos y condiciones</a>
+                                                    </label>
+                                                </div>
+
+                                                <button @click="confirmBooking" :disabled="!termsAccepted || isProcessing"
+                                                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
+                                                    {{ isProcessing ? 'Procesando...' : 'Confirmar Reserva' }}
+                                                </button>
+                                            </div>
+                                        </Transition>
+
+                                        <div class="mt-8 flex flex-wrap justify-between gap-4">
+                                            <button v-if="currentStep > 1" @click="previousStep"
+                                                    class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+                                                Anterior
+                                            </button>
+                                            <button v-if="currentStep < 5" @click="nextStep"
+                                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+                                                Siguiente
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div v-else-if="currentTab === 'shop'" key="shop">
+                                    <!-- Shop content -->
+                                    <div v-if="isLoading" class="animate-pulse">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            <div v-for="i in 6" :key="i" class="bg-gray-200 p-6 rounded-lg h-48"></div>
+                                        </div>
+                                    </div>
+                                    <div v-else-if="filteredProducts.length === 0" class="text-center py-12">
+                                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                        </svg>
+                                        <h3 class="mt-2 text-sm font-medium text-gray-900">No hay productos disponibles</h3>
+                                        <p class="mt-1 text-sm text-gray-500">Parece que no hay productos disponibles en este momento.</p>
+                                    </div>
+                                    <div v-else>
+                                        <h2 class="text-2xl font-semibold text-gray-900 mb-6">Catálogo de Productos</h2>
+                                        <div class="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+                                            <div v-for="product in filteredProducts" :key="product.id" class="group">
+                                                <div class="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
+                                                    <img src="https://via.placeholder.com/300" :alt="product.name" class="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity duration-300">
+                                                </div>
+                                                <h3 class="mt-4 text-sm text-gray-700">{{ product.name }}</h3>
+                                                <p class="mt-1 text-lg font-medium text-gray-900">${{ product.price }}</p>
+                                                <button @click="addToCart(product)" class="mt-3 w-full bg-primary border border-transparent rounded-md py-2 px-8 flex items-center justify-center text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+                                                    Agregar al Carrito
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div v-if="cart.length > 0" class="mt-12 bg-white shadow overflow-hidden sm:rounded-lg">
+                                            <div class="px-4 py-5 sm:px-6">
+                                                <h3 class="text-lg leading-6 font-medium text-gray-900">Carrito de Compras</h3>
+                                            </div>
+                                            <div class="border-t border-gray-200">
+                                                <dl>
+                                                    <div v-for="(item, index) in cart" :key="index" class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                        <dt class="text-sm font-medium text-gray-500">{{ item.name }}</dt>
+                                                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between">
+                                                            <span>${{ item.price }}</span>
+                                                            <button @click="removeFromCart(item)" class="text-red-600 hover:text-red-800 transition-colors duration-200">
+                                                                Eliminar
+                                                            </button>
+                                                        </dd>
+                                                    </div>
+                                                </dl>
+                                            </div>
+                                            <div class="px-4 py-5 bg-white sm:p-6">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-lg font-semibold text-gray-900">Total: ${{ cartTotal }}</span>
+                                                    <button @click="checkoutAndRedirect" :disabled="isProcessing" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+                                                        {{ isProcessing ? 'Procesando...' : 'Finalizar Compra' }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </Transition>
-
-                            <div class="mt-8 flex justify-between">
-                                <button v-if="currentStep > 1" @click="previousStep" class="btn bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
-                                    Anterior
-                                </button>
-                                <button v-if="currentStep < 5" @click="nextStep" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
-                                    Siguiente
-                                </button>
-                            </div>
                         </div>
                     </div>
-
-                    <div v-else-if="currentTab === 'shop'" key="shop">
-                        <div v-if="isLoading">
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div v-for="i in 6" :key="i" class="card p-6 space-y-4">
-                                    <div class="skeleton h-6 w-3/4 rounded"></div>
-                                    <div class="skeleton h-4 w-full rounded"></div>
-                                    <div class="skeleton h-4 w-5/6 rounded"></div>
-                                    <div class="skeleton h-10 w-full rounded"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else-if="filteredProducts.length === 0">
-                            <p class="text-center text-xl font-semibold text-gray-700">No hay productos disponibles en este momento.</p>
-                        </div>
-                        <div v-else>
-                            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Catálogo de Productos</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div v-for="product in filteredProducts" :key="product.id" class="card p-6 flex flex-col justify-between relative transform hover:scale-105 hover:shadow-lg transition-all duration-300">
-                                    <div>
-                                        <h3 class="font-semibold text-lg mb-2 text-gray-900">{{ product.name }}</h3>
-                                        <p class="text-sm text-gray-600 mb-4">{{ product.description }}</p>
-                                        <p class="text-gray-900 font-medium text-lg mb-4">${{ product.price }}</p>
-                                    </div>
-                                    <button @click="addToCart(product)" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
-                                        Agregar al Carrito
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="cart.length > 0" class="mt-12 bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold mb-4 text-gray-900">Carrito de Compras</h3>
-                            <ul class="space-y-4">
-                                <li v-for="item in cart" :key="item.id" class="flex justify-between items-center border-b pb-2">
-                                    <span class="text-gray-900">{{ item.name }} - ${{ item.price }}</span>
-                                    <button @click="removeFromCart(item)" class="text-red-600 hover:text-red-800">
-                                        Eliminar
-                                    </button>
-                                </li>
-                            </ul>
-                            <div class="mt-4 flex justify-between items-center">
-                                <span class="text-xl font-semibold text-gray-900">Total: ${{ cartTotal }}</span>
-                                <button @click="checkoutAndRedirect" class="btn bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 hover:shadow-md">
-                                    Finalizar Compra
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </Transition>
+                </div>
             </div>
-        </div>
+        </main>
+
+        <footer class="bg-white">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+                <div class="flex justify-center space-x-6 md:order-2">
+                    <a href="#" class="text-gray-400 hover:text-gray-500 transition-colors duration-200">
+                        <span class="sr-only">Facebook</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+
+                    <a href="#" class="text-gray-400 hover:text-gray-500 transition-colors duration-200">
+                        <span class="sr-only">Instagram</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+
+                    <a href="#" class="text-gray-400 hover:text-gray-500 transition-colors duration-200">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                        </svg>
+                    </a>
+                </div>
+                <div class="mt-8 md:mt-0 md:order-1">
+                    <p class="text-center text-base text-gray-400">&copy; 2023 {{ appTitle }}. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </footer>
 
         <Transition name="fade">
-            <div v-if="notification.show" :class="['fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white', {
+            <div v-if="notification.show" :class="['fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg text-white', {
                 'bg-green-500': notification.type === 'success',
                 'bg-red-500': notification.type === 'error',
                 'bg-blue-500': notification.type === 'info'
@@ -513,7 +637,7 @@
         </Transition>
 
         <Transition name="fade">
-            <div v-if="showTermsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div v-if="showTermsModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
                 <div class="bg-white rounded-lg p-8 max-w-lg w-full max-h-[80vh] overflow-y-auto">
                     <h2 class="text-2xl font-bold mb-4 text-gray-900">Términos y Condiciones</h2>
                     <div class="text-gray-700 space-y-4">
@@ -523,7 +647,7 @@
                         <p>4. Nos reservamos el derecho de modificar o cancelar reservas en circunstancias excepcionales.</p>
                         <p>5. La información personal proporcionada será tratada de acuerdo con nuestra política de privacidad.</p>
                     </div>
-                    <button @click="showTermsModal = false" class="mt-6 bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors duration-300">
+                    <button @click="showTermsModal = false" class="mt-6 bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark transition-colors duration-200">
                         Cerrar
                     </button>
                 </div>
@@ -531,39 +655,43 @@
         </Transition>
 
         <Transition name="fade">
-            <div v-if="showConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div v-if="showConfirmationModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
                 <div class="bg-white rounded-lg p-8 max-w-lg w-full">
                     <h2 class="text-2xl font-bold mb-4 text-gray-900">¡Reserva Confirmada!</h2>
                     <p class="text-gray-700 mb-4">Tu reserva ha sido confirmada con éxito. Hemos enviado un resumen a tu correo electrónico.</p>
                     <p class="text-gray-900 font-semibold mb-2">Número de Reserva: {{ bookingNumber }}</p>
                     <p class="text-gray-700 mb-4">Por favor, guarda este número para futuras referencias.</p>
-                    <button @click="closeConfirmationModal" class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors duration-300">
+                    <button @click="closeConfirmationModal" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark transition-colors duration-200">
                         Cerrar
                     </button>
                 </div>
             </div>
         </Transition>
 
-        <div class="fixed bottom-4 left-4">
-            <button @click="showChat = !showChat" class="bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors duration-300">
-                <span v-if="!showChat">Chat</span>
-                <span v-else>Cerrar</span>
+        <div class="fixed bottom-4 right-4">
+            <button @click="showChat = !showChat" class="bg-primary text-white p-3 rounded-full shadow-lg hover:bg-primary-dark transition-colors duration-300">
+                <svg v-if="!showChat" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+                <svg v-else class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
             </button>
         </div>
 
         <Transition name="slide-fade">
-            <div v-if="showChat" class="fixed bottom-16 left-4 w-80 bg-white rounded-lg shadow-xl p-4 z-50">
+            <div v-if="showChat" class="fixed bottom-20 right-4 w-80 bg-white rounded-lg shadow-xl p-4 z-50">
                 <div class="h-64 overflow-y-auto mb-4 space-y-2">
                     <div v-for="(message, index) in chatMessages" :key="index" :class="['p-2 rounded-lg', {
                         'bg-gray-200 text-gray-900': message.sender === 'user',
-                        'bg-gray-900 text-white': message.sender === 'support'
+                        'bg-primary text-white': message.sender === 'support'
                     }]">
                         {{ message.text }}
                     </div>
                 </div>
                 <form @submit.prevent="sendMessage" class="flex">
-                    <input v-model="chatInput" type="text" placeholder="Escribe tu mensaje..." class="flex-grow border rounded-l-lg p-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                    <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-r-lg hover:bg-gray-800 transition-colors duration-300">Enviar</button>
+                    <input v-model="chatInput" type="text" placeholder="Escribe tu mensaje..." class="flex-grow border rounded-l-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    <button type="submit" class="bg-primary text-white px-4 py-2 rounded-r-lg hover:bg-primary-dark transition-colors duration-300">Enviar</button>
                 </form>
             </div>
         </Transition>
@@ -613,69 +741,54 @@
 
 
                 const isTimeAvailable = (time) => {
-    if (!selectedDate.value) return false;
+        if (!selectedDate.value) return false;
 
-    const bookingDate = selectedDate.value.toISOString().split('T')[0];
-    const existingBookings = bookings.value.filter(booking =>
-        booking.date === bookingDate
-    );
+        const bookingDate = selectedDate.value.toISOString().split('T')[0];
+        const existingBookings = bookings.value.filter(booking =>
+            booking.date === bookingDate
+        );
 
-    for (const booking of existingBookings) {
-        const serviceDuration = getServiceDuration(booking.service_name);
-        const bookingStartTime = new Date(`2000-01-01T${booking.time}`);
-        const bookingEndTime = new Date(`2000-01-01T${addMinutesToTime(booking.time, serviceDuration + 30)}`);
-        const currentTime = new Date(`2000-01-01T${time}`);
-
-        if (currentTime >= bookingStartTime && currentTime < bookingEndTime) {
-            return false;
-        }
-    }
-
-    return true;
-};
-
-const getReservationInfo = (time) => {
-    if (!selectedDate.value) return '';
-
-    const bookingDate = selectedDate.value.toISOString().split('T')[0];
-    const dayBookings = bookings.value.filter(booking => booking.date === bookingDate);
-    
-    // Ordenar las reservas por hora
-    dayBookings.sort((a, b) => a.time.localeCompare(b.time));
-
-    let currentSlot = 0;
-    for (const booking of dayBookings) {
-        const serviceDuration = getServiceDuration(booking.service_name);
-        const slots = Math.ceil(serviceDuration / 30);
-        const totalSlots = slots + 1; // Añadir un slot extra
-        const bookingStartTime = new Date(`2000-01-01T${booking.time}`);
-        const bookingEndTime = new Date(`2000-01-01T${addMinutesToTime(booking.time, serviceDuration + 30)}`);
-        const currentTime = new Date(`2000-01-01T${time}`);
-
-        if (currentTime >= bookingStartTime && currentTime < bookingEndTime) {
-            return `Reservado (Slots ${currentSlot + 1}-${currentSlot + totalSlots})`;
+        for (const booking of existingBookings) {
+            const bookingStartTime = booking.time;
+            const bookingEndTime = booking.end_time;
+            
+            // Incluye el slot de fin en la reserva
+            if (bookingStartTime <= time && time <= bookingEndTime) {
+                return false;
+            }
         }
 
-        if (currentTime < bookingStartTime) {
-            break;
+        return true;
+    };
+
+    const getReservationInfo = (time) => {
+        if (!selectedDate.value) return '';
+
+        const bookingDate = selectedDate.value.toISOString().split('T')[0];
+        const existingBooking = bookings.value.find(booking => 
+            booking.date === bookingDate && 
+            booking.time <= time && 
+            time <= booking.end_time
+        );
+
+        if (existingBooking) {
+            return `${existingBooking.time} - ${existingBooking.end_time}`;
         }
 
-        currentSlot += totalSlots;
-    }
+        return '';
+    };
+            const addMinutesToTime = (time, minutes) => {
+                const [hours, mins] = time.split(':').map(Number);
+                const date = new Date(2000, 0, 1, hours, mins + minutes);
+                return date.toTimeString().slice(0, 5);
+            };
 
-    return '';
-};
 
 const getServiceDuration = (serviceName) => {
     const service = services.value.find(s => s.name === serviceName);
     return service ? service.duration : 0;
 };
 
-const addMinutesToTime = (time, minutes) => {
-    const [hours, mins] = time.split(':').map(Number);
-    const date = new Date(2000, 0, 1, hours, mins + minutes);
-    return date.toTimeString().slice(0, 5);
-};
 
                 const getReservedSlotNumber = (time) => {
     if (!selectedDate.value) return '';
