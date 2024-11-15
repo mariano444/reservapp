@@ -1094,6 +1094,10 @@ const getServiceDuration = (serviceName) => {
                     }
                 };
 
+                const formatDate = (date) => {
+                    return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+                };
+
 
     const simulatePaymentProcess = () => {
         return new Promise((resolve) => {
@@ -1555,26 +1559,18 @@ const confirmBooking = async (paymentStatus) => {
 
 
 const generateWhatsAppMessage = (booking) => {
-    let message = 'Resumen de la reserva:\n\n';
-    message += `Número de Reserva: ${bookingNumber.value}\n`;
-    message += `Servicio: ${booking.service_name}\n`;
-    message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
-    message += `Hora de inicio: ${booking.time}\n`;
-    message += `Hora de finalización: ${booking.end_time}\n`; // Asegúrate de que `end_time` esté calculado y almacenado correctamente
-    message += `Precio Total: $${booking.price}\n`;
-    message += `Seña Pagada: $${booking.deposit_amount}\n`;
-    message += `Nombre: ${booking.client_name}\n`;
-    message += `Teléfono: ${booking.client_phone}\n`;
-    return message;
+  let message = 'Resumen de la reserva:\n\n';
+  message += `Número de Reserva: ${bookingNumber.value}\n`;
+  message += `Servicio: ${booking.service_name}\n`;
+  message += `Fecha: ${formatDate(new Date(booking.date))}\n`;
+  message += `Hora de inicio: ${booking.time}\n`;
+  message += `Hora de finalización: ${booking.end_time}\n`; // Add this line
+  message += `Precio Total: $${booking.price}\n`;
+  message += `Seña Pagada: $${booking.deposit_amount}\n`;
+  message += `Nombre: ${booking.client_name}\n`;
+  message += `Teléfono: ${booking.client_phone}\n`;
+  return message;
 };
-
-const formatDate = (date) => {
-    // Asegúrate de que la fecha se formatee correctamente
-    const timeZoneOffset = date.getTimezoneOffset() * 60000; // Offset en milisegundos
-    const localDate = new Date(date.getTime() - timeZoneOffset);
-    return localDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-};
-
 
                 // Return the reactive state and methods
                 return {
