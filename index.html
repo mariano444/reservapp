@@ -291,6 +291,127 @@
             .shadow-soft {
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             }
+            
+
+            /* New styles for improved responsiveness */
+            .booking-steps {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 1rem;
+                padding-bottom: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .booking-step {
+                flex: 0 0 auto;
+                width: 150px;
+                text-align: center;
+                padding: 1rem;
+                background-color: #f3f4f6;
+                border-radius: 0.5rem;
+                transition: all 0.3s ease;
+            }
+            
+            .booking-step.active {
+                background-color: #4F46E5;
+                color: white;
+                transform: scale(1.05);
+            }
+            
+            .booking-step-icon {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .booking-step-text {
+                font-size: 0.875rem;
+            }
+            
+            @media (max-width: 640px) {
+                .booking-steps {
+                    justify-content: flex-start;
+                }
+                
+                .booking-step {
+                    width: 120px;
+                }
+                .calendar {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            }
+        /* Promo icons styles */
+        .promo-icons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+        
+        .icon {
+            font-style: normal;
+        }
+        
+            /* New styles for improved responsiveness */
+            .booking-steps {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 0.5rem;
+                padding-bottom: 1rem;
+                margin-bottom: 2rem;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            
+            .booking-steps::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .booking-step {
+                flex: 0 0 auto;
+                width: 80px;
+                text-align: center;
+                padding: 0.5rem;
+                background-color: #f3f4f6;
+                border-radius: 0.5rem;
+                transition: all 0.3s ease;
+            }
+            
+            .booking-step.active {
+                background-color: #4F46E5;
+                color: white;
+                transform: scale(1.05);
+            }
+            
+            .booking-step-icon {
+                font-size: 1.25rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .booking-step-text {
+                font-size: 0.75rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            @media (min-width: 640px) {
+                .booking-step {
+                    width: 100px;
+                    padding: 0.75rem;
+                }
+                
+                .booking-step-icon {
+                    font-size: 1.5rem;
+                }
+                
+                .booking-step-text {
+                    font-size: 0.875rem;
+                }
+            }
         </style>
         <script>
             tailwind.config = {
@@ -350,24 +471,24 @@
                                     <div v-else>
                                         <div class="mb-8">
                                             <nav aria-label="Progress">
-                                                <ol role="list" class="flex items-center justify-between sm:justify-start">
-                                                    <li v-for="step in 5" :key="step" :class="[step > 1 ? 'sm:ml-10' : '', 'relative']">
-                                                        <div v-if="step > 1" class="absolute inset-0 flex items-center" aria-hidden="true">
-                                                            <div class="h-0.5 w-full bg-gray-200"></div>
-                                                        </div>
-                                                        <a href="#" :class="['relative flex items-center justify-center w-8 h-8 rounded-full', { 'bg-primary text-white': currentStep >= step, 'bg-white border-2 border-gray-300': currentStep < step }]">
-                                                            <span v-if="currentStep > step" class="text-white">
-                                                                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                                                                </svg>
-                                                            </span>
-                                                            <span v-else>{{ step }}</span>
-                                                        </a>
-                                                        <div class="hidden sm:block mt-2 text-xs text-center">
-                                                            {{ ['Servicios', 'Fecha', 'Hora', 'Datos', 'Pago'][step - 1] }}
-                                                        </div>
-                                                    </li>
-                                                </ol>
+            <!-- Updated booking steps section -->
+            <div v-if="!isLoading && filteredServices.length > 0">
+                <div class="booking-steps">
+                    <div v-for="step in 5" :key="step" 
+                         :class="['booking-step', { 'active': currentStep >= step }]">
+                        <div class="booking-step-icon">
+                            <span v-if="step === 1">📋</span>
+                            <span v-else-if="step === 2">📅</span>
+                            <span v-else-if="step === 3">🕒</span>
+                            <span v-else-if="step === 4">👤</span>
+                            <span v-else>💳</span>
+                        </div>
+                        <div class="booking-step-text">
+                            {{ ['Servicios', 'Fecha', 'Hora', 'Datos', 'Pago'][step - 1] }}
+                        </div>
+                    </div>
+                </div>
+            </div>
                                             </nav>
                                         </div>
 
@@ -391,14 +512,18 @@
                                                         </div>
                                                         <div class="mt-4 flex items-center justify-between">
                                                             <p class="text-sm font-medium text-gray-900">${{ service.price }}</p>
-                                                            <div class="flex items-center">
+                                                            <!--div class="flex items-center">
                                                                 <svg class="text-yellow-400 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                                                     <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
                                                                 </svg>
                                                                 <p class="ml-1 text-sm text-gray-500">{{ service.rating.toFixed(1) }}</p>
-                                                            </div>
+                                                            </div-->
                                                         </div>
-                                                        <div v-if="service.promocion" class="promo-badge animate__animated animate__fadeIn">
+                                                        <div v-if="service.promocion" class="promo-badge animate__animated animate__fadeIn flex items-center">
+                                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
+                                                            </svg>
                                                             {{ service.nombre_promo || 'Promoción' }}
                                                         </div>
                                                     </div>
@@ -529,7 +654,7 @@
 
                                                 <div id="mercadopago-button-container"></div>
 
-                                                <div class="flex items-center">
+                                                <!--div class="flex items-center">
                                                     <input type="checkbox" id="terms" v-model="termsAccepted" required
                                                            class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded transition-colors duration-200">
                                                     <label for="terms" class="ml-2 block text-sm text-gray-900">
@@ -540,7 +665,7 @@
                                                 <button @click="confirmBooking" :disabled="!termsAccepted || isProcessing"
                                                         class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
                                                     {{ isProcessing ? 'Procesando...' : 'Confirmar Reserva' }}
-                                                </button>
+                                                </button-->
                                             </div>
                                         </Transition>
 
@@ -693,7 +818,7 @@
             </div>
         </Transition>
 
-        <div class="fixed bottom-4 right-4">
+        <!--div class="fixed bottom-4 right-4">
             <button @click="showChat = !showChat" class="bg-primary text-white p-3 rounded-full shadow-lg hover:bg-primary-dark transition-colors duration-300">
                 <svg v-if="!showChat" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -702,7 +827,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-        </div>
+        </div-->
 
         <!--Transition name="slide-fade">
             <div v-if="showChat" class="fixed bottom-20 right-4 w-80 bg-white rounded-lg shadow-xl p-4 z-50">
@@ -719,7 +844,7 @@
                     <button type="submit" class="bg-primary text-white px-4 py-2 rounded-r-lg hover:bg-primary-dark transition-colors duration-300">Enviar</button>
                 </form>
             </div>
-    </Transition-->
+        </Transition-->
     </div>
 
     <script>
@@ -999,7 +1124,7 @@ const getServiceDuration = (serviceName) => {
                 const initMercadoPago = async () => {
                     await createMercadoPagoPreference();
                     if (preferenceId.value) {
-                        const mp = new MercadoPago('APP_USR-7e074160-3840-4194-bf27-7beee9489c9d', {
+                        const mp = new MercadoPago('APP_USR-a222a3c7-3f87-46c5-afe1-c172aa35323d', {
                             locale: 'es-AR'
                         });
 
@@ -1056,7 +1181,7 @@ const getServiceDuration = (serviceName) => {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Authorization': 'Bearer APP_USR-3549263053798148-110618-852bdcdbea13c4a27d5d95d8e7f98f5b-2079511789'
+                                'Authorization': 'Bearer APP_USR-8142007441986200-111615-e50b20f8c3dc747c1b6b6bfa7924cc3e-1670125470'
                             },
                             body: JSON.stringify({
                                 items: [
