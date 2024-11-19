@@ -2016,73 +2016,6 @@ const getServiceDuration = (serviceName) => {
                     };
 
 
-
-                    const confirmBooking = async (paymentStatus) => {
-                        if (paymentStatus !== 'approved') {
-                            showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
-                            return;
-                        }
-
-                        isProcessingPayment.value = true;
-                        showNotification('Procesando tu reserva...', 'info');
-
-                        try {
-                            retrieveBookingDetails();
-
-                            if (!selectedDate.value) {
-                                throw new Error('No se encontraron detalles de la reserva');
-                            }
-
-                            const selectedService = selectedServices.value[0]; // Assuming single service selection
-                            const endTime = calculateEndTime(selectedTime.value, selectedService.duration);
-
-                            const booking = {
-                                admin_unique_code: adminCode.value,
-                                client_id: generateUUID(),
-                                service_name: selectedServices.value.map(s => s.name).join(', '),
-                                date: selectedDate.value.toISOString().split('T')[0],
-                                time: selectedTime.value,
-                                end_time: endTime,
-                                price: totalPrice.value,
-                                status: 'confirmed',
-                                payment_status: 'deposit_paid',
-                                deposit_amount: depositAmount.value,
-                                client_name: clientName.value,
-                                client_phone: clientPhone.value,
-                                client_email: clientEmail.value
-                            };
-
-                            const { data, error } = await supabase
-                                .from('bookings')
-                                .insert([booking]);
-
-                            if (error) throw error;
-
-                            showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
-                            
-                            bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-                            showConfirmationModal.value = true;
-
-                            const message = generateWhatsAppMessage(booking);
-                            const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
-                            
-                            window.open(whatsappUrl, '_blank');
-
-                            setTimeout(() => {
-                                window.location.href = whatsappUrl;
-                            }, 2000);
-
-                            resetBookingForm();
-                            currentStep.value = 1;
-                            localStorage.removeItem('bookingDetails');
-                        } catch (error) {
-                            console.error('Error al procesar la reserva:', error);
-                            showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
-                        } finally {
-                            isProcessingPayment.value = false;
-                        }
-                    };
-
                     const toggleService = (service) => {
                             const index = selectedServices.value.findIndex(s => s.id === service.id);
                             if (index === -1) {
@@ -2126,6 +2059,88 @@ const getServiceDuration = (serviceName) => {
                                     product.stock++;
                                 }
                                 showNotification('Producto eliminado del carrito.', 'success');
+                            }
+                        };
+                        
+
+                        const confirmBooking = async (paymentStatus) => {
+                            if (paymentStatus !== 'approved') {
+                                showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
+                                return;
+                            }
+
+                            isProcessingPayment.value = true;
+                            showNotification('Procesando tu reserva...', 'info');
+
+                            try {
+                                retrieveBookingDetails();
+
+                                if (!selectedDate.value) {
+                                    throw new Error('No se encontraron detalles de la reserva');
+                                }
+
+                                const selectedService = selectedServices.value[0]; // Asumiendo selección de un solo servicio
+                                const endTime = calculateEndTime(selectedTime.value, selectedService.duration);
+
+                                const booking = {
+                                    admin_unique_code: adminCode.value,
+                                    client_id: generateUUID(),
+                                    service_name: selectedServices.value.map(s => s.name).join(', '),
+                                    date: selectedDate.value.toISOString().split('T')[0],
+                                    time: selectedTime.value,
+                                    end_time: endTime,
+                                    price: totalPrice.value,
+                                    status: 'confirmed',
+                                    payment_status: 'deposit_paid',
+                                    deposit_amount: depositAmount.value,
+                                    client_name: clientName.value,
+                                    client_phone: clientPhone.value,
+                                    client_email: clientEmail.value
+                                };
+
+                                const { data, error } = await supabase
+                                    .from('bookings')
+                                    .insert([booking]);
+
+                                if (error) throw error;
+
+                                // Actualizar los cupos disponibles para el servicio
+                                for (const service of selectedServices.value) {
+                                    if (service.available_slots !== null) {
+                                        const { data, error } = await supabase
+                                            .from('services')
+                                            .update({ available_slots: service.available_slots - 1 })
+                                            .eq('id', service.id);
+
+                                        if (error) throw error;
+                                    }
+                                }
+
+                                showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
+                                
+                                bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                                showConfirmationModal.value = true;
+
+                                const message = generateWhatsAppMessage(booking);
+                                const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+                                
+                                window.open(whatsappUrl, '_blank');
+
+                                setTimeout(() => {
+                                    window.location.href = whatsappUrl;
+                                }, 2000);
+
+                                resetBookingForm();
+                                currentStep.value = 1;
+                                localStorage.removeItem('bookingDetails');
+
+                                // Actualizar la lista de servicios después de la reserva
+                                await fetchServices(adminCode);
+                            } catch (error) {
+                                console.error('Error al procesar la reserva:', error);
+                                showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
+                            } finally {
+                                isProcessingPayment.value = false;
                             }
                         };
 
