@@ -1351,10 +1351,6 @@ const fetchPromotions = async () => {
 
 
 
-                const formatDate = (date) => {
-                    return new Date(date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-                };
-
                 const formatCountdown = (milliseconds) => {
                     if (milliseconds <= 0) return 'Expirado';
                     const seconds = Math.floor(milliseconds / 1000);
@@ -2033,6 +2029,11 @@ const getServiceDuration = (serviceName) => {
                     };
 
 
+                   const formatDate = (date) => {
+                        // Ensure the date is formatted correctly
+                        const options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+                        return date.toLocaleDateString('es-ES', options);
+                    };
 
                     const confirmBooking = async (paymentStatus) => {
                         if (paymentStatus !== 'approved') {
