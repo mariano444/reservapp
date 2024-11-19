@@ -272,10 +272,10 @@
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 gap: 0.5rem;
             }
-            /* New styles for enhanced design */
+            /* New styles for enhanced design
             .gradient-bg {
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            }
+            } */
             .glass-effect {
                 background: rgba(255, 255, 255, 0.25);
                 backdrop-filter: blur(4px);
@@ -412,6 +412,188 @@
                     font-size: 0.875rem;
                 }
             }
+
+           /* .gradient-bg {
+    background: linear-gradient(135deg, #4338ca, #3b82f6);
+  }*/
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  .trust-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .trust-badge svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+  }
+  
+  .enhanced-button {
+    transition: all 0.3s ease;
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .enhanced-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .security-info {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-top: 1rem;
+  }
+                  
+            /* Enhanced styles for promotions */
+            .promotions-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            .promotion-card {
+                background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+                border-radius: 1rem;
+                overflow: hidden;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+                position: relative;
+            }
+            .promotion-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            .promotion-card:hover {
+                transform: translateY(-5px) scale(1.02);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            .promotion-card:hover::before {
+                opacity: 1;
+            }
+            .promotion-content {
+                padding: 1.5rem;
+                color: white;
+            }
+            .promotion-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+            }
+            .promotion-title-container {
+                flex-grow: 1;
+            }
+            .promotion-title {
+                font-size: 1.5rem;
+                font-weight: bold;
+                margin-bottom: 0.25rem;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            }
+            .promotion-service {
+                font-size: 1rem;
+                opacity: 0.9;
+                font-style: italic;
+            }
+            .promotion-price {
+                font-size: 1.5rem;
+                font-weight: bold;
+                background-color: rgba(255, 255, 255, 0.2);
+                padding: 0.5rem 1rem;
+                border-radius: 9999px;
+                white-space: nowrap;
+            }
+            .promotion-description {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+                opacity: 0.9;
+                line-height: 1.5;
+            }
+            .promotion-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+            }
+            .promotion-expiry, .promotion-slots {
+                background-color: rgba(255, 255, 255, 0.2);
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                display: flex;
+                align-items: center;
+            }
+            .promotion-expiry svg, .promotion-slots svg {
+                width: 1rem;
+                height: 1rem;
+                margin-right: 0.25rem;
+            }
+            .countdown {
+                font-size: 1rem;
+                font-weight: bold;
+                color: #FCD34D;
+                text-align: center;
+                margin-bottom: 1rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: rgba(0, 0, 0, 0.1);
+                padding: 0.5rem;
+                border-radius: 0.5rem;
+            }
+            .countdown svg {
+                width: 1.25rem;
+                height: 1.25rem;
+                margin-right: 0.5rem;
+            }
+            .select-promotion-btn {
+                background-color: rgba(255, 255, 255, 0.9);
+                color: #4F46E5;
+                font-weight: 600;
+                padding: 0.75rem 1.5rem;
+                border-radius: 9999px;
+                transition: all 0.3s ease;
+                display: block;
+                width: 100%;
+                text-align: center;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            .select-promotion-btn:hover {
+                background-color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            .pulse-animation {
+                animation: pulse 2s infinite;
+            }
         </style>
         <script>
             tailwind.config = {
@@ -436,12 +618,17 @@
             </div>
         </header>
 
-        <main class="flex-grow">
-            <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <!-- Main content -->
-                <div class="px-4 py-6 sm:px-0">
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                        <div class="p-6 bg-white border-b border-gray-200">
+        <!-- Add this just after the opening <body> tag -->
+<div class="gradient-bg py-2 text-black text-center text-sm">
+    🔒 Reservas seguras y garantizadas | 💯 Satisfacción del cliente
+  </div>
+  
+
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
                             <div class="mb-8 flex justify-center">
                                 <div class="inline-flex rounded-md shadow-sm" role="group">
                                     <button @click="setCurrentTab('booking')" :class="['px-4 py-2 text-sm font-medium rounded-l-lg focus:z-10 focus:ring-2 focus:ring-primary focus:text-white', currentTab === 'booking' ? 'bg-primary text-white' : 'bg-white text-gray-900 hover:bg-gray-50']">
@@ -461,7 +648,10 @@
                                             <div v-for="i in 6" :key="i" class="bg-gray-200 p-6 rounded-lg h-48"></div>
                                         </div>
                                     </div>
-                                    <div v-else-if="filteredServices.length === 0" class="text-center py-12">
+                                    <div v-if="isLoading" class="animate-pulse">
+                                        <!-- Loading skeleton remains unchanged -->
+                                    </div>
+                                    <div v-else-if="filteredServicesAndPartialPromos.length === 0" class="text-center py-12">
                                         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                             <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                                         </svg>
@@ -492,44 +682,122 @@
                                             </nav>
                                         </div>
 
+
                                         <Transition name="slide-fade" mode="out-in">
-                                            <!-- Step 1: Select Services -->
-                                            <div v-if="currentStep === 1" key="step1" class="space-y-6">
-                                                <h2 class="text-2xl font-semibold text-gray-900">Selecciona tus Servicios</h2>
-                                                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                                                    <div v-for="service in filteredServices" :key="service.id"
-                                                         @click="toggleService(service)"
-                                                         class="relative bg-white border rounded-lg shadow-sm p-6 cursor-pointer hover:border-primary focus:outline-none transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md"
-                                                         :class="{'border-primary ring-2 ring-primary': isServiceSelected(service), 'border-gray-200': !isServiceSelected(service)}">
-                                                        <div class="flex items-center justify-between">
-                                                            <div class="flex-1 truncate">
-                                                                <h3 class="text-sm font-medium text-gray-900">{{ service.name }}</h3>
-                                                                <p class="mt-1 text-xs text-gray-500">{{ service.description }}</p>
+                                            <div v-if="currentStep === 1">
+                                                <!-- Promotions Section -->
+
+<!-- Enhanced Promotions Section with Expired Promotion Handling -->
+<div v-if="fullPromotions.length > 0" class="mb-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">Promociones Especiales</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="promo in fullPromotions" :key="promo.id" class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105">
+            <div class="p-6 text-white">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-2">{{ promo.name }}</h3>
+                        <p class="text-indigo-100 text-sm">{{ promo.description }}</p>
+                    </div>
+                    <div class="bg-white text-indigo-600 text-xl font-bold py-1 px-3 rounded-full">
+                        ${{ promo.price }}
+                    </div>
+                </div>
+                <p class="mb-4 text-lg">{{ promo.nombre_promo }}</p>
+                <div class="flex justify-between items-center text-sm mb-4">
+                    <span v-if="promo.expiry_date" class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Expira: {{ formatDate(promo.expiry_date) }}
+                    </span>
+                    <span v-if="promo.available_slots" class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        {{ promo.available_slots }} cupos
+                    </span>
+                </div>
+                <div v-if="promo.countdown !== null" class="bg-white bg-opacity-20 text-white py-2 px-4 rounded-full text-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span v-if="promo.countdown > 0">Termina en: {{ formatCountdown(promo.countdown) }}</span>
+                    <span v-else>Promoción finalizada</span>
+                </div>
+                <button 
+                    v-if="promo.countdown === null || promo.countdown > 0"
+                    @click="selectPromotion(promo)" 
+                    class="w-full bg-white text-indigo-600 font-bold py-2 px-4 rounded-full hover:bg-indigo-100 transition-colors duration-300">
+                    Seleccionar
+                </button>
+                <div 
+                    v-else
+                    class="w-full bg-gray-400 text-white font-bold py-2 px-4 rounded-full text-center">
+                    Promoción finalizada
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                                            
+                                                    <!-- Services Section (including partial promotions) -->
+                                                    <div class="space-y-6">
+                                                        <h2 class="text-2xl font-semibold text-gray-900">Nuestros Servicios y Promociones</h2>
+                                                        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                                            <!-- Iteramos sobre todos los servicios y promociones -->
+                                                            <div v-for="service in filteredServicesAndPartialPromos" 
+                                                                 :key="service.id"
+                                                                 @click="toggleService(service)"
+                                                                 class="relative bg-white border rounded-lg shadow-sm p-6 cursor-pointer hover:border-primary focus:outline-none transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md"
+                                                                 :class="{'border-primary ring-2 ring-primary': isServiceSelected(service), 'border-gray-200': !isServiceSelected(service)}">
+                                                                
+                                                                <!-- Contenido del servicio -->
+                                                                <div class="flex items-center justify-between">
+                                                                    <div class="flex-1 truncate">
+                                                                        <h3 class="text-sm font-medium text-gray-900">{{ service.name }}</h3>
+                                                                        <p class="mt-1 text-xs text-gray-500">{{ service.description }}</p>
+                                                                    </div>
+                                                                    <svg v-if="isServiceSelected(service)" class="h-5 w-5 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                                                        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                                                                    </svg>
+                                                                </div>
+                                                                
+                                                                <!-- Precio y etiqueta de promoción -->
+                                                                <div class="mt-4 flex items-center justify-between">
+                                                                    <p class="text-sm font-medium text-gray-900">${{ service.price }}</p>
+                                                                    <div v-if="service.promocion" 
+                                                                         class="px-2 py-1 text-xs font-semibold rounded-full"
+                                                                         :class="{'bg-green-100 text-green-800': !service.countdown && !service.available_slots, 
+                                                                                  'bg-yellow-100 text-yellow-800': service.countdown || service.available_slots}">
+                                                                        {{ service.nombre_promo || 'Promoción' }}
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Detalles adicionales para promociones limitadas -->
+                                                                <div v-if="service.promocion && (service.countdown || service.available_slots)" class="mt-2 text-xs text-gray-600">
+                                                                    <div v-if="service.countdown" class="flex items-center">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                        </svg>
+                                                                        Termina en: {{ formatCountdown(service.countdown) }}
+                                                                    </div>
+                                                                    <div v-if="service.available_slots" class="flex items-center mt-1">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                                        </svg>
+                                                                        {{ service.available_slots }} cupos disponibles
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Botón de selección -->
+                                                                <button @click.stop="toggleService(service)" 
+                                                                        class="mt-4 w-full bg-primary border border-transparent rounded-md py-2 px-4 flex items-center justify-center text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+                                                                    {{ isServiceSelected(service) ? 'Deseleccionar' : 'Seleccionar' }}
+                                                                </button>
                                                             </div>
-                                                            <svg v-if="isServiceSelected(service)" class="h-5 w-5 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                                                            </svg>
-                                                        </div>
-                                                        <div class="mt-4 flex items-center justify-between">
-                                                            <p class="text-sm font-medium text-gray-900">${{ service.price }}</p>
-                                                            <!--div class="flex items-center">
-                                                                <svg class="text-yellow-400 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                                    <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
-                                                                </svg>
-                                                                <p class="ml-1 text-sm text-gray-500">{{ service.rating.toFixed(1) }}</p>
-                                                            </div-->
-                                                        </div>
-                                                        <div v-if="service.promocion" class="promo-badge animate__animated animate__fadeIn flex items-center">
-                                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
-                                                            </svg>
-                                                            {{ service.nombre_promo || 'Promoción' }}
                                                         </div>
                                                     </div>
-                                                </div>
                                             </div>
-
                                             <!-- Step 2: Select Date -->
                                             <div v-else-if="currentStep === 2" key="step2" class="space-y-6">
                                                 <h2 class="text-2xl font-semibold text-gray-900">Selecciona una Fecha</h2>
@@ -610,10 +878,32 @@
                                                         <input type="email" id="email" v-model="clientEmail" required
                                                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors duration-200">
                                                     </div-->
-                                                    <button type="submit"
-                                                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
-                                                        Continuar
-                                                    </button>
+<!-- Add these trust badges in the booking form, just before the "Continuar" button in Step 4 -->
+<div class="flex flex-wrap mb-4">
+    <span class="trust-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      Datos Seguros
+    </span>
+    <span class="trust-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      Reserva Garantizada
+    </span>
+  </div>
+  
+  <!-- Add this security info text just after the "Continuar" button in Step 4 -->
+  <p class="security-info">
+    🔒 Tu información está protegida con encriptación de 256 bits.
+  </p>
+  
+  <!-- Enhance the "Continuar" button in Step 4 with the new class -->
+  <button type="submit"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 enhanced-button">
+    Continuar
+  </button>
                                                 </form>
                                             </div>
 
@@ -744,6 +1034,41 @@
                     </div>
                 </div>
             </div>
+            <!-- Add this just before the closing </body> tag -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="glass-card p-6">
+      <h2 class="text-2xl font-semibold mb-4">¿Por qué elegirnos?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex items-start">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h3 class="font-semibold">Reservas Garantizadas</h3>
+            <p class="text-sm text-gray-600">Tu reserva está 100% garantizada.</p>
+          </div>
+        </div>
+        <div class="flex items-start">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h3 class="font-semibold">Atención Personalizada</h3>
+            <p class="text-sm text-gray-600">Estamos aquí para ayudarte en todo momento.</p>
+          </div>
+        </div>
+        <div class="flex items-start">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          </svg>
+          <div>
+            <h3 class="font-semibold">Calidad Garantizada</h3>
+            <p class="text-sm text-gray-600">Servicios y productos de alta calidad.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
         </main>
 
         <footer class="bg-white">
@@ -888,6 +1213,165 @@
                 const adminPhoneNumber = ref('');
                 const isProcessing = ref(false);
                 const isLoading = ref(true);
+                const promotions = ref([]);
+                
+                
+
+                const fetchServices = async (adminCode) => {
+    try {
+        console.log('Fetching services for admin code:', adminCode.value);
+        const { data, error } = await supabase
+            .from('services')
+            .select('*')
+            .eq('admin_unique_code', adminCode.value) // Filtrar por admin_unique_code
+            .eq('promocion', false); // Filtrar para obtener solo los servicios que no son promoción
+        if (error) throw error;
+        console.log('Services fetched:', data);
+        services.value = data.map(service => ({ ...service, rating: Math.random() * 5 }));
+    } catch (error) {
+        console.error('Error fetching services:', error);
+        showNotification('Error al cargar los servicios. Por favor, intenta de nuevo.', 'error');
+    }
+};
+
+
+            const fetchProducts = async () => {
+    try {
+        const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .eq('admin_unique_code', adminCode.value);
+        if (error) throw error;
+        products.value = data;
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        showNotification('Error al cargar los productos. Por favor, intenta de nuevo.', 'error');
+    }
+};
+
+
+onMounted(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    adminCode.value = urlParams.get('code');
+    const paymentStatus = urlParams.get('status');
+    
+    if (paymentStatus === 'approved') {
+        confirmBooking('approved');
+    }
+    
+    Promise.all([
+        fetchServices(adminCode), // Pasa adminCode a fetchServices
+        fetchProducts(),
+        fetchBusinessHours(),
+        fetchBookings(),
+        fetchAdminPhoneNumber(),
+        fetchBusinessName(),
+        fetchPromotions()
+    ]).then(() => {
+        isLoading.value = false;
+    }).catch(error => {
+        console.error('Error initializing app:', error);
+        showNotification('Error al cargar los datos. Por favor, recarga la página.', 'error');
+        isLoading.value = false;
+    });
+});
+
+
+
+
+                const fullPromotions = computed(() => {
+    return promotions.value.filter(promo => 
+        promo.expiry_date || promo.available_slots || promo.countdown
+    );
+});
+
+const partialPromotions = computed(() => {
+    return promotions.value.filter(promo => 
+        !promo.expiry_date && !promo.available_slots && !promo.countdown
+    );
+});
+
+const filteredServicesAndPartialPromos = computed(() => {
+    const regularServices = services.value.filter(service => !service.promocion);
+    const combinedServices = [...regularServices, ...partialPromotions.value];
+    
+    return combinedServices.filter(service =>
+        service.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        service.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+});
+
+// Update the existing methods or add new ones as needed
+const selectPromotion = (promo) => {
+    toggleService(promo);
+    currentStep.value = 2;
+};
+
+const toggleService = (service) => {
+    const index = selectedServices.value.findIndex(s => s.id === service.id);
+    if (index === -1) {
+        selectedServices.value.push(service);
+    } else {
+        selectedServices.value.splice(index, 1);
+    }
+};
+
+const isServiceSelected = (service) => {
+    return selectedServices.value.some(s => s.id === service.id);
+};
+
+                const filteredServices = computed(() => {
+    return services.value.filter(service =>
+        (service.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        service.description.toLowerCase().includes(searchQuery.value.toLowerCase())) &&
+        !promotions.value.some(promo => promo.id === service.id)
+    );
+});
+
+const fetchPromotions = async () => {
+    try {
+        console.log('Fetching promotions for admin code:', adminCode.value);
+        const { data, error } = await supabase
+            .from('services')
+            .select('*')
+            .eq('admin_unique_code', adminCode.value)
+            .eq('promocion', true); // Asegúrate de que esta condición es correcta
+        if (error) throw error;
+        console.log('Promotions fetched:', data);
+        promotions.value = data.map(promo => ({
+            ...promo,
+            expiry_date: promo.expiry_date ? new Date(promo.expiry_date) : null,
+            countdown: promo.countdown_end ? new Date(promo.countdown_end) - new Date() : null
+        }));
+    } catch (error) {
+        console.error('Error fetching promotions:', error);
+        showNotification('Error al cargar las promociones. Por favor, intenta de nuevo.', 'error');
+    }
+};
+
+
+
+                const formatDate = (date) => {
+                    return new Date(date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+                };
+
+                const formatCountdown = (milliseconds) => {
+                    if (milliseconds <= 0) return 'Expirado';
+                    const seconds = Math.floor(milliseconds / 1000);
+                    const minutes = Math.floor(seconds / 60);
+                    const hours = Math.floor(minutes / 60);
+                    const days = Math.floor(hours / 24);
+                    return `${days}d ${hours % 24}h ${minutes % 60}m ${seconds % 60}s`;
+                };
+
+
+                // Update countdown every second
+                setInterval(() => {
+                    promotions.value = promotions.value.map(promo => ({
+                        ...promo,
+                        countdown: promo.countdown ? promo.countdown - 1000 : null
+                    }));
+                }, 1000);
 
 
                 const isTimeAvailable = (time) => {
@@ -955,13 +1439,6 @@ const getServiceDuration = (serviceName) => {
     return bookingIndex !== -1 ? bookingIndex : '';
 };
 
-                // Computed properties
-                const filteredServices = computed(() => {
-                    return services.value.filter(service =>
-                        service.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                        service.description.toLowerCase().includes(searchQuery.value.toLowerCase())
-                    );
-                });
 
                 const filteredProducts = computed(() => {
                     return products.value.filter(product =>
@@ -1035,33 +1512,6 @@ const getServiceDuration = (serviceName) => {
                 // Methods
                 const setCurrentTab = (tab) => currentTab.value = tab;
 
-                const fetchServices = async () => {
-                    try {
-                        const { data, error } = await supabase
-                            .from('services')
-                            .select('*')
-                            .eq('admin_unique_code', adminCode.value);
-                        if (error) throw error;
-                        services.value = data.map(service => ({...service, rating: Math.random() * 5}));
-                    } catch (error) {
-                        console.error('Error fetching services:', error);
-                        showNotification('Error al cargar los servicios. Por favor, intenta de nuevo.', 'error');
-                    }
-                };
-
-                const fetchProducts = async () => {
-                    try {
-                        const { data, error } = await supabase
-                            .from('products')
-                            .select('*')
-                            .eq('admin_unique_code', adminCode.value);
-                        if (error) throw error;
-                        products.value = data;
-                    } catch (error) {
-                        console.error('Error fetching products:', error);
-                        showNotification('Error al cargar los productos. Por favor, intenta de nuevo.', 'error');
-                    }
-                };
 
                 const fetchBusinessName = async () => {
                     try {
@@ -1227,19 +1677,6 @@ const getServiceDuration = (serviceName) => {
             }, 2000);
         });
     };
-
-                const toggleService = (service) => {
-                    const index = selectedServices.value.findIndex(s => s.id === service.id);
-                    if (index === -1) {
-                        selectedServices.value.push(service);
-                    } else {
-                        selectedServices.value.splice(index, 1);
-                    }
-                };
-
-                const isServiceSelected = (service) => {
-                    return selectedServices.value.some(s => s.id === service.id);
-                };
 
                 const selectDate = (date) => {
                     if (isDateAvailable(date) && !isDateInPast(date)) {
@@ -1529,35 +1966,6 @@ const getServiceDuration = (serviceName) => {
                     }
                 });
 
-                onMounted(() => {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    adminCode.value = urlParams.get('code');
-                    const paymentStatus = urlParams.get('status');
-                    
-                    if (paymentStatus === 'approved') {
-                        confirmBooking('approved');
-                    }
-                    
-                    if (adminCode.value) {
-                        Promise.all([
-                            fetchServices(),
-                            fetchProducts(),
-                            fetchBusinessHours(),
-                            fetchBookings(),
-                            fetchAdminPhoneNumber(),
-                            fetchBusinessName()
-                        ]).then(() => {
-                            isLoading.value = false;
-                        }).catch(error => {
-                            console.error('Error initializing app:', error);
-                            showNotification('Error al cargar los datos. Por favor, recarga la página.', 'error');
-                            isLoading.value = false;
-                        });
-                    } else {
-                        showNotification('Código de administrador no proporcionado. Algunas funciones pueden no estar disponibles.', 'warning');
-                        isLoading.value = false;
-                    }
-                });
 
                 watch(() => currentStep.value, (newStep) => {
                     if (newStep === 5) {
@@ -1624,11 +2032,7 @@ const getServiceDuration = (serviceName) => {
                         return message;
                     };
 
-                    const formatDate = (date) => {
-                        // Ensure the date is formatted correctly
-                        const options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-                        return date.toLocaleDateString('es-ES', options);
-                    };
+
 
                     const confirmBooking = async (paymentStatus) => {
                         if (paymentStatus !== 'approved') {
@@ -1700,6 +2104,17 @@ const getServiceDuration = (serviceName) => {
                 return {
                     appTitle,
                     appSubtitle,
+                    promotions,
+                    formatDate,
+                    formatCountdown,
+                    fullPromotions,
+                    filteredServicesAndPartialPromos,
+                    currentTab,
+                    currentStep,
+                    promotions,
+                    formatDate,
+                    formatCountdown,
+                    selectPromotion,
                     isProcessingPayment,
                     currentTab,
                     searchQuery,
