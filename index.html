@@ -611,12 +611,27 @@
     </head>
 <body class="h-full">
     <div id="app" v-cloak class="min-h-screen flex flex-col bg-gray-50">
-        <header class="bg-white shadow-sm">
-            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold text-gray-900">{{ appTitle }}</h1>
-                <p class="mt-1 text-sm text-gray-600">{{ appSubtitle }}</p>
-            </div>
-        </header>
+<!-- Replace the existing header with this enhanced version -->
+<header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ appTitle }}</h1>
+      <p class="text-sm text-gray-600">{{ appSubtitle }}</p>
+      <div class="mt-4 flex space-x-2">
+        <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+          <svg class="mr-1.5 h-2 w-2 text-blue-400" fill="currentColor" viewBox="0 0 8 8">
+            <circle cx="4" cy="4" r="3" />
+          </svg>
+          Profesionales certificados
+        </span>
+        <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+          <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
+            <circle cx="4" cy="4" r="3" />
+          </svg>
+          Garantía de satisfacción
+        </span>
+      </div>
+    </div>
+  </header>
 
         <!-- Add this just after the opening <body> tag | 💯 Satisfacción del cliente -->
 <div class="gradient-bg py-2 text-black text-center text-sm">
@@ -625,8 +640,9 @@
   
 
   <main class="flex-grow">
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8" style="padding-top: 0!important;
+    padding-bottom: 0!important;">
+        <div class="px-4 py-6 sm:px-0" style="padding-top: 0!important;">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                             <div class="mb-8 flex justify-center">
@@ -658,10 +674,7 @@
                                         <h3 class="mt-2 text-sm font-medium text-gray-900">No hay servicios disponibles</h3>
                                         <p class="mt-1 text-sm text-gray-500">Parece que no hay servicios disponibles en este momento.</p>
                                     </div>
-                                    <div v-else>
-                                        <div class="mb-8">
-                                            <nav aria-label="Progress">
-            <!-- Updated booking steps section -->
+                                                <!-- Updated booking steps section 
             <div v-if="!isLoading && filteredServices.length > 0">
                 <div class="booking-steps">
                     <div v-for="step in 5" :key="step" 
@@ -678,7 +691,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
+                                    <div v-else>
+                                        <div class="mb-8">
+                                            <nav aria-label="Progress">
+
                                             </nav>
                                         </div>
 
@@ -745,11 +762,12 @@
                                                         <h2 class="text-2xl font-semibold text-gray-900">Nuestros Servicios y Promociones</h2>
                                                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                                                             <!-- Iteramos sobre todos los servicios y promociones -->
-                                                            <div v-for="service in filteredServicesAndPartialPromos" 
-                                                                 :key="service.id"
-                                                                 @click="toggleService(service)"
-                                                                 class="relative bg-white border rounded-lg shadow-sm p-6 cursor-pointer hover:border-primary focus:outline-none transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md"
-                                                                 :class="{'border-primary ring-2 ring-primary': isServiceSelected(service), 'border-gray-200': !isServiceSelected(service)}">
+<!-- Modify the service and product cards to add the hover effect -->
+<div v-for="service in filteredServicesAndPartialPromos" 
+     :key="service.id"
+     @click="toggleService(service)"
+     class="relative bg-white border rounded-lg shadow-sm p-6 cursor-pointer hover:border-primary focus:outline-none transition-all duration-300 ease-in-out hover-scale"
+     :class="{'border-primary ring-2 ring-primary': isServiceSelected(service), 'border-gray-200': !isServiceSelected(service)}">
                                                                 
                                                                 <!-- Contenido del servicio -->
                                                                 <div class="flex items-center justify-between">
@@ -1034,7 +1052,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Add this just before the closing </body> tag -->
+            <!-- Add this just before the closing </body> tag 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="glass-card p-6">
       <h2 class="text-2xl font-semibold mb-4">¿Por qué elegirnos?</h2>
@@ -1068,7 +1086,164 @@
         </div>
       </div>
     </div>
+  </div>-->
+            <!-- Add this just before the closing </body> tag -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="glass-card p-6">
+                  <h2 class="text-2xl font-semibold mb-4">¿Por qué elegirnos?</h2>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div>
+                        <h3 class="font-semibold">Reservas Garantizadas</h3>
+                        <p class="text-sm text-gray-600">Tu reserva está 100% garantizada.</p>
+                      </div>
+                    </div>
+                    <div class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div>
+                        <h3 class="font-semibold">Atención Personalizada</h3>
+                        <p class="text-sm text-gray-600">Estamos aquí para ayudarte en todo momento.</p>
+                      </div>
+                    </div>
+                    <div class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                      </svg>
+                      <div>
+                        <h3 class="font-semibold">Calidad Garantizada</h3>
+                        <p class="text-sm text-gray-600">Servicios y productos de alta calidad.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  <!-- Add this just before the closing </body> tag 
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">¿Por qué elegirnos?</h3>
+        <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Experiencia</dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">10+ años</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Clientes satisfechos</dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">5000+</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Calificación promedio</dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">4.9/5</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+-->
+  <!-- Gallery Section 
+<section class="py-12 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-center mb-8">Galería de Trabajos</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div v-for="image in galleryImages" :key="image.id" class="relative overflow-hidden rounded-lg shadow-lg aspect-w-1 aspect-h-1">
+          <img :src="image.src" :alt="image.alt" class="object-cover w-full h-full transition-transform duration-300 hover:scale-110">
+        </div>
+      </div>
+    </div>
+  </section>-->
+
+
+            <!-- Improved Contact Information Section -->
+            <section class="py-16 bg-gradient-to-b from-white to-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-900">Contacto</h2>
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                        <div class="p-8 md:p-12 lg:flex lg:items-center lg:justify-between">
+                            <div class="space-y-6 lg:max-w-lg">
+                                <h3 class="text-2xl font-bold text-gray-900">Información de Contacto</h3>
+                                <div class="space-y-4">
+                                    <!--p class="flex items-center text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                        {{ adminPhoneNumber }}
+                                    </p>
+                                    <p class="flex items-center text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                        {{ adminEmail }}
+                                    </p-->
+                                    <p class="flex items-center text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                        Representante: {{ adminName }} {{ adminLastName }}
+                                    </p>
+                                    <p class="flex items-start text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 mt-1 text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                        <span>{{ locationInfo.address }}, {{ locationInfo.city }}, {{ locationInfo.state }}, {{ locationInfo.country }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="mt-8 lg:mt-0 lg:ml-8 flex flex-col items-center">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-6">Contáctanos por WhatsApp</h3>
+                                <button @click="openWhatsApp" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300 transform hover:scale-105">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                    Iniciar chat en WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+                        <!-- Improved Contact Information Section
+                        <section class="py-12 bg-white">
+                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Información de Contacto</h2>
+                                <div class="bg-gradient-to-r from-primary to-primary-dark p-1 rounded-lg shadow-lg">
+                                    <div class="bg-white p-6 rounded-lg">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div class="space-y-4">
+                                                <h3 class="text-xl font-semibold text-gray-900">Nuestros Datos</h3>
+                                                <!--p class="flex items-center text-gray-600">
+                                                    <i data-lucide="mail" class="w-5 h-5 mr-2 text-primary"></i>
+                                                    {{ adminEmail }}
+                                                </p
+                                                <p class="flex items-center text-gray-600">
+                                                    <i data-lucide="user" class="w-5 h-5 mr-2 text-primary"></i>
+                                                    Representante: {{ adminName }} {{ adminLastName }}
+                                                </p>
+                                                <p class="flex items-center text-gray-600">
+                                                    <i data-lucide="map-pin" class="w-5 h-5 mr-2 text-primary"></i>
+                                                    {{ locationInfo.address }}, {{ locationInfo.city }}, {{ locationInfo.state }}, {{ locationInfo.country }}
+                                                </p>
+                                            </div>
+                                            <div class="flex flex-col justify-center items-center space-y-4">
+                                                <h3 class="text-xl font-semibold text-gray-900">Contáctanos por WhatsApp</h3>
+                                                <button @click="openWhatsApp" class="flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                                                    <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
+                                                    Iniciar chat en WhatsApp
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section> -->
+
         </main>
 
         <footer class="bg-white">
@@ -1214,8 +1389,62 @@
                 const isProcessing = ref(false);
                 const isLoading = ref(true);
                 const promotions = ref([]);
-                
-                
+                const adminEmail = ref('');
+                const adminName = ref('');
+                const adminLastName = ref('');
+
+                // Modificamos esta función para obtener toda la información del administrador
+                const fetchAdminInfo = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .select('phone, email, first_name, last_name')
+                            .eq('admin_unique_code', adminCode.value)
+                            .single();
+                        if (error) throw error;
+                        adminPhoneNumber.value = data.phone;
+                        adminEmail.value = data.email;
+                        adminName.value = data.first_name;
+                        adminLastName.value = data.last_name;
+                    } catch (error) {
+                        console.error('Error fetching admin information:', error);
+                        showNotification('Error al cargar la información del administrador.', 'error');
+                    }
+                };
+
+                    // Add these new reactive references
+                    const locationInfo = ref({});
+
+                    const fetchLocationInfo = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('locations')
+                            .select('*')
+                            .eq('admin_unique_code', adminCode.value)
+                            .single();
+                        if (error) throw error;
+                        locationInfo.value = data;
+                    } catch (error) {
+                        console.error('Error fetching location info:', error);
+                        showNotification('Error al cargar la información de ubicación.', 'error');
+                    }
+                };
+
+const openWhatsApp = () => {
+  const message = encodeURIComponent('Hola, me gustaría obtener más información sobre sus servicios.');
+  window.open(`https://wa.me/${adminPhoneNumber.value}?text=${message}`, '_blank');
+};
+
+                const galleryImages = ref([
+  { id: 1, src: '/placeholder.svg?height=300&width=400', alt: 'Trabajo 1' },
+  { id: 2, src: '/placeholder.svg?height=300&width=400', alt: 'Trabajo 2' },
+  { id: 3, src: '/placeholder.svg?height=300&width=400', alt: 'Trabajo 3' },
+  { id: 4, src: '/placeholder.svg?height=300&width=400', alt: 'Trabajo 4' },
+  { id: 5, src: '/placeholder.svg?height=300&width=400', alt: 'Trabajo 5' },
+  { id: 6, src: '/placeholder.svg?height=300&width=400', alt: 'Trabajo 6' },
+  { id: 7, src: '/placeholder.svg?height=300&width=400', alt: 'Trabajo 7' },
+  { id: 8, src: '/placeholder.svg?height=300&width=400', alt: 'Trabajo 8' },
+]);
 
                 const fetchServices = async (adminCode) => {
     try {
@@ -1266,7 +1495,9 @@ onMounted(() => {
         fetchBookings(),
         fetchAdminPhoneNumber(),
         fetchBusinessName(),
-        fetchPromotions()
+        fetchPromotions(),
+        fetchLocationInfo(),
+        fetchAdminInfo(),
     ]).then(() => {
         isLoading.value = false;
     }).catch(error => {
@@ -1307,14 +1538,6 @@ const selectPromotion = (promo) => {
     currentStep.value = 2;
 };
 
-const toggleService = (service) => {
-    const index = selectedServices.value.findIndex(s => s.id === service.id);
-    if (index === -1) {
-        selectedServices.value.push(service);
-    } else {
-        selectedServices.value.splice(index, 1);
-    }
-};
 
 const isServiceSelected = (service) => {
     return selectedServices.value.some(s => s.id === service.id);
@@ -1722,18 +1945,6 @@ const getServiceDuration = (serviceName) => {
                     }
                 };
 
-                const addToCart = (product) => {
-                    cart.value.push(product);
-                    showNotification('Producto agregado al carrito.', 'success');
-                };
-
-                const removeFromCart = (item) => {
-                    const index = cart.value.findIndex(cartItem => cartItem.id === item.id);
-                    if (index !== -1) {
-                        cart.value.splice(index, 1);
-                        showNotification('Producto eliminado del carrito.', 'success');
-                    }
-                };
 
                 const saveOrderToDatabase = async () => {
                     try {
@@ -2035,80 +2246,147 @@ const getServiceDuration = (serviceName) => {
                     };
 
 
+                    const toggleService = (service) => {
+                            const index = selectedServices.value.findIndex(s => s.id === service.id);
+                            if (index === -1) {
+                                // Check if the service has available slots
+                                if (service.available_slots !== null && service.available_slots > 0) {
+                                    selectedServices.value.push(service);
+                                    // Decrease available slots
+                                    service.available_slots--;
+                                } else if (service.available_slots === null) {
+                                    // If available_slots is null, add the service without restrictions
+                                    selectedServices.value.push(service);
+                                } else {
+                                    showNotification('No hay cupos disponibles para este servicio.', 'error');
+                                }
+                            } else {
+                                selectedServices.value.splice(index, 1);
+                                // Increase available slots when deselecting
+                                if (service.available_slots !== null) {
+                                    service.available_slots++;
+                                }
+                            }
+                        };
 
-                    const confirmBooking = async (paymentStatus) => {
-                        if (paymentStatus !== 'approved') {
-                            showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
-                            return;
-                        }
+                        const addToCart = (product) => {
+                            if (product.stock > 0) {
+                                cart.value.push(product);
+                                product.stock--;
+                                showNotification('Producto agregado al carrito.', 'success');
+                            } else {
+                                showNotification('Producto agotado.', 'error');
+                            }
+                        };
 
-                        isProcessingPayment.value = true;
-                        showNotification('Procesando tu reserva...', 'info');
+                        const removeFromCart = (item) => {
+                            const index = cart.value.findIndex(cartItem => cartItem.id === item.id);
+                            if (index !== -1) {
+                                cart.value.splice(index, 1);
+                                // Increase stock when removing from cart
+                                const product = products.value.find(p => p.id === item.id);
+                                if (product) {
+                                    product.stock++;
+                                }
+                                showNotification('Producto eliminado del carrito.', 'success');
+                            }
+                        };
+                        
 
-                        try {
-                            retrieveBookingDetails();
-
-                            if (!selectedDate.value) {
-                                throw new Error('No se encontraron detalles de la reserva');
+                        const confirmBooking = async (paymentStatus) => {
+                            if (paymentStatus !== 'approved') {
+                                showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
+                                return;
                             }
 
-                            const selectedService = selectedServices.value[0]; // Assuming single service selection
-                            const endTime = calculateEndTime(selectedTime.value, selectedService.duration);
+                            isProcessingPayment.value = true;
+                            showNotification('Procesando tu reserva...', 'info');
 
-                            const booking = {
-                                admin_unique_code: adminCode.value,
-                                client_id: generateUUID(),
-                                service_name: selectedServices.value.map(s => s.name).join(', '),
-                                date: selectedDate.value.toISOString().split('T')[0],
-                                time: selectedTime.value,
-                                end_time: endTime,
-                                price: totalPrice.value,
-                                status: 'confirmed',
-                                payment_status: 'deposit_paid',
-                                deposit_amount: depositAmount.value,
-                                client_name: clientName.value,
-                                client_phone: clientPhone.value,
-                                client_email: clientEmail.value
-                            };
+                            try {
+                                retrieveBookingDetails();
 
-                            const { data, error } = await supabase
-                                .from('bookings')
-                                .insert([booking]);
+                                if (!selectedDate.value) {
+                                    throw new Error('No se encontraron detalles de la reserva');
+                                }
 
-                            if (error) throw error;
+                                const selectedService = selectedServices.value[0]; // Asumiendo selección de un solo servicio
+                                const endTime = calculateEndTime(selectedTime.value, selectedService.duration);
 
-                            showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
-                            
-                            bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-                            showConfirmationModal.value = true;
+                                const booking = {
+                                    admin_unique_code: adminCode.value,
+                                    client_id: generateUUID(),
+                                    service_name: selectedServices.value.map(s => s.name).join(', '),
+                                    date: selectedDate.value.toISOString().split('T')[0],
+                                    time: selectedTime.value,
+                                    end_time: endTime,
+                                    price: totalPrice.value,
+                                    status: 'confirmed',
+                                    payment_status: 'deposit_paid',
+                                    deposit_amount: depositAmount.value,
+                                    client_name: clientName.value,
+                                    client_phone: clientPhone.value,
+                                    client_email: clientEmail.value
+                                };
 
-                            const message = generateWhatsAppMessage(booking);
-                            const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
-                            
-                            window.open(whatsappUrl, '_blank');
+                                const { data, error } = await supabase
+                                    .from('bookings')
+                                    .insert([booking]);
 
-                            setTimeout(() => {
-                                window.location.href = whatsappUrl;
-                            }, 2000);
+                                if (error) throw error;
 
-                            resetBookingForm();
-                            currentStep.value = 1;
-                            localStorage.removeItem('bookingDetails');
-                        } catch (error) {
-                            console.error('Error al procesar la reserva:', error);
-                            showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
-                        } finally {
-                            isProcessingPayment.value = false;
-                        }
-                    };
+                                // Actualizar los cupos disponibles para el servicio
+                                for (const service of selectedServices.value) {
+                                    if (service.available_slots !== null) {
+                                        const { data, error } = await supabase
+                                            .from('services')
+                                            .update({ available_slots: service.available_slots - 1 })
+                                            .eq('id', service.id);
+
+                                        if (error) throw error;
+                                    }
+                                }
+
+                                showNotification('Reserva confirmada y seña procesada con éxito!', 'success');
+                                
+                                bookingNumber.value = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                                showConfirmationModal.value = true;
+
+                                const message = generateWhatsAppMessage(booking);
+                                const whatsappUrl = `https://wa.me/${adminPhoneNumber.value}?text=${encodeURIComponent(message)}`;
+                                
+                                window.open(whatsappUrl, '_blank');
+
+                                setTimeout(() => {
+                                    window.location.href = whatsappUrl;
+                                }, 2000);
+
+                                resetBookingForm();
+                                currentStep.value = 1;
+                                localStorage.removeItem('bookingDetails');
+
+                                // Actualizar la lista de servicios después de la reserva
+                                await fetchServices(adminCode);
+                            } catch (error) {
+                                console.error('Error al procesar la reserva:', error);
+                                showNotification('Hubo un error al procesar tu reserva. Por favor, intenta de nuevo.', 'error');
+                            } finally {
+                                isProcessingPayment.value = false;
+                            }
+                        };
+                        
 
                 // Return the reactive state and methods
                 return {
                     appTitle,
                     appSubtitle,
                     promotions,
+                    locationInfo,
                     formatDate,
                     formatCountdown,
+                    galleryImages,
+                    adminEmail,
+                    adminName,
+                    openWhatsApp,
                     fullPromotions,
                     filteredServicesAndPartialPromos,
                     currentTab,
