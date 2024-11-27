@@ -953,14 +953,21 @@
                                                             <dt class="text-sm font-medium text-gray-500">Precio Total</dt>
                                                             <dd class="mt-1 text-sm text-gray-900">${{ totalPrice }}</dd>
                                                         </div>
-                                                        <div>
+                                                        <div v-if="!adminPlanActive">
                                                             <dt class="text-sm font-medium text-gray-500">Seña (10%)</dt>
                                                             <dd class="mt-1 text-sm text-gray-900">${{ depositAmount }}</dd>
                                                         </div>
                                                     </dl>
                                                 </div>
 
-                                                <div id="mercadopago-button-container"></div>
+                                                <div v-if="adminPlanActive">
+                                                    <button @click="confirmBooking('approved')" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+                                                        Confirmar la reserva
+                                                    </button>
+                                                </div>
+                                                <div v-else>
+                                                    <div id="mercadopago-button-container"></div>
+                                                </div>
 
                                                 <!--div class="flex items-center">
                                                     <input type="checkbox" id="terms" v-model="termsAccepted" required
@@ -1393,24 +1400,103 @@
                 const adminName = ref('');
                 const adminLastName = ref('');
 
-                // Modificamos esta función para obtener toda la información del administrador
-                const fetchAdminInfo = async () => {
-                    try {
-                        const { data, error } = await supabase
-                            .from('admin_configurations')
-                            .select('phone, email, first_name, last_name')
-                            .eq('admin_unique_code', adminCode.value)
-                            .single();
-                        if (error) throw error;
-                        adminPhoneNumber.value = data.phone;
-                        adminEmail.value = data.email;
-                        adminName.value = data.first_name;
-                        adminLastName.value = data.last_name;
-                    } catch (error) {
-                        console.error('Error fetching admin information:', error);
-                        showNotification('Error al cargar la información del administrador.', 'error');
+
+            const fetchAdminPlanStatus = async () => {
+                try {
+                    if (!adminEmail.value) {
+                        console.error('Admin email is not set');
+                        return;
                     }
-                };
+                    const { data, error } = await supabase
+                        .from('user_plans')
+                        .select('is_active')
+                        .eq('email', adminEmail.value)
+                        .single();
+                    if (error) throw error;
+                    adminPlanActive.value = data.is_active;
+                } catch (error) {
+                    console.error('Error fetching admin plan status:', error);
+                    showNotification('Error al verificar el estado del plan del administrador.', 'error');
+                }
+            };
+
+            const fetchAdminInfo = async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from('admin_configurations')
+                        .select('phone, email, first_name, last_name')
+                        .eq('admin_unique_code', adminCode.value)
+                        .single();
+                    if (error) throw error;
+                    adminPhoneNumber.value = data.phone;
+                    adminEmail.value = data.email;
+                    adminName.value = data.first_name;
+                    adminLastName.value = data.last_name;
+                    await fetchAdminPlanStatus(); // Call this after setting adminEmail
+                } catch (error) {
+                    console.error('Error fetching admin information:', error);
+                    showNotification('Error al cargar la información del administrador.', 'error');
+                }
+            };
+
+            const initMercadoPago = async () => {
+                await createMercadoPagoPreference();
+                if (preferenceId.value) {
+                    const mp = new MercadoPago('APP_USR-a222a3c7-3f87-46c5-afe1-c172aa35323d', {
+                        locale: 'es-AR'
+                    });
+
+                    mp.checkout({
+                        preference: {
+                            id: preferenceId.value
+                        },
+                        render: {
+                            container: '#mercadopago-button-container',
+                            label: 'Pagar con MercadoPago',
+                        }
+                    });
+
+                    // Remove the event listener since it's not supported in this version
+                } else {
+                    showNotification('Error al inicializar el pago. Por favor, intenta de nuevo.', 'error');
+                }
+            };
+
+            onMounted(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                adminCode.value = urlParams.get('code');
+                const paymentStatus = urlParams.get('status');
+                
+                if (paymentStatus === 'approved') {
+                    confirmBooking('approved');
+                }
+                
+                Promise.all([
+                    fetchServices(adminCode),
+                    fetchProducts(),
+                    fetchBusinessHours(),
+                    fetchBookings(),
+                    fetchAdminPhoneNumber(),
+                    fetchBusinessName(),
+                    fetchPromotions(),
+                    fetchLocationInfo(),
+                    fetchAdminInfo(),
+                    // fetchAdminPlanStatus is now called within fetchAdminInfo
+                ]).then(() => {
+                    isLoading.value = false;
+                }).catch(error => {
+                    console.error('Error initializing app:', error);
+                    showNotification('Error al cargar los datos. Por favor, recarga la página.', 'error');
+                    isLoading.value = false;
+                });
+            });
+
+
+
+                            // Add new reactive reference for admin plan status
+            const adminPlanActive = ref(false);
+
+
 
                     // Add these new reactive references
                     const locationInfo = ref({});
@@ -1477,36 +1563,6 @@ const openWhatsApp = () => {
         showNotification('Error al cargar los productos. Por favor, intenta de nuevo.', 'error');
     }
 };
-
-
-onMounted(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    adminCode.value = urlParams.get('code');
-    const paymentStatus = urlParams.get('status');
-    
-    if (paymentStatus === 'approved') {
-        confirmBooking('approved');
-    }
-    
-    Promise.all([
-        fetchServices(adminCode), // Pasa adminCode a fetchServices
-        fetchProducts(),
-        fetchBusinessHours(),
-        fetchBookings(),
-        fetchAdminPhoneNumber(),
-        fetchBusinessName(),
-        fetchPromotions(),
-        fetchLocationInfo(),
-        fetchAdminInfo(),
-    ]).then(() => {
-        isLoading.value = false;
-    }).catch(error => {
-        console.error('Error initializing app:', error);
-        showNotification('Error al cargar los datos. Por favor, recarga la página.', 'error');
-        isLoading.value = false;
-    });
-});
-
 
 
 
@@ -1796,30 +1852,6 @@ const getServiceDuration = (serviceName) => {
                 const isProcessingPayment = ref(false);
 
 
-                const initMercadoPago = async () => {
-                    await createMercadoPagoPreference();
-                    if (preferenceId.value) {
-                        const mp = new MercadoPago('APP_USR-a222a3c7-3f87-46c5-afe1-c172aa35323d', {
-                            locale: 'es-AR'
-                        });
-
-                        const checkout = mp.checkout({
-                            preference: {
-                                id: preferenceId.value
-                            },
-                            render: {
-                                container: '#mercadopago-button-container',
-                                label: 'Pagar con MercadoPago',
-                            }
-                        });
-
-                        checkout.on('payment_received', (data) => {
-                            confirmBooking(data.status);
-                        });
-                    } else {
-                        showNotification('Error al inicializar el pago. Por favor, intenta de nuevo.', 'error');
-                    }
-                };
 
                 const retrieveBookingDetails = () => {
                     const storedDetails = localStorage.getItem('bookingDetails');
@@ -2293,46 +2325,47 @@ const getServiceDuration = (serviceName) => {
                         };
                         
 
-                        const confirmBooking = async (paymentStatus) => {
-                            if (paymentStatus !== 'approved') {
-                                showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
-                                return;
-                            }
+            // Modify the confirmBooking function
+            const confirmBooking = async (paymentStatus) => {
+                if (paymentStatus !== 'approved' && !adminPlanActive.value) {
+                    showNotification('El pago no fue aprobado. Por favor, intenta de nuevo.', 'error');
+                    return;
+                }
 
-                            isProcessingPayment.value = true;
-                            showNotification('Procesando tu reserva...', 'info');
+                isProcessingPayment.value = true;
+                showNotification('Procesando tu reserva...', 'info');
 
-                            try {
-                                retrieveBookingDetails();
+                try {
+                    retrieveBookingDetails();
 
-                                if (!selectedDate.value) {
-                                    throw new Error('No se encontraron detalles de la reserva');
-                                }
+                    if (!selectedDate.value) {
+                        throw new Error('No se encontraron detalles de la reserva');
+                    }
 
-                                const selectedService = selectedServices.value[0]; // Asumiendo selección de un solo servicio
-                                const endTime = calculateEndTime(selectedTime.value, selectedService.duration);
+                    const selectedService = selectedServices.value[0]; // Asumiendo selección de un solo servicio
+                    const endTime = calculateEndTime(selectedTime.value, selectedService.duration);
 
-                                const booking = {
-                                    admin_unique_code: adminCode.value,
-                                    client_id: generateUUID(),
-                                    service_name: selectedServices.value.map(s => s.name).join(', '),
-                                    date: selectedDate.value.toISOString().split('T')[0],
-                                    time: selectedTime.value,
-                                    end_time: endTime,
-                                    price: totalPrice.value,
-                                    status: 'confirmed',
-                                    payment_status: 'deposit_paid',
-                                    deposit_amount: depositAmount.value,
-                                    client_name: clientName.value,
-                                    client_phone: clientPhone.value,
-                                    client_email: clientEmail.value
-                                };
+                    const booking = {
+                        admin_unique_code: adminCode.value,
+                        client_id: generateUUID(),
+                        service_name: selectedServices.value.map(s => s.name).join(', '),
+                        date: selectedDate.value.toISOString().split('T')[0],
+                        time: selectedTime.value,
+                        end_time: endTime,
+                        price: totalPrice.value,
+                        status: 'confirmed',
+                        payment_status: adminPlanActive.value ? 'not_required' : 'deposit_paid',
+                        deposit_amount: adminPlanActive.value ? 0 : depositAmount.value,
+                        client_name: clientName.value,
+                        client_phone: clientPhone.value,
+                        client_email: clientEmail.value
+                    };
 
-                                const { data, error } = await supabase
-                                    .from('bookings')
-                                    .insert([booking]);
+                    const { data, error } = await supabase
+                        .from('bookings')
+                        .insert([booking]);
 
-                                if (error) throw error;
+                    if (error) throw error;
 
                                 // Actualizar los cupos disponibles para el servicio
                                 for (const service of selectedServices.value) {
@@ -2379,6 +2412,7 @@ const getServiceDuration = (serviceName) => {
                 return {
                     appTitle,
                     appSubtitle,
+                    adminPlanActive,
                     promotions,
                     locationInfo,
                     formatDate,
