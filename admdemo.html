@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://kit.fontawesome.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://ui-avatars.com https://tailwindui.com data:; connect-src 'self' https://tbtzlqeoogcfviojfqzg.supabase.co https://tbtzlqeoogcfviojfqzg.supabase.co;">
+    <title>Panel de Administración Profesional</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/vue3-smooth-scroll"></script>
+    <style>
+        [v-cloak] { display: none; }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 640px) {
+            .responsive-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            }
+            .responsive-padding {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+        }
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+        }
+        @media (max-width: 640px) {
+            .mobile-nav {
+                display: flex;
+            }
+            .desktop-nav {
+                display: none;
+            }
+            .content-area {
+                padding-bottom: 70px;
+            }
+        }
+        @media (max-width: 640px) {
+            .touch-target {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+        [v-cloak] { display: none; }
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .preloader-content {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .mobile-menu-button {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+            background-color: #4F46E5;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .mobile-menu-button:hover {
+            background-color: #4338CA;
+        }
+        .mobile-menu-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /*background-color: rgba(0, 0, 0, 0.5);*/
+            z-index: 1000;
+            display: none;
+        }
+        .mobile-menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80%;
+            max-width: 300px;
+            height: 100%;
+            background-color: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            overflow-y: auto;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .mobile-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            color: #6B7280;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        .mobile-menu-item:hover {
+            background-color: #F3F4F6;
+        }
+        .mobile-menu-item.active {
+            color: #4F46E5;
+            background-color: #EEF2FF;
+        }
+        .mobile-menu-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        .mobile-menu-header {
+            padding: 1rem;
+            background-color: #4F46E5;
+            color: white;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        .mobile-menu-footer {
+            padding: 1rem;
+            border-top: 1px solid #E5E7EB;
+        }
+        @media (max-width: 640px) {
+            .mobile-menu-button {
+                display: block;
+            }
+            .mobile-menu-wrapper {
+                display: block;
+            }
+            .desktop-nav {
+                display: none;
+            }
+            .content-area {
+                padding-top: 4rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="app" v-cloak>
+        <div v-if="isLoading" class="preloader">
+            <div class="preloader-content">
+                <div class="spinner"></div>
+                <p>Cargando...</p>
+            </div>
+        </div>
+
+        <div v-else-if="!isAuthenticated">
+            <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+                <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
+                    <div>
+                        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Acceso no autorizado</h2>
+                        <p class="mt-2 text-center text-sm text-gray-600">
+                            Por favor, inicia sesión para acceder al panel de administración.
+                        </p>
+                    </div>
+                    <div>
+                        <button @click="redirectToLogin" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 touch-target">
+                            Ir a la página de inicio de sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-else>
+            <nav class="bg-white shadow-lg desktop-nav">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                        <div class="flex">
+                            <div class="flex-shrink-0 flex items-center">
+                                <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow">
+                            </div>
+                            <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                                <a v-for="tab in tabs" :key="tab" 
+                                   @click="changeTab(tab.toLowerCase())"
+                                   :class="['border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium cursor-pointer transition-colors duration-200', 
+                                            currentTab === tab.toLowerCase() ? 'border-indigo-500 text-gray-900' : '']">
+                                    {{ tab }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+                            <button @click="logout" class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                                <span class="sr-only">Cerrar sesión</span>
+                                Cerrar sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Updated Mobile Navigation 
+            <nav class="mobile-nav">
+                <a v-for="tab in tabs" :key="tab" 
+                   @click="changeTab(tab.toLowerCase())"
+                   :class="['mobile-nav-item', currentTab === tab.toLowerCase() ? 'active' : '']">
+                    <span class="mobile-nav-icon">
+                        <i v-if="tab === 'Dashboard'" class="fas fa-home"></i>
+                        <i v-else-if="tab === 'Servicios'" class="fas fa-concierge-bell"></i>
+                        <i v-else-if="tab === 'Productos'" class="fas fa-box"></i>
+                        <i v-else-if="tab === 'Reservas'" class="fas fa-calendar-alt"></i>
+                        <i v-else-if="tab === 'Productos Pedidos'" class="fas fa-shopping-cart"></i>
+                        <i v-else-if="tab === 'Compartir'" class="fas fa-share-alt"></i>
+                        <i v-else-if="tab === 'Configuraciones'" class="fas fa-cog"></i>
+                    </span>
+                    <span>{{ tab }}</span>
+                </a>
+            </nav>
+
+            <div class="mobile-menu">
+                <a v-for="tab in tabs" :key="tab" 
+                   @click="changeTab(tab.toLowerCase())"
+                   :class="['mobile-menu-item', currentTab === tab.toLowerCase() ? 'active' : '']">
+                    <span class="mobile-menu-icon">
+                        <i :class="getTabIcon(tab)"></i>
+
+                            <i v-if="tab === 'Dashboard'" class="fas fa-home"></i>
+                            <i v-else-if="tab === 'Servicios'" class="fas fa-concierge-bell"></i>
+                            <i v-else-if="tab === 'Productos'" class="fas fa-box"></i>
+                            <i v-else-if="tab === 'Reservas'" class="fas fa-calendar-alt"></i>
+                            <i v-else-if="tab === 'Productos Pedidos'" class="fas fa-shopping-cart"></i>
+                            <i v-else-if="tab === 'Compartir'" class="fas fa-share-alt"></i>
+                            <i v-else-if="tab === 'Configuraciones'" class="fas fa-cog"></i>
+
+                    </span>
+                    <span>{{ tab }}</span>
+                </a>
+            </div>-->
+
+        <!-- Mobile Menu Button -->
+        <button @click="toggleMobileMenu" class="mobile-menu-button">
+            <i class="fas" :class="{'fa-bars': !isMobileMenuOpen, 'fa-times': isMobileMenuOpen}"></i>
+        </button>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu-wrapper" :class="{'pointer-events-none': !isMobileMenuOpen}" @click="closeMobileMenu">
+            <div class="mobile-menu" :class="{'open': isMobileMenuOpen}" @click.stop>
+                <div class="mobile-menu-header">
+                    Panel de Administración
+                </div>
+                <a v-for="tab in tabs" :key="tab" 
+                   @click="changeTab(tab.toLowerCase()); closeMobileMenu();"
+                   :class="['mobile-menu-item', currentTab === tab.toLowerCase() ? 'active' : '']">
+                    <span class="mobile-menu-icon">
+                        <i :class="getTabIcon(tab)"></i>
+                    </span>
+                    <span>{{ tab }}</span>
+                </a>
+                <div class="mobile-menu-footer">
+                    <a @click="logout" class="mobile-menu-item">
+                        <span class="mobile-menu-icon">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </span>
+                        <span>Cerrar sesión</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+            <div class="py-10 responsive-padding content-area">
+                <header>
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h1 class="text-3xl font-bold leading-tight text-gray-900 dark:text-white">Panel de Administración</h1>
+                    </div>
+                </header>
+                <main>
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <!-- Dashboard -->
+                        <div v-if="currentTab === 'dashboard'" class="px-4 py-8 sm:px-0 animate-fade-in">
+                            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 responsive-grid">
+                                <div v-for="(stat, index) in stats" :key="index" class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg card-hover transition-all duration-300">
+                                    <div class="px-4 py-5 sm:p-6">
+                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                                            {{ stat.title }}
+                                        </dt>
+                                        <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+                                            {{ stat.value }}
+                                        </dd>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 responsive-grid">
+                                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg card-hover transition-all duration-300">
+                                    <div class="px-4 py-5 sm:p-6">
+                                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Reservas por Servicio</h3>
+                                        <div class="mt-5">
+                                            <canvas ref="bookingsByServiceChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg card-hover transition-all duration-300">
+                                    <div class="px-4 py-5 sm:p-6">
+                                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Ingresos Mensuales</h3>
+                                        <div class="mt-5">
+                                            <canvas ref="monthlyRevenueChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg card-hover transition-all duration-300">
+                                <div class="px-4 py-5 sm:p-6">
+                                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">Consejo del día</h3>
+                                    <p class="text-gray-600 dark:text-gray-300">{{ dailyTip }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Services -->
+                        <div v-if="currentTab === 'servicios'" class="px-4 py-8 sm:px-0 animate-fade-in">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Servicios</h2>
+                                <button @click="openServiceModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 transform hover:scale-105 touch-target">
+                                    Añadir Servicio
+                                </button>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+                                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    <li v-for="service in services" :key="service.id" class="px-6 py-4 flex items-center justify-between space-x-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                                {{ service.name }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                {{ service.duration }} minutos | ${{ service.price }}
+                                            </p>
+                                            <p v-if="service.promocion" class="text-sm text-indigo-600 dark:text-indigo-400">
+                                                Promoción: {{ service.nombre_promo }}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center space-x-4">
+                                            <button @click="editService(service)" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors duration-150 touch-target">
+                                                Editar
+                                            </button>
+                                            <button @click="deleteService(service.id)" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-150 touch-target">
+                                Eliminar
+                                            </button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Products -->
+                        <div v-if="currentTab === 'productos'" class="px-4 py-8 sm:px-0 animate-fade-in">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Productos</h2>
+                                <button @click="openProductModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 transform hover:scale-105 touch-target">
+                                    Añadir Producto
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 responsive-grid">
+                                <div v-for="product in products" :key="product.id" class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg card-hover transition-all duration-300">
+                                    <div class="p-5">
+                                        <div  class="flex items-center justify-between">
+                                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ product.name }}</h3>
+                                            <p class="text-lg font-semibold text-gray-900 dark:text-white">${{ product.price }}</p>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ product.description }}</p>
+                                        
+                                        <div class="mt-4 flex justify-between items-center">
+                                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Stock: {{ product.stock }}</span>
+                                            
+                                            <div>
+                                                <button @click="editProduct(product)" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors duration-150 mr-2 touch-target">
+                                                    
+                                                    Editar
+                                                </button>
+                                                <button @click="deleteProduct(product.id)" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-150 touch-target">
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bookings -->
+                        <div v-if="currentTab === 'reservas'" class="px-4 py-8 sm:px-0 animate-fade-in">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Reservas</h2>
+                            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+                                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    <li v-for="booking in bookings" :key="booking.id" class="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                                    {{ booking.client_name }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                    {{ booking.service_name }} | {{ formatDate(booking.date) }} {{ booking.time }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                                    Teléfono: {{ booking.client_phone }} | Email: {{ booking.client_email }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                    Estado: {{ booking.status }} | Pago: {{ booking.payment_status }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                    Precio: ${{ booking.price }} | Depósito: ${{ booking.deposit_amount }}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <button @click="deleteBooking(booking.id)" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-150 touch-target">
+                                                    Cancelar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Ordered Products -->
+                        <div v-if="currentTab === 'productos pedidos'" class="px-4 py-8 sm:px-0 animate-fade-in">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Productos Pedidos</h2>
+                            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+                                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    <li v-for="order in orderedProducts" :key="order.id" class="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                                    {{ order.product_name }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                    Cantidad: {{ order.quantity }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Share Link -->
+                        <div v-if="currentTab === 'compartir'" class="px-4 py-8 sm:px-0 animate-fade-in">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Compartir Servicios y Catálogo</h2>
+                            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg p-6">
+                                <p class="text-gray-700 dark:text-gray-300 mb-4">Comparte este enlace único para que tus clientes puedan ver tus servicios y catálogo:</p>
+                                <div class="flex items-center space-x-4">
+                                    <input type="text" :value="shareLink" readonly class="flex-1 p-2 border rounded-md dark:bg-gray-700 dark:text-white" />
+                                    <button @click="copyShareLink" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 touch-target">
+                                        Copiar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Configurations -->
+                        <div v-if="currentTab === 'configuraciones'" class="px-4 py-8 sm:px-0 animate-fade-in">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Configuraciones</h2>
+                            <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg p-6">
+                                <form @submit.prevent="saveConfigurations">
+                                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                        <div>
+                                            <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre</label>
+                                            <input type="text" id="firstName" v-model="configurations.firstName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                        </div>
+                                        <div>
+                                            <label for="lastName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Apellido</label>
+                                            <input type="text" id="lastName" v-model="configurations.lastName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                        </div>
+                                        <div>
+                                            <label for="businessName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del Emprendimiento</label>
+                                            <input type="text" id="businessName" v-model="configurations.businessName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                        </div>
+                                        <div>
+                                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                                            <input type="email" id="email" v-model="configurations.email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                        </div>
+                                        <div>
+                                            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono</label>
+                                            <input type="tel" id="phone" v-model="configurations.phone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        </div>
+                                    </div>
+                                    <div class="mt-6">
+                                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Horario de Trabajo</h3>
+                                        <div v-for="day in configurations.workingHours" :key="day.day_of_week" class="mb-4">
+                                            <div class="flex items-center justify-between">
+                                                <label :for="'day-' + day.day_of_week" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                    {{ getDayName(day.day_of_week) }}
+                                                </label>
+                                                <input 
+                                                    :id="'day-' + day.day_of_week" 
+                                                    v-model="day.is_working_day" 
+                                                    type="checkbox" 
+                                                    class="form-checkbox h-5 w-5 text-indigo-600"
+                                                >
+                                            </div>
+                                            <div v-if="day.is_working_day" class="mt-2 flex space-x-4">
+                                                <input 
+                                                    v-model="day.open_time" 
+                                                    type="time" 
+                                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                                >
+                                                <input 
+                                                    v-model="day.close_time" 
+                                                    type="time" 
+                                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-6">
+                                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm transition-colors duration-300 touch-target">
+                                            Guardar Configuraciones
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <!-- Service Modal -->
+            <div v-if="showServiceModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <form @submit.prevent="saveService">
+                            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div class="sm:flex sm:items-start">
+                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
+                                            {{ editingService ? 'Editar Servicio' : 'Añadir Servicio' }}
+                                        </h3>
+                                        <div class="mt-2">
+                                            <input v-model="serviceForm.name" type="text" placeholder="Nombre del servicio" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                            <input v-model="serviceForm.duration" type="number" placeholder="Duración (minutos)" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                            <input v-model="serviceForm.price" type="number" step="0.01" placeholder="Precio" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                            <textarea v-model="serviceForm.description" placeholder="Descripción" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="3"></textarea>
+                                            <div class="mt-4 flex items-center">
+                                                <input v-model="serviceForm.promocion" type="checkbox" id="promocion"  class="form-checkbox h-5 w-5 text-indigo-600">
+                                                <label for="promocion" class="ml-2 block text-sm text-gray-900 dark:text-white">¿Tiene promoción?</label>
+                                            </div>
+                                            <input v-if="serviceForm.promocion" v-model="serviceForm.nombre_promo" type="text" placeholder="Nombre de la promoción" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-300 touch-target">
+                                    {{ editingService ? 'Guardar Cambios' : 'Añadir Servicio' }}
+                                </button>
+                                <button @click="closeServiceModal" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-300 touch-target">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Modal -->
+            <div v-if="showProductModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <form @submit.prevent="saveProduct">
+                            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div class="sm:flex sm:items-start">
+                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
+                                            {{ editingProduct ? 'Editar Producto' : 'Añadir Producto' }}
+                                        </h3>
+                                        <div class="mt-2">
+                                            <input v-model="productForm.name" type="text" placeholder="Nombre del producto" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                            <input v-model="productForm.price" type="number" step="0.01" placeholder="Precio" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                            <input v-model="productForm.stock" type="number" placeholder="Stock" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                                            <textarea v-model="productForm.description" placeholder="Descripción" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-300 touch-target">
+                                    {{ editingProduct ? 'Guardar Cambios' : 'Añadir Producto' }}
+                                </button>
+                                <button @click="closeProductModal" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-300 touch-target">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const { createApp, ref, onMounted, watch, computed } = Vue
+
+        // Initialize Supabase client globally
+        window.supabase = supabase.createClient(
+            'https://tbtzlqeoogcfviojfqzg.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidHpscWVvb2djZnZpb2pmcXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA0ODI0ODEsImV4cCI6MjA0NjA1ODQ4MX0.E4tlXIb8tTHySUkA-VMHpdrnep63prRi1PGsypCMjGQ'
+        );
+        createApp({
+            setup() {
+                const isLoading = ref(true)
+                const isAuthenticated = ref(false)
+                const userUniqueCode = ref('')
+                const currentTab = ref('dashboard')
+                const tabs = ['Dashboard', 'Servicios', 'Productos', 'Reservas', 'Productos Pedidos', 'Compartir', 'Configuraciones']
+                const services = ref([])
+                const products = ref([])
+                const bookings = ref([])
+                const orderedProducts = ref([])
+                const showServiceModal = ref(false)
+                const showProductModal = ref(false)
+                const editingService = ref(null)
+                const editingProduct = ref(null)
+                const serviceForm = ref({
+                    name: '',
+                    duration: '',
+                    price: '',
+                    description: '',
+                    promocion: false,
+                    nombre_promo: ''
+                })
+                const productForm = ref({
+                    name: '',
+                    price: '',
+                    stock: '',
+                    description: ''
+                })
+                const stats = ref([
+                    { title: 'Total de Reservas', value: 0 },
+                    { title: 'Ingresos Totales', value: '$0' },
+                    { title: 'Clientes Nuevos', value: 0 },
+                    { title: 'Productos Vendidos', value: 0 }
+                ])
+                const dailyTip = ref('')
+                const shareLink = ref('')
+                const configurations = ref({
+                    firstName: '',
+                    lastName: '',
+                    businessName: '',
+                    phone: '',
+                    workingHours: [
+                        { day_of_week: 0, is_working_day: false, open_time: '09:00', close_time: '17:00' },
+                        { day_of_week: 1, is_working_day: true, open_time: '09:00', close_time: '17:00' },
+                        { day_of_week: 2, is_working_day: true, open_time: '09:00', close_time: '17:00' },
+                        { day_of_week: 3, is_working_day: true, open_time: '09:00', close_time: '17:00' },
+                        { day_of_week: 4, is_working_day: true, open_time: '09:00', close_time: '17:00' },
+                        { day_of_week: 5, is_working_day: true, open_time: '09:00', close_time: '17:00' },
+                        { day_of_week: 6, is_working_day: false, open_time: '09:00', close_time: '17:00' },
+                    ]
+                })
+
+                onMounted(async () => {
+                    await checkSession()
+                    if (isAuthenticated.value) {
+                        await fetchDashboardData()
+                        await fetchServices()
+                        await fetchProducts()
+                        await fetchBookings()
+                        await fetchOrderedProducts()
+                        await fetchConfigurations()
+                        generateShareLink()
+                    }
+                    isLoading.value = false
+                })
+
+                watch(currentTab, async (newTab) => {
+                    if (!isAuthenticated.value) return
+                    switch (newTab) {
+                        case 'dashboard':
+                            await fetchDashboardData()
+                            break
+                        case 'servicios':
+                            await fetchServices()
+                            break
+                        case 'productos':
+                            await fetchProducts()
+                            break
+                        case 'reservas':
+                            await fetchBookings()
+                            break
+                        case 'productos pedidos':
+                            await fetchOrderedProducts()
+                            break
+                    }
+                })
+
+                const checkSession = async () => {
+                    const { data: { session } } = await supabase.auth.getSession()
+                    if (session) {
+                        isAuthenticated.value = true
+                        userUniqueCode.value = session.user.id
+                    } else {
+                        isAuthenticated.value = false
+                    }
+                }
+
+
+                const redirectToLogin = () => {
+                    window.location.href = 'file:///C:/Users/manza/Desktop/reservapp/login.html'
+                }
+
+                const changeTab = (tab) => {
+                    currentTab.value = tab
+                }
+
+                const fetchDashboardData = async () => {
+                    try {
+                        const { data: bookingsData, error: bookingsError } = await supabase
+                            .from('bookings')
+                            .select('*')
+                            .eq('admin_unique_code', userUniqueCode.value)
+
+                        if (bookingsError) throw bookingsError
+
+                        const totalBookings = bookingsData.length
+                        const totalRevenue = bookingsData.reduce((sum, booking) => sum + booking.price, 0)
+                        const newClients = new Set(bookingsData.map(booking => booking.client_id)).size
+
+                        const { data: ordersData, error: ordersError } = await supabase
+                            .from('order_items')
+                            .select('quantity')
+                            .eq('admin_unique_code', userUniqueCode.value)
+
+                        if (ordersError) throw ordersError
+
+                        const totalProductsSold = ordersData.reduce((sum, order) => sum + order.quantity, 0)
+
+                        stats.value = [
+                            { title: 'Total de Reservas', value: totalBookings },
+                            { title: 'Ingresos Totales', value: `$${totalRevenue.toFixed(2)}` },
+                            { title: 'Clientes Nuevos', value: newClients },
+                            { title: 'Productos Vendidos', value: totalProductsSold }
+                        ]
+
+                        const { data: tipData, error: tipError } = await supabase
+                            .from('daily_tips')
+                            .select('tip')
+                            .limit(1)
+                            .single()
+
+                        if (tipError && tipError.code !== 'PGRST116') {
+                            throw tipError
+                        }
+
+                        dailyTip.value = tipData ? tipData.tip : 'No hay consejo disponible para hoy.'
+
+                        // ... (keep existing chart creation code) ...
+
+                    } catch (error) {
+                        console.error('Error fetching dashboard data:', error)
+                    }
+                }
+
+                const createBookingsByServiceChart = (bookingsData) => {
+                    const serviceCount = bookingsData.reduce((acc, booking) => {
+                        acc[booking.service_name] = (acc[booking.service_name] || 0) + 1
+                        return acc
+                    }, {})
+
+                    const ctx = document.getElementById('bookingsByServiceChart').getContext('2d')
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: Object.keys(serviceCount),
+                            datasets: [{
+                                data: Object.values(serviceCount),
+                                backgroundColor: [
+                                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Reservas por Servicio'
+                                }
+                            }
+                        }
+                    })
+                }
+
+                const createMonthlyRevenueChart = (bookingsData) => {
+                    const monthlyRevenue = bookingsData.reduce((acc, booking) => {
+                        const date = new Date(booking.date)
+                        const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`
+                        acc[monthYear] = (acc[monthYear] || 0) + booking.price
+                        return acc
+                    }, {})
+
+                    const sortedMonths = Object.keys(monthlyRevenue).sort((a, b) => {
+                        const [monthA, yearA] = a.split('/')
+                        const [monthB, yearB] = b.split('/')
+                        return new Date(yearA, monthA - 1) - new Date(yearB, monthB - 1)
+                    })
+
+                    const ctx = document.getElementById('monthlyRevenueChart').getContext('2d')
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: sortedMonths,
+                            datasets: [{
+                                label: 'Ingresos Mensuales',
+                                data: sortedMonths.map(month => monthlyRevenue[month]),
+                                borderColor: '#4BC0C0',
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Ingresos Mensuales'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return '$' + value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+
+                const fetchConfigurations = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .select('*')
+                            .eq('admin_unique_code', userUniqueCode.value)
+                            .single()
+
+                        if (error) {
+                            if (error.code === 'PGRST116') {
+                                console.warn('No configuration found for the current user.')
+                                return
+                            }
+                            throw error
+                        }
+
+                        if (data) {
+                            configurations.value = {
+                                ...configurations.value,
+                                firstName: data.first_name,
+                                lastName: data.last_name,
+                                businessName: data.business_name,
+                                phone: data.phone,
+                                email: data.email,
+                                workingHours: JSON.parse(data.working_hours)
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error fetching configurations:', error)
+                    }
+                }
+
+                const saveConfigurations = async () => {
+                    try {
+                        const configData = {
+                            admin_unique_code: userUniqueCode.value,
+                            first_name: configurations.value.firstName,
+                            last_name: configurations.value.lastName,
+                            business_name: configurations.value.businessName,
+                            email: configurations.value.email,
+                            working_hours: JSON.stringify(configurations.value.workingHours),
+                            phone: configurations.value.phone
+                        }
+
+                        const { data, error } = await supabase
+                            .from('admin_configurations')
+                            .upsert(configData, { onConflict: 'admin_unique_code' })
+
+                        if (error) throw error
+
+                        alert('Configuraciones guardadas exitosamente')
+                    } catch (error) {
+                        console.error('Error saving configurations:', error)
+                        alert('Error al guardar las configuraciones: ' + error.message)
+                    }
+                }
+
+                const fetchServices = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('services')
+                            .select('*')
+                            .eq('admin_unique_code', userUniqueCode.value)
+                        if (error) throw error
+                        services.value = data
+                    } catch (error) {
+                        console.error('Error fetching services:', error)
+                    }
+                }
+
+                const fetchProducts = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('products')
+                            .select('*')
+                            .eq('admin_unique_code', userUniqueCode.value)
+                        if (error) throw error
+                        products.value = data
+                    } catch (error) {
+                        console.error('Error fetching products:', error)
+                    }
+                }
+
+                const fetchBookings = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('bookings')
+                            .select('*')
+                            .eq('admin_unique_code', userUniqueCode.value)
+                        if (error) throw error
+                        bookings.value = data
+                    } catch (error) {
+                        console.error('Error fetching bookings:', error)
+                    }
+                }
+
+                const fetchOrderedProducts = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from('order_items')
+                            .select('id, quantity, products(name)')
+                            .eq('admin_unique_code', userUniqueCode.value)
+
+                        if (error) {
+                            throw new Error(`Error fetching ordered products: ${error.message}`)
+                        }
+
+                        orderedProducts.value = data.map(item => ({
+                            id: item.id,
+                            quantity: item.quantity,
+                            product_name: item.products?.name || 'Desconocido'
+                        }))
+                    } catch (error) {
+                        console.error(error.message)
+                    }
+                }
+
+                const openServiceModal = () => {
+                    editingService.value = null
+                    serviceForm.value = {
+                        name: '',
+                        duration: '',
+                        price: '',
+                        description: '',
+                        promocion: false,
+                        nombre_promo: ''
+                    }
+                    showServiceModal.value = true
+                }
+
+                const closeServiceModal = () => {
+                    showServiceModal.value = false
+                }
+                
+                const saveService = async () => {
+                    try {
+                        const serviceData = {
+                            ...serviceForm.value,
+                            admin_unique_code: userUniqueCode.value
+                        }
+
+                        let result
+                        if (editingService.value) {
+                            const { data, error } = await supabase
+                                .from('services')
+                                .update(serviceData)
+                                .eq('id', editingService.value.id)
+                            if (error) throw error
+                            result = data
+                        } else {
+                            const { data, error } = await supabase
+                                .from('services')
+                                .insert(serviceData)
+                            if (error) throw error
+                            result = data
+                        }
+
+                        await fetchServices()
+                        closeServiceModal()
+                    } catch (error) {
+                        console.error('Error saving service:', error)
+                    }
+                }
+
+                const editService = (service) => {
+                    editingService.value = service
+                    serviceForm.value = { ...service }
+                    showServiceModal.value = true
+                }
+
+                const deleteService = async (serviceId) => {
+                    if (confirm('¿Estás seguro de que quieres eliminar este servicio?')) {
+                        try {
+                            const { error } = await supabase
+                                .from('services')
+                                .delete()
+                                .eq('id', serviceId)
+                            if (error) throw error
+                            await fetchServices()
+                        } catch (error) {
+                            console.error('Error deleting service:', error)
+                        }
+                    }
+                }
+
+                const openProductModal = () => {
+                    editingProduct.value = null
+                    productForm.value = {
+                        name: '',
+                        price: '',
+                        stock: '',
+                        description: ''
+                    }
+                    showProductModal.value = true
+                }
+
+                const closeProductModal = () => {
+                    showProductModal.value = false
+                }
+
+                const saveProduct = async () => {
+                    try {
+                        const productData = {
+                            ...productForm.value,
+                            admin_unique_code: userUniqueCode.value
+                        }
+
+                        let result
+                        if (editingProduct.value) {
+                            const { data, error } = await supabase
+                                .from('products')
+                                .update(productData)
+                                .eq('id', editingProduct.value.id)
+                            if (error) throw error
+                            result = data
+                        } else {
+                            const { data, error } = await supabase
+                                .from('products')
+                                .insert(productData)
+                            if (error) throw error
+                            result = data
+                        }
+
+                        await fetchProducts()
+                        closeProductModal()
+                    } catch (error) {
+                        console.error('Error saving product:', error)
+                    }
+                }
+
+                const editProduct = (product) => {
+                    editingProduct.value = product
+                    productForm.value = { ...product }
+                    showProductModal.value = true
+                }
+
+                const deleteProduct = async (productId) => {
+                    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+                        try {
+                            const { error } = await supabase
+                                .from('products')
+                                .delete()
+                                .eq('id', productId)
+                            if (error) throw error
+                            await fetchProducts()
+                        } catch (error) {
+                            console.error('Error deleting product:', error)
+                        }
+                    }
+                }
+
+                const deleteBooking = async (bookingId) => {
+                    if (confirm('¿Estás seguro de que quieres cancelar esta reserva?')) {
+                        try {
+                            const { error } = await supabase
+                                .from('bookings')
+                                .delete()
+                                .eq('id', bookingId)
+                            if (error) throw error
+                            await fetchBookings()
+                        } catch (error) {
+                            console.error('Error canceling booking:', error)
+                        }
+                    }
+                }
+
+                const formatDate = (dateString) => {
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' }
+                    return new Date(dateString).toLocaleDateString('es-ES', options)
+                }
+
+                const generateShareLink = () => {
+                    shareLink.value = `https://tudominio.com/catalogo/${userUniqueCode.value}`
+                }
+
+                const copyShareLink = () => {
+                    navigator.clipboard.writeText(shareLink.value)
+                        .then(() => alert('Enlace copiado al portapapeles'))
+                        .catch(err => console.error('Error al copiar el enlace: ', err))
+                }
+
+                const getDayName = (dayNumber) => {
+                    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+                    return days[dayNumber]
+                }
+
+                
+
+
+                const isMobileMenuOpen = ref(false)
+
+                const toggleMobileMenu = () => {
+                    isMobileMenuOpen.value = !isMobileMenuOpen.value
+                }
+
+                const closeMobileMenu = () => {
+                    isMobileMenuOpen.value = false
+                }
+
+                const getTabIcon = (tab) => {
+                    const icons = {
+                        'Dashboard': 'fas fa-home',
+                        'Servicios': 'fas fa-concierge-bell',
+                        'Productos': 'fas fa-box',
+                        'Reservas': 'fas fa-calendar-alt',
+                        'Productos Pedidos': 'fas fa-shopping-cart',
+                        'Compartir': 'fas fa-share-alt',
+                        'Configuraciones': 'fas fa-cog'
+                    }
+                    return icons[tab] || 'fas fa-question'
+                }
+
+                const logout = async () => {
+                    try {
+                        await supabase.auth.signOut()
+                        window.location.href = 'login.html'
+                    } catch (error) {
+                        console.error('Error during logout:', error)
+                        alert('Error al cerrar sesión. Por favor, inténtelo de nuevo.')
+                    }
+                }
+
+                return {
+                    isLoading,
+                    isAuthenticated,
+                    currentTab,
+                    getTabIcon,
+                    isMobileMenuOpen,
+                    toggleMobileMenu,
+                    getTabIcon,
+                    isMobileMenuOpen,
+                    toggleMobileMenu,
+                    closeMobileMenu,
+                    getTabIcon,
+                    logout,
+                    tabs,
+                    services,
+                    products,
+                    bookings,
+                    orderedProducts,
+                    showServiceModal,
+                    showProductModal,
+                    serviceForm,
+                    productForm,
+                    stats,
+                    dailyTip,
+                    shareLink,
+                    configurations,
+                    logout,
+                    redirectToLogin,
+                    changeTab,
+                    openServiceModal,
+                    closeServiceModal,
+                    saveService,
+                    editService,
+                    deleteService,
+                    openProductModal,
+                    closeProductModal,
+                    saveProduct,
+                    editProduct,
+                    deleteProduct,
+                    deleteBooking,
+                    formatDate,
+                    copyShareLink,
+                    saveConfigurations,
+                    getDayName
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
