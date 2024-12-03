@@ -529,6 +529,35 @@
                                             <input type="tel" id="phone" v-model="configurations.phone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                         </div>
                                     </div>
+                                                                                        <!-- Fields for service location -->
+<!-- Inside the configurations form, update the locality section -->
+<div class="mt-4">
+    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Ubicación del Servicio</h3>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+            <label for="address" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dirección</label>
+            <input type="text" id="address" v-model="configurations.address" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+        <div>
+            <label for="city" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ciudad</label>
+            <input type="text" id="city" v-model="configurations.city" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+        <div>
+            <label for="state" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estado/Provincia</label>
+            <input type="text" id="state" v-model="configurations.state" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+        <div>
+            <label for="country" class="block text-sm font-medium text-gray-700 dark:text-gray-300">País</label>
+            <input type="text" id="country" v-model="configurations.country" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+    </div>
+    <div class="mt-4">
+        <label for="show_location" class="inline-flex items-center">
+            <input type="checkbox" id="show_location" v-model="configurations.showLocation" class="form-checkbox h-5 w-5 text-indigo-600">
+            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Mostrar ubicación públicamente</span>
+        </label>
+    </div>
+</div>
                                     <div class="mt-6">
                                         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Horario de Trabajo</h3>
                                         <div v-for="day in configurations.workingHours" :key="day.day_of_week" class="mb-4">
@@ -588,10 +617,17 @@
                                             <input v-model="serviceForm.price" type="number" step="0.01" placeholder="Precio" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                                             <textarea v-model="serviceForm.description" placeholder="Descripción" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="3"></textarea>
                                             <div class="mt-4 flex items-center">
-                                                <input v-model="serviceForm.promocion" type="checkbox" id="promocion"  class="form-checkbox h-5 w-5 text-indigo-600">
+                                                <input v-model="serviceForm.promocion" type="checkbox" id="promocion" class="form-checkbox h-5 w-5 text-indigo-600">
                                                 <label for="promocion" class="ml-2 block text-sm text-gray-900 dark:text-white">¿Tiene promoción?</label>
                                             </div>
                                             <input v-if="serviceForm.promocion" v-model="serviceForm.nombre_promo" type="text" placeholder="Nombre de la promoción" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                            <input v-if="serviceForm.promocion" v-model="serviceForm.available_slots" type="number" placeholder="Cupos disponibles" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                            <input v-if="serviceForm.promocion" v-model="serviceForm.expiration_date" type="date" placeholder="Fecha de expiración" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                                            <!-- New field for countdown end -->
+                                        <div v-if="serviceForm.promocion" class="mt-4">
+                                            <label for="countdown_end" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fin de la cuenta regresiva</label>
+                                            <input v-model="serviceForm.countdown_end" type="datetime-local" id="countdown_end" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -670,14 +706,22 @@
                 const showProductModal = ref(false)
                 const editingService = ref(null)
                 const editingProduct = ref(null)
+
                 const serviceForm = ref({
-                    name: '',
-                    duration: '',
-                    price: '',
-                    description: '',
-                    promocion: false,
-                    nombre_promo: ''
-                })
+                name: '',
+                duration: '',
+                price: '',
+                description: '',
+                promocion: false,
+                nombre_promo: '',
+                available_slots: null,
+                expiration_date: null,
+                countdown_end: null,
+                address: '',
+                city: '',
+                state: '',
+                country: ''
+            })
                 const productForm = ref({
                     name: '',
                     price: '',
@@ -692,12 +736,19 @@
                 ])
                 const dailyTip = ref('')
                 const shareLink = ref('')
-                const configurations = ref({
-                    firstName: '',
-                    lastName: '',
-                    businessName: '',
-                    phone: '',
-                    workingHours: [
+
+    const configurations = ref({
+        firstName: '',
+        lastName: '',
+        businessName: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        state: '',
+        country: '',
+        showLocation: false,
+        workingHours: [
                         { day_of_week: 0, is_working_day: false, open_time: '09:00', close_time: '17:00' },
                         { day_of_week: 1, is_working_day: true, open_time: '09:00', close_time: '17:00' },
                         { day_of_week: 2, is_working_day: true, open_time: '09:00', close_time: '17:00' },
@@ -705,8 +756,98 @@
                         { day_of_week: 4, is_working_day: true, open_time: '09:00', close_time: '17:00' },
                         { day_of_week: 5, is_working_day: true, open_time: '09:00', close_time: '17:00' },
                         { day_of_week: 6, is_working_day: false, open_time: '09:00', close_time: '17:00' },
-                    ]
-                })
+        ]
+    })
+
+    
+    const fetchConfigurations = async () => {
+        try {
+            const { data: adminData, error: adminError } = await supabase
+                .from('admin_configurations')
+                .select('*')
+                .eq('admin_unique_code', userUniqueCode.value)
+                .single()
+
+            if (adminError && adminError.code !== 'PGRST116') {
+                throw adminError
+            }
+
+            const { data: locationData, error: locationError } = await supabase
+                .from('locations')
+                .select('*')
+                .eq('admin_unique_code', userUniqueCode.value)
+                .single()
+
+            if (locationError && locationError.code !== 'PGRST116') {
+                throw locationError
+            }
+
+            if (adminData) {
+                configurations.value = {
+                    ...configurations.value,
+                    firstName: adminData.first_name,
+                    lastName: adminData.last_name,
+                    businessName: adminData.business_name,
+                    email: adminData.email,
+                    phone: adminData.phone,
+                    workingHours: JSON.parse(adminData.working_hours)
+                }
+            }
+
+            if (locationData) {
+                configurations.value = {
+                    ...configurations.value,
+                    address: locationData.address,
+                    city: locationData.city,
+                    state: locationData.state,
+                    country: locationData.country,
+                    showLocation: locationData.show_location
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching configurations:', error)
+        }
+    }
+
+    const saveConfigurations = async () => {
+        try {
+            const adminData = {
+                admin_unique_code: userUniqueCode.value,
+                first_name: configurations.value.firstName,
+                last_name: configurations.value.lastName,
+                business_name: configurations.value.businessName,
+                email: configurations.value.email,
+                phone: configurations.value.phone,
+                working_hours: JSON.stringify(configurations.value.workingHours)
+            }
+
+            const locationData = {
+                admin_unique_code: userUniqueCode.value,
+                address: configurations.value.address,
+                city: configurations.value.city,
+                state: configurations.value.state,
+                country: configurations.value.country,
+                show_location: configurations.value.showLocation
+            }
+
+            const { error: adminError } = await supabase
+                .from('admin_configurations')
+                .upsert(adminData, { onConflict: 'admin_unique_code' })
+
+            if (adminError) throw adminError
+
+            const { error: locationError } = await supabase
+                .from('locations')
+                .upsert(locationData, { onConflict: 'admin_unique_code' })
+
+            if (locationError) throw locationError
+
+            alert('Configuraciones guardadas exitosamente')
+        } catch (error) {
+            console.error('Error saving configurations:', error)
+            alert('Error al guardar las configuraciones: ' + error.message)
+        }
+    }
 
                 onMounted(async () => {
                     await checkSession()
@@ -742,6 +883,60 @@
                             break
                     }
                 })
+
+                
+
+            // ... (rest of the setup function remains unchanged)
+
+            const saveService = async () => {
+                try {
+                    const serviceData = {
+                        ...serviceForm.value,
+                        admin_unique_code: userUniqueCode.value
+                    }
+
+                    // Convert countdown_end to ISO string if it exists
+                    if (serviceData.countdown_end) {
+                        serviceData.countdown_end = new Date(serviceData.countdown_end).toISOString();
+                    }
+
+                    let result
+                    if (editingService.value) {
+                        const { data, error } = await supabase
+                            .from('services')
+                            .update(serviceData)
+                            .eq('id', editingService.value.id)
+                        if (error) throw error
+                        result = data
+                    } else {
+                        const { data, error } = await supabase
+                            .from('services')
+                            .insert(serviceData)
+                        if (error) throw error
+                        result = data
+                    }
+
+                    // Save location data
+                    const locationData = {
+                        admin_unique_code: userUniqueCode.value,
+                        address: serviceForm.value.address,
+                        city: serviceForm.value.city,
+                        state: serviceForm.value.state,
+                        country: serviceForm.value.country
+                    }
+
+                    const { error: locationError } = await supabase
+                        .from('locations')
+                        .upsert(locationData, { onConflict: 'admin_unique_code' })
+
+                    if (locationError) throw locationError
+
+                    await fetchServices()
+                    closeServiceModal()
+                } catch (error) {
+                    console.error('Error saving service:', error)
+                }
+            }
 
                 const checkSession = async () => {
                     const { data: { session } } = await supabase.auth.getSession()
@@ -894,63 +1089,6 @@
                     })
                 }
 
-                const fetchConfigurations = async () => {
-                    try {
-                        const { data, error } = await supabase
-                            .from('admin_configurations')
-                            .select('*')
-                            .eq('admin_unique_code', userUniqueCode.value)
-                            .single()
-
-                        if (error) {
-                            if (error.code === 'PGRST116') {
-                                console.warn('No configuration found for the current user.')
-                                return
-                            }
-                            throw error
-                        }
-
-                        if (data) {
-                            configurations.value = {
-                                ...configurations.value,
-                                firstName: data.first_name,
-                                lastName: data.last_name,
-                                businessName: data.business_name,
-                                phone: data.phone,
-                                email: data.email,
-                                workingHours: JSON.parse(data.working_hours)
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error fetching configurations:', error)
-                    }
-                }
-
-                const saveConfigurations = async () => {
-                    try {
-                        const configData = {
-                            admin_unique_code: userUniqueCode.value,
-                            first_name: configurations.value.firstName,
-                            last_name: configurations.value.lastName,
-                            business_name: configurations.value.businessName,
-                            email: configurations.value.email,
-                            working_hours: JSON.stringify(configurations.value.workingHours),
-                            phone: configurations.value.phone
-                        }
-
-                        const { data, error } = await supabase
-                            .from('admin_configurations')
-                            .upsert(configData, { onConflict: 'admin_unique_code' })
-
-                        if (error) throw error
-
-                        alert('Configuraciones guardadas exitosamente')
-                    } catch (error) {
-                        console.error('Error saving configurations:', error)
-                        alert('Error al guardar las configuraciones: ' + error.message)
-                    }
-                }
-
                 const fetchServices = async () => {
                     try {
                         const { data, error } = await supabase
@@ -1026,36 +1164,6 @@
 
                 const closeServiceModal = () => {
                     showServiceModal.value = false
-                }
-                
-                const saveService = async () => {
-                    try {
-                        const serviceData = {
-                            ...serviceForm.value,
-                            admin_unique_code: userUniqueCode.value
-                        }
-
-                        let result
-                        if (editingService.value) {
-                            const { data, error } = await supabase
-                                .from('services')
-                                .update(serviceData)
-                                .eq('id', editingService.value.id)
-                            if (error) throw error
-                            result = data
-                        } else {
-                            const { data, error } = await supabase
-                                .from('services')
-                                .insert(serviceData)
-                            if (error) throw error
-                            result = data
-                        }
-
-                        await fetchServices()
-                        closeServiceModal()
-                    } catch (error) {
-                        console.error('Error saving service:', error)
-                    }
                 }
 
                 const editService = (service) => {
