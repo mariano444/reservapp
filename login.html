@@ -281,9 +281,9 @@
                     </a>
                 </div>
                 <div v-if="isLogin" class="mt-4 text-center">
-                    <a class="toggle-form" href="#" @click.prevent="showResetPassword = true">
+                    <button @click="showForgotPassword = true" class="text-sm text-accent-color hover:text-secondary-color transition-colors duration-300">
                         {{ currentLanguage.forgotPassword }}
-                    </a>
+                    </button>
                 </div>
             </div>
             <transition name="fade">
@@ -292,14 +292,14 @@
                 </div>
             </transition>
             <transition name="fade">
-                <div v-if="showResetPassword" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div v-if="showForgotPassword" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg w-96">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ currentLanguage.resetPassword }}</h3>
-                        <input type="email" v-model="resetEmail" :placeholder="currentLanguage.email" class="w-full px-3 py-2 border border-gray-300 rounded-md mb-4">
-                        <button @click="resetPassword" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ currentLanguage.forgotPassword }}</h3>
+                        <input type="email" v-model="forgotPasswordEmail" :placeholder="currentLanguage.emailPlaceholder" class="w-full px-3 py-2 border border-gray-300 rounded-md mb-4">
+                        <button @click="handleForgotPassword" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
                             {{ currentLanguage.sendResetLink }}
                         </button>
-                        <button @click="showResetPassword = false" class="w-full mt-2 bg-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-400">
+                        <button @click="showForgotPassword = false" class="w-full mt-2 bg-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-400">
                             {{ currentLanguage.close }}
                         </button>
                     </div>
@@ -342,7 +342,16 @@
             strong: 'Fuerte',
             veryStrong: 'Muy fuerte',
             phoneNumber: 'Número de Teléfono',
-            phoneNumberPlaceholder: 'Tu número de teléfono'
+            phoneNumberPlaceholder: 'Tu número de teléfono',
+            changePassword: 'Cambiar Contraseña',
+            currentPassword: 'Contraseña Actual',
+            newPassword: 'Nueva Contraseña',
+            confirmNewPassword: 'Confirmar Nueva Contraseña',
+            updatePassword: 'Actualizar Contraseña',
+            resetLinkSent: 'Se ha enviado un enlace de restablecimiento a tu correo electrónico.',
+            resetLinkError: 'Error al enviar el enlace de restablecimiento. Por favor, inténtalo de nuevo.',
+            loginSuccess: '¡Inicio de sesión exitoso! Redirigiendo...',
+            registrationSuccess: '¡Registro exitoso! Por favor, verifica tu correo electrónico.'
         };
 
         const english = {
@@ -371,7 +380,16 @@
             strong: 'Strong',
             veryStrong: 'Very strong',
             phoneNumber: 'Phone Number',
-            phoneNumberPlaceholder: 'Your phone number'
+            phoneNumberPlaceholder: 'Your phone number',
+            changePassword: 'Change Password',
+            currentPassword: 'Current Password',
+            newPassword: 'New Password',
+            confirmNewPassword: 'Confirm New Password',
+            updatePassword: 'Update Password',
+            resetLinkSent: 'A password reset link has been sent to your email.',
+            resetLinkError: 'Error sending reset link. Please try again.',
+            loginSuccess: 'Login successful! Redirecting...',
+            registrationSuccess: 'Registration successful! Please check your email.'
         };
 
         createApp({
@@ -392,6 +410,43 @@
                 const currentLanguage = ref(spanish)
                 const emailError = ref('')
                 const phone = ref('')
+                const showChangePassword = ref(false)
+                const currentPassword = ref('')
+
+                const lastPasswordResetAttempt = ref(0)
+
+
+                const showForgotPassword = ref(false)
+                const forgotPasswordEmail = ref('')
+                const confirmPassword = ref('')
+                const newPassword = ref('')
+                const confirmNewPassword= ref('')
+
+                const handleForgotPassword = async () => {
+                    if (isLoading.value) return
+                    isLoading.value = true
+                    try {
+                        const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+                            forgotPasswordEmail.value,
+                            {
+                                redirectTo: `${window.location.origin}/reset-password.html`,
+                            }
+                        )
+
+                        if (resetError) throw resetError
+
+                        message.value = currentLanguage.value.resetLinkSent
+                        error.value = false
+                        showForgotPassword.value = false
+                        forgotPasswordEmail.value = ''
+                    } catch (err) {
+                        message.value = currentLanguage.value.resetLinkError
+                        error.value = true
+                    } finally {
+                        isLoading.value = false
+                    }
+                }
+
 
                 const passwordStrength = computed(() => {
                     const pwd = password.value
@@ -458,7 +513,7 @@
 
                             if (signInError) throw signInError
 
-                            message.value = currentLanguage.value === spanish ? '¡Inicio de sesión exitoso! Redirigiendo...' : 'Login successful! Redirecting...'
+                            message.value = currentLanguage.value.loginSuccess
                             error.value = false
 
                             // Redirect to admin panel after successful login
@@ -496,7 +551,7 @@
 
                             if (configError) throw configError
 
-                            message.value = currentLanguage.value === spanish ? '¡Registro exitoso! Por favor, verifica tu correo electrónico.' : 'Registration successful! Please check your email.'
+                            message.value = currentLanguage.value.registrationSuccess
                             error.value = false
                         }
                     } catch (err) {
@@ -550,12 +605,68 @@
                     }
                 }
 
+                const changePassword = async () => {
+                    if (newPassword.value !== confirmNewPassword.value) {
+                        message.value = currentLanguage.value === spanish 
+                            ? 'Las nuevas contraseñas no coinciden' 
+                            : 'New passwords do not match'
+                        error.value = true
+                        return
+                    }
+
+                    try {
+                        const { error } = await supabase.auth.updateUser({ 
+                            password: newPassword.value 
+                        })
+
+                        if (error) throw error
+
+                        message.value = currentLanguage.value === spanish
+                            ? 'Contraseña actualizada con éxito'
+                            : 'Password updated successfully'
+                        error.value = false
+                        showChangePassword.value = false
+                        currentPassword.value = ''
+                        newPassword.value = ''
+                        confirmNewPassword.value = ''
+                    } catch (err) {
+                        message.value = err.message
+                        error.value = true
+                    }
+                }
+
+
+
                 // Call checkLoggedInUser on component mount
                 onMounted(() => {
                     checkLoggedInUser()
                 })
 
                 return {
+                    showForgotPassword,
+                    forgotPasswordEmail,
+                    handleForgotPassword,
+                    message,
+                    error,
+                    isLoading,
+                    showForgotPassword,
+                    forgotPasswordEmail,
+                    newPassword,
+                    confirmNewPassword,
+                    showChangePassword,
+                    password,
+                    confirmPassword,
+                    message,
+                    error,
+                    resetPassword,
+                    currentPassword,
+                    newPassword,
+                    showForgotPassword,
+                    forgotPasswordEmail,
+                    handleForgotPassword,
+                    lastPasswordResetAttempt,
+                    confirmNewPassword,
+                    changePassword,
                     isLogin,
                     firstName,
                     lastName,
@@ -581,7 +692,10 @@
                     validateEmail,
                     handleSubmit,
                     resetPassword,
-                    checkRateLimit
+                    checkRateLimit,
+                    showForgotPassword,
+                    forgotPasswordEmail,
+                    handleForgotPassword
                 }
             }
         }).mount('#app')
