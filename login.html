@@ -56,7 +56,7 @@
             top: -150px;
             left: -100px;
             border-radius: 43% 57% 70% 30% / 30% 40% 60% 70%;
-            animation: morph 15s linear infinite alternate;
+            animation: morph 15s linear infinite alternate, float 10s ease-in-out infinite;
         }
         .shape-2 {
             background-color: var(--secondary-color);
@@ -65,11 +65,16 @@
             top: 50%;
             right: -100px;
             border-radius: 70% 30% 30% 70% / 60% 40% 60% 40%;
-            animation: morph 8s linear infinite alternate;
+            animation: morph 8s linear infinite alternate, float 8s ease-in-out infinite alternate;
         }
         @keyframes morph {
             0% { border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%; }
             100% { border-radius: 40% 60%; }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
         }
         .form-container {
             background: rgba(255, 255, 255, 0.05);
@@ -79,9 +84,10 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
             transition: all 0.3s ease;
+            transform: perspective(1000px) rotateX(0deg);
         }
         .form-container:hover {
-            transform: translateY(-5px);
+            transform: perspective(1000px) rotateX(5deg) translateY(-5px);
             box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
         }
         .title {
@@ -221,6 +227,107 @@
             transform: translateX(20px);
             opacity: 0;
         }
+        .language-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .language-toggle button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        .language-toggle button.active {
+            opacity: 1;
+        }
+        .input-group label {
+            position: absolute;
+            left: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .input-group input:focus + i + label,
+        .input-group input:not(:placeholder-shown) + i + label {
+            top: 0;
+            left: 1rem;
+            font-size: 0.75rem;
+            opacity: 1;
+        }
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .social-login button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        .social-login button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .forgot-password {
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+        .forgot-password a {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .forgot-password a:hover {
+            color: var(--secondary-color);
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--background-color);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .close-modal {
+            float: right;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -230,38 +337,48 @@
     </div>
     <div class="container">
         <div id="app">
+            <div class="language-toggle">
+                <button @click="setLanguage('es')" :class="{ active: currentLanguage === spanish }">ES</button>
+                <button @click="setLanguage('en')" :class="{ active: currentLanguage === english }">EN</button>
+            </div>
             <h1 class="title">TuReservaYa</h1>
             <div class="form-container">
-                <h2 class="text-2xl font-bold mb-6 text-center">{{ isLogin ? currentLanguage.login : currentLanguage.register }}.</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center">{{ isLogin ? currentLanguage.login : currentLanguage.register }}</h2>
                 <form @submit.prevent="handleSubmit" class="space-y-4">
                     <transition-group name="slide-fade" tag="div">
                         <template v-if="!isLogin">
                             <div class="input-group" key="firstName">
-                                <input type="text" v-model="firstName" :placeholder="currentLanguage.firstNamePlaceholder" required>
+                                <input type="text" v-model="firstName" id="firstName" placeholder=" " required>
                                 <i class="fas fa-user"></i>
+                                <label for="firstName">{{ currentLanguage.firstName }}</label>
                             </div>
                             <div class="input-group" key="lastName">
-                                <input type="text" v-model="lastName" :placeholder="currentLanguage.lastNamePlaceholder" required>
+                                <input type="text" v-model="lastName" id="lastName" placeholder=" " required>
                                 <i class="fas fa-user"></i>
+                                <label for="lastName">{{ currentLanguage.lastName }}</label>
                             </div>
                             <div class="input-group" key="businessName">
-                                <input type="text" v-model="businessName" :placeholder="currentLanguage.businessNamePlaceholder" required>
+                                <input type="text" v-model="businessName" id="businessName" placeholder=" " required>
                                 <i class="fas fa-building"></i>
+                                <label for="businessName">{{ currentLanguage.businessName }}</label>
                             </div>
                             <div class="input-group" key="phone">
-                                <input type="tel" v-model="phone" :placeholder="currentLanguage.phoneNumberPlaceholder" required>
+                                <input type="tel" v-model="phone" id="phone" placeholder=" " required>
                                 <i class="fas fa-phone"></i>
+                                <label for="phone">{{ currentLanguage.phoneNumber }}</label>
                             </div>
                         </template>
                     </transition-group>
                     <div class="input-group">
-                        <input type="email" v-model="email" :placeholder="currentLanguage.emailPlaceholder" required @blur="validateEmail">
+                        <input type="email" v-model="email" id="email" placeholder=" " required @blur="validateEmail">
                         <i class="fas fa-envelope"></i>
+                        <label for="email">{{ currentLanguage.email }}</label>
                     </div>
                     <div class="input-group">
-                        <input :type="showPassword ? 'text' : 'password'" v-model="password" :placeholder="currentLanguage.passwordPlaceholder" required>
+                        <input :type="showPassword ? 'text' : 'password'" v-model="password" id="password" placeholder=" " required>
                         <i class="fas fa-lock"></i>
-                        <i class="password-toggle" :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" @click="togglePasswordVisibility"></i>
+                        <label for="password">{{ currentLanguage.password }}</label>
+                        <i class="password-toggle" :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" @click="togglePasswordVisibility" style="left: auto;"></i>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-bar-fill" :style="{ width: passwordStrength + '%', backgroundColor: passwordStrengthColor }"></div>
@@ -270,6 +387,9 @@
                     <button v-if="!isLogin" type="button" @click="generatePassword" class="text-sm text-accent-color hover:text-secondary-color transition-colors duration-300">
                         {{ currentLanguage.generatePassword }}
                     </button>
+                    <div class="forgot-password" v-if="isLogin">
+                        <a href="#" @click.prevent="showForgotPassword = true">{{ currentLanguage.forgotPassword }}</a>
+                    </div>
                     <button class="btn-primary" type="submit" :disabled="isLoading">
                         <span v-if="isLoading" class="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
                         {{ isLogin ? currentLanguage.login : currentLanguage.register }}
@@ -280,11 +400,11 @@
                         {{ isLogin ? currentLanguage.noAccount : currentLanguage.haveAccount }}
                     </a>
                 </div>
-                <div v-if="isLogin" class="mt-4 text-center">
-                    <button @click="showForgotPassword = true" class="text-sm text-accent-color hover:text-secondary-color transition-colors duration-300">
-                        {{ currentLanguage.forgotPassword }}
-                    </button>
-                </div>
+                <!--div class="social-login">
+                    <button @click="socialLogin('google')"><i class="fab fa-google"></i></button>
+                    <button @click="socialLogin('facebook')"><i class="fab fa-facebook-f"></i></button>
+                    <button @click="socialLogin('twitter')"><i class="fab fa-twitter"></i></button>
+                </div-->
             </div>
             <transition name="fade">
                 <div v-if="message" class="mt-4 p-4 rounded text-white text-center" :class="{'bg-green-500': !error, 'bg-red-500': error}">
@@ -292,15 +412,17 @@
                 </div>
             </transition>
             <transition name="fade">
-                <div v-if="showForgotPassword" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg w-96">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ currentLanguage.forgotPassword }}</h3>
-                        <input type="email" v-model="forgotPasswordEmail" :placeholder="currentLanguage.emailPlaceholder" class="w-full px-3 py-2 border border-gray-300 rounded-md mb-4">
-                        <button @click="handleForgotPassword" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+                <div v-if="showForgotPassword" class="modal">
+                    <div class="modal-content">
+                        <button @click="showForgotPassword = false" class="close-modal">&times;</button>
+                        <h3 class="text-lg font-medium text-white mb-4">{{ currentLanguage.forgotPassword }}</h3>
+                        <div class="input-group">
+                            <input type="email" v-model="forgotPasswordEmail" id="forgotPasswordEmail" placeholder=" " required>
+                            <i class="fas fa-envelope"></i>
+                            <label for="forgotPasswordEmail">{{ currentLanguage.email }}</label>
+                        </div>
+                        <button @click="handleForgotPassword" class="btn-primary mt-4">
                             {{ currentLanguage.sendResetLink }}
-                        </button>
-                        <button @click="showForgotPassword = false" class="w-full mt-2 bg-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-400">
-                            {{ currentLanguage.close }}
                         </button>
                     </div>
                 </div>
@@ -415,7 +537,6 @@
 
                 const lastPasswordResetAttempt = ref(0)
 
-
                 const showForgotPassword = ref(false)
                 const forgotPasswordEmail = ref('')
                 const confirmPassword = ref('')
@@ -446,7 +567,6 @@
                         isLoading.value = false
                     }
                 }
-
 
                 const passwordStrength = computed(() => {
                     const pwd = password.value
@@ -635,7 +755,24 @@
                     }
                 }
 
+                const setLanguage = (lang) => {
+                    currentLanguage.value = lang === 'es' ? spanish : english
+                }
 
+                const socialLogin = async (provider) => {
+                    try {
+                        const { data, error } = await supabase.auth.signInWithOAuth({
+                            provider: provider,
+                        })
+                        if (error) throw error
+                        // Handle successful login
+                        message.value = currentLanguage.value.loginSuccess
+                        error.value = false
+                    } catch (err) {
+                        message.value = err.message
+                        error.value = true
+                    }
+                }
 
                 // Call checkLoggedInUser on component mount
                 onMounted(() => {
@@ -695,7 +832,9 @@
                     checkRateLimit,
                     showForgotPassword,
                     forgotPasswordEmail,
-                    handleForgotPassword
+                    handleForgotPassword,
+                    setLanguage,
+                    socialLogin
                 }
             }
         }).mount('#app')
